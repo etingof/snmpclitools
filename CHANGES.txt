@@ -6,6 +6,8 @@ Changes to version 0.1.0a
 - UNSTABLE EARLY ALPHA RELEASE.
 - Re-worked to run on top of the latest pysnmp API (4.x)
 - SPARK-based parser used for c/l parsing
+- Rudimental API versioning implemented to let incompatible package
+  branches to co-exist within the same Python installation.
 
 Fri Feb 27 08:57:01 MSK 2004
 
