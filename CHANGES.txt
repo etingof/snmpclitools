@@ -1,3 +1,11 @@
+Tue Mar  1 18:42:27 MSK 2005
+
+Changes to version 0.1.1a
+-------------------------
+
+- UNSTABLE EARLY ALPHA RELEASE.
+- Fixed long-pending typo in usage formatting
+
 Mon Nov  15 08:11:59 MSD 2004
 
 Changes to version 0.1.0a
