@@ -4,7 +4,7 @@ from distutils.core import setup
 
 setup(name="pysnmp-apps",
       version="0.1.0a",
-      description="A collection of SNMP applications written in Python",
+      description="A collection of SNMP applications written on top of PySNMP",
       author="Ilya Etingof",
       author_email="ilya@glas.net ",
       url="http://sourceforge.net/projects/pysnmp/",
