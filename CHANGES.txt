@@ -4,3 +4,5 @@ Changes to version 0.0.1
 ------------------------
 - PySNMP-based applications split off the pysnmp package and re-released
   on their own
+- The command line interface to SNMP tools previously shipped along with PySNMP
+  not reworked for a more consistent design and re-released within pysnmp-apps.
