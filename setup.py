@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name="pysnmp-apps",
-      version="0.1.0-alpha",
+      version="0.1.0a",
       description="A collection of SNMP applications written in Python",
       author="Ilya Etingof",
       author_email="ilya@glas.net ",
