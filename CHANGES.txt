@@ -1,3 +1,12 @@
+Fri Feb 27 08:57:01 MSK 2004
+
+Changes to version 0.0.3
+------------------------
+
+- Bugfix to scripts installation directive at setup.py. All apps
+  now install as 'scripts'.
+- CLI classes adjucted to match new abstract ASN1 classes API
+
 Thu Feb 12 08:49:32 MSK 2004
 
 Changes to version 0.0.2
