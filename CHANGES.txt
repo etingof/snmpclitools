@@ -1,0 +1,6 @@
+Thu Jan 8 19:14:56 MSK 2004
+
+Changes to version 0.0.1
+------------------------
+- PySNMP-based applications split off the pysnmp package and re-released
+  on their own
