@@ -9,5 +9,5 @@ setup(name="pysnmp-apps",
       author_email="ilya@glas.net ",
       url="http://sourceforge.net/projects/pysnmp/",
       packages = [ 'pysnmp_apps', 'pysnmp_apps.cli' ],
-      scripts = [ 'apps/pysnmpwalk' ],
+      scripts = [ 'tools/pysnmpwalk' ],
       license="BSD")
