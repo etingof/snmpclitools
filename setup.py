@@ -14,8 +14,8 @@ setup(name="pysnmp-apps",
                    'pysnmpap.cli.ucd.proto',                   
                    'pysnmpap.cli.ucd.carrier',
                    'pysnmpap.cli.ucd.carrier.udp' ],
-      data_files = [ ('/usr/local/bin', ['apps/pysnmpwalk']),
-                     ('/usr/local/bin', ['apps/pysnmpbulkwalk']),
-                     ('/usr/local/bin', ['apps/pysnmptrapd']), ],
+      data_files = [ ('local/bin', ['apps/pysnmpwalk']),
+                     ('local/bin', ['apps/pysnmpbulkwalk']),
+                     ('local/bin', ['apps/pysnmptrapd']), ],
       license="BSD"
       )
