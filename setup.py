@@ -12,6 +12,6 @@ setup(name="pysnmpap",
                    'pysnmpap.cli' ],
       data_files = [ ('/usr/local/bin', ['apps/pysnmpwalk']),
                      ('/usr/local/bin', ['apps/pysnmpbulkwalk']),
-                     ('/usr/local/bin', ['apps/pysnmptrapd']), ]
+                     ('/usr/local/bin', ['apps/pysnmptrapd']), ],
       license="BSD"
       )
