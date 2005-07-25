@@ -9,9 +9,9 @@ from pysnmp import error
 def getUsage():
     return "\
 MIB options:\n\
-  -m MIB[:...]      load given list of MIBs (ALL loads everything)\n\
-  -M DIR[:...]      look in given list of directories for MIBs\n\
-  -O OUTOPTS        Toggle various defaults controlling output display:\n\
+   -m MIB[:...]      load given list of MIBs (ALL loads everything)\n\
+   -M DIR[:...]      look in given list of directories for MIBs\n\
+   -O OUTOPTS        Toggle various defaults controlling output display:\n\
               b:  do not break OID indexes down\n\
               e:  print enums numerically\n\
               f:  print full OIDs on output\n\
@@ -21,7 +21,7 @@ MIB options:\n\
               u:  print OIDs using UCD-style prefix suppression\n\
               U:  don't print units\n\
               v:  print values only (not OID = value)\n\
-  -I INOPTS     Toggle various defaults controlling input parsing:\n\
+   -I INOPTS         Toggle various defaults controlling input parsing:\n\
               h:  don't apply DISPLAY-HINTs\n\
               u:  top-level OIDs must have '.' prefix (UCD-style)\n\
 "
