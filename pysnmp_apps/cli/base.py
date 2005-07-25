@@ -1,10 +1,7 @@
 # Abstract interface to SNMP objects initializers
-from pysnmp_apps.cli.spark import GenericScanner, GenericASTBuilder, \
-     GenericASTTraversal, GenericASTTraversalPruningException
-from pysnmp_apps.cli.error import IncompleteDataError
+from pysnmp_apps.cli import spark
 
-__all__ = [ 'ConfigToken', 'ConfigNode', 'AbstractConfigScanner',
-            'AbstractConfigParser', 'AbstractConfigGenerator' ]
+# AST
 
 class ConfigToken:
     # Abstract grammar token
@@ -40,18 +37,42 @@ class ConfigNode:
         else:
             return '%s(%s)' % (self.type, self.attr)
 
-class ScannerTemplate(GenericScanner):
+# Scanner
+
+class __ScannerTemplate(spark.GenericScanner):
     def tokenize(self, input):
         self.rv = []
-        GenericScanner.tokenize(self, input)
+        spark.GenericScanner.tokenize(self, input)
         return self.rv
-    
-class ParserTemplate(GenericASTBuilder):
+
+class __FirstLevelScanner(__ScannerTemplate):
+    def t_string(self, s):
+        r' [\.a-zA-Z0-9\///-][\.a-zA-Z0-9\///-]* '
+        self.rv.append(ConfigToken('string', s))
+
+class __SecondLevelScanner(__FirstLevelScanner):
+    def t_equal(self, s):
+        r' = '
+        self.rv.append(ConfigToken('equal'))
+
+    def t_semicolon(self, s):
+        r' : '
+        self.rv.append(ConfigToken('semicolon'))
+
+    def t_whitespace(self, s):
+        r' \s+ '
+        self.rv.append(ConfigToken('whitespace'))
+
+ScannerTemplate = __SecondLevelScanner
+
+# Parser
+
+class ParserTemplate(spark.GenericASTBuilder):
     initialSymbol = None
     def __init__(self, startSymbol=None):
         if startSymbol is None:
             startSymbol = self.initialSymbol
-        GenericASTBuilder.__init__(self, ConfigNode, startSymbol)
+        spark.GenericASTBuilder.__init__(self, ConfigNode, startSymbol)
 
     def terminal(self, token):
         #  Reduce to homogeneous AST.
@@ -62,9 +83,12 @@ class ParserTemplate(GenericASTBuilder):
         #  one child.
         if len(args) == 1:
             return args[0]
-        return GenericASTBuilder.nonterminal(self, type, args)
-        
-class GeneratorTemplate(GenericASTTraversal):
+        return spark.GenericASTBuilder.nonterminal(self, type, args)
+
+
+# Generator
+
+class GeneratorTemplate(spark.GenericASTTraversal):
     def __init__(self): pass  # Skip superclass constructor
 
     def typestring(self, node):
@@ -78,7 +102,7 @@ class GeneratorTemplate(GenericASTTraversal):
                 func(client, node)
             else:
                 self.default(client, node)
-        except GenericASTTraversalPruningException:
+        except spark.GenericASTTraversalPruningException:
             return client
 
         for kid in node:
@@ -91,5 +115,4 @@ class GeneratorTemplate(GenericASTTraversal):
 
         return client
     
-    def default(self, client, node):
-        pass
+    def default(self, client, node): pass
