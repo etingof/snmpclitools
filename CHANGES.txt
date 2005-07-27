@@ -1,3 +1,14 @@
+Wed Jul 27 22:55:46 MSD 2005
+
+Changes to version 0.2.1a
+-------------------------
+
+- UNSTABLE EARLY ALPHA RELEASE.
+- Re-worked to run on top of the latest pysnmp API (4.1.x)
+- CLI internals have been re-designed towards clearer modularity
+  (see cli/base.py CVS log for details)
+- pysnmpset/pysnmpwalk/pysnmpbulkwalk tools added
+
 Tue Mar  1 18:42:27 MSK 2005
 
 Changes to version 0.1.1a
