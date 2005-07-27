@@ -10,5 +10,6 @@ setup(name="pysnmp-apps",
       url="http://sourceforge.net/projects/pysnmp/",
       packages = [ 'pysnmp_apps', 'pysnmp_apps.v4',
                    'pysnmp_apps.v4.cli' ],
-      scripts = [ 'tools/pysnmpget' ],
+      scripts = [ 'tools/pysnmpget', 'tools/pysnmpset',
+                  'tools/pysnmpwalk', 'tools/pysnmpbulkwalk' ],
       license="BSD")
