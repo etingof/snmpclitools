@@ -217,5 +217,6 @@ def generator((snmpEngine, ctx), ast):
 
     ctx['paramsName'] = '%s-params' % ctx['securityName']
     config.addTargetParams(
-        snmpEngine, ctx['paramsName'],ctx['securityName'],ctx['securityLevel']
+        snmpEngine, ctx['paramsName'],ctx['securityName'],
+        ctx['securityLevel'], ctx['versionId']
         )
