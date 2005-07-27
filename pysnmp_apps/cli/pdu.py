@@ -45,6 +45,7 @@ class ReadPduParserMixIn:
         ModName ::= string
         NodeName ::= ObjectName ObjectIndices
         ObjectName ::= string
+        ObjectIndices ::= ObjectIndex string ObjectIndices
         ObjectIndices ::= ObjectIndex ObjectIndices
         ObjectIndices ::= ObjectIndex
         ObjectIndices ::=
