@@ -47,17 +47,17 @@ class __ScannerTemplate(spark.GenericScanner):
 
 class __FirstLevelScanner(__ScannerTemplate):
     def t_string(self, s):
-        r' [\.a-zA-Z0-9\///-][\.a-zA-Z0-9\///-]* '
+        r' [=\.a-zA-Z0-9\///-][\.a-zA-Z0-9\///-]* '
         self.rv.append(ConfigToken('string', s))
 
 class __SecondLevelScanner(__FirstLevelScanner):
-    def t_equal(self, s):
-        r' = '
-        self.rv.append(ConfigToken('equal'))
-
     def t_semicolon(self, s):
         r' : '
         self.rv.append(ConfigToken('semicolon'))
+
+    def t_quote(self, s):
+        r' \" '
+        self.rv.append(ConfigToken('quote'))
 
     def t_whitespace(self, s):
         r' \s+ '
