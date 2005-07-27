@@ -1,4 +1,8 @@
 import string
+from pyasn1.type import univ
+from pyasn1.error import PyAsn1Error
+from pysnmp.proto import rfc1902
+from pysnmp import error
 from pysnmp_apps.cli import base
 
 # Read class
@@ -20,19 +24,31 @@ class ReadPduScannerMixIn: pass
 # Parser
 
 class ReadPduParserMixIn:
-    def p_readPduSpec(self, args):
+    def p_varBindSpec(self, args):
+        '''
+        VarBind ::= VarName
+        VarType ::= string
+        VarValue ::= string        
+        '''
+    
+    def p_pduSpec(self, args):
         '''
         Params ::= VarBinds
 
         VarBinds ::= VarBind whitespace VarBinds
         VarBinds ::= VarBind
         VarBinds ::=
-        VarBind ::= ModName semicolon semicolon NodeName
-        VarBind ::= ModName semicolon semicolon
-        VarBind ::= semicolon semicolon NodeName
-        VarBind ::= NodeName
+        VarName ::= ModName semicolon semicolon NodeName
+        VarName ::= ModName semicolon semicolon
+        VarName ::= semicolon semicolon NodeName
+        VarName ::= NodeName
         ModName ::= string
-        NodeName ::= string
+        NodeName ::= ObjectName ObjectIndices
+        ObjectName ::= string
+        ObjectIndices ::= ObjectIndex ObjectIndices
+        ObjectIndices ::= ObjectIndex
+        ObjectIndices ::=
+        ObjectIndex ::= quote string quote        
         '''
 
 # Generator
@@ -41,33 +57,69 @@ class __ReadPduGenerator(base.GeneratorTemplate):
     def n_ModName(self, (snmpEngine, ctx), node):
         ctx['modName'] = node[0].attr
 
-    def n_NodeName(self, (snmpEngine, ctx), node):
-        ctx['nodeName'] = node[0].attr
+    def n_ObjectName(self, (snmpEngine, ctx), node):
+        objectName = []
+        for subOid in string.split(node[0].attr, '.'):
+            if not subOid:
+                continue
+            try:
+                objectName.append(string.atol(subOid))
+            except string.atoi_error:
+                objectName.append(subOid)
+        ctx['objectName'] = tuple(objectName)
+        
+    def n_ObjectIndex(self, (snmpEngine, ctx), node):
+        if not ctx.has_key('objectIndices'):
+            ctx['objectIndices'] = []
+        ctx['objectIndices'].append(node[1].attr)
 
-    def n_VarBind_exit(self, (snmpEngine, ctx), node):
+    def n_VarName_exit(self, (snmpEngine, ctx), node):
         mibViewCtl = ctx['mibViewController']
         if ctx.has_key('modName'):
             mibViewCtl.mibBuilder.loadModules(ctx['modName'])
-        nodeName = []
-        if ctx.has_key('nodeName'):
-            for subOid in string.split(ctx['nodeName'], '.'):
-                if not subOid:
-                    continue
-                try:
-                    nodeName.append(string.atol(subOid))
-                except string.atoi_error:
-                    nodeName.append(subOid)
-        nodeName = tuple(nodeName)
-
+        if ctx.has_key('objectName'):
+            objectName = ctx['objectName']
+        else:
+            objectName = None
+            
         modName = ctx.get('modName', '')            
 
-        oid, label, suffix = mibViewCtl.getNodeName(nodeName, modName)
-
-        if not ctx.has_key('varBinds'):
-            ctx['varBinds'] = [ (oid + suffix, None) ]
+        if objectName:
+            oid, label, suffix = mibViewCtl.getNodeName(objectName, modName)
         else:
-            ctx['varBinds'].append((oid + suffix, None))
-                
+            oid, label, suffix = mibViewCtl.getFirstNodeName(modName)
+        modName, nodeDesc, _suffix = mibViewCtl.getNodeLocation(oid)
+        mibNode, = mibViewCtl.mibBuilder.importSymbols(modName, nodeDesc)
+        if hasattr(mibNode, 'getColumnInitializer'):
+            # Table column
+            if ctx.has_key('objectIndices'):
+                modName, nodeDesc, _suffix = mibViewCtl.getNodeLocation(
+                    mibNode.name[:-1]
+                    )
+                mibNode, = mibViewCtl.mibBuilder.importSymbols(
+                    modName, nodeDesc
+                    )
+                suffix = suffix + apply(
+                    mibNode.getInstIdFromIndices, ctx['objectIndices']
+                    )
+        else:
+            if ctx.has_key('objectIndices'):
+                raise error.PySnmpError(
+                    'Cant resolve indices: %s' % ctx['objectIndices']
+                    )
+        ctx['varName'] = oid + suffix
+        if ctx.has_key('objectName'):
+            del ctx['objectName']
+        if ctx.has_key('objectIndices'):
+            del ctx['objectIndices']
+
+    def n_VarBind_exit(self, (snmpEngine, ctx), node):
+        if not ctx.has_key('varBinds'):
+            ctx['varBinds'] = [ (ctx['varName'], None) ]
+        else:
+            ctx['varBinds'].append((ctx['varName'], None))
+        del ctx['varName']
+        
     def n_VarBinds_exit(self, (mibViewProxy, ctx), node):
         if not ctx.has_key('varBinds') or not ctx['varBinds']:
             ctx['varBinds'] = [ ((1, 3, 6), None) ]
@@ -77,6 +129,24 @@ def readPduGenerator((snmpEngine, ctx), ast):
 
 # Write class
 
+def getWriteUsage():
+    return "\
+Management parameters:\n\
+   <[\"mib-module\"::]\"object-name\"|\"oid\" \"type\"|\"=\" value> ...\n\
+              mib-module:           MIB name (such as SNMPv2-MIB)\n\
+              object-name:          MIB symbol (sysDescr.0) or OID\n\
+              type:                 MIB value type\n\
+                    i               integer\n\
+                    u               unsigned integer\n\
+                    s               string\n\
+                    n               NULL\n\
+                    o               ObjectIdentifier\n\
+                    t               TimeTicks\n\
+                    a               IP address\n\
+              =:                    use MIB for value type lookup\n\
+              value:                value to write\n\
+"                  
+
 # Scanner
 
 WritePduScannerMixIn = ReadPduScannerMixIn
@@ -84,46 +154,63 @@ WritePduScannerMixIn = ReadPduScannerMixIn
 # Parser
 
 class WritePduParserMixIn(ReadPduParserMixIn):
-    def p_writePduSpec(self, args):
+    def p_varBindSpec(self, args):
         '''
-        NodeName ::= VarBind
-        VarBind ::= Oid equal Val
-        VarBind ::= Oid string Val
+        VarBind ::= VarName whitespace VarType whitespace VarValue
+        VarType ::= string
+        VarValue ::= string        
         '''
 
 # Generator
 
 class __WritePduGenerator(__ReadPduGenerator):
-    def n_NodeName(self, node): pass
-    def n_VarBind(self, node):
-        # XXX
+    _typeMap = {
+        'i': rfc1902.Integer(),
+        'u': rfc1902.Integer32(),
+        's': rfc1902.OctetString(),
+        'n': univ.Null(),
+        'o': univ.ObjectIdentifier(),
+        't': rfc1902.TimeTicks(),
+        'a': rfc1902.IpAddress()
+        }
+
+    def n_VarType(self, (snmpEngine, ctx), node):
+        ctx['varType'] = node[0].attr
+
+    def n_VarValue(self, (snmpEngine, ctx), node):
+        ctx['varValue'] = node[0].attr
+
+    def n_VarBind_exit(self, (snmpEngine, ctx), node):
         mibViewCtl = ctx['mibViewController']
-        if ctx.has_key('modName'):
-            mibViewCtl.mibBuilder.loadModules(ctx['modName'])
-        nodeName = []
-        if ctx.has_key('nodeName'):
-            for subOid in string.split(ctx['nodeName'], '.'):
-                if not subOid:
-                    continue
-                try:
-                    nodeName.append(string.atol(subOid))
-                except string.atoi_error:
-                    nodeName.append(subOid)
-        nodeName = tuple(nodeName)
-
-        modName = ctx.get('modName', '')            
-
-        oid, label, suffix = mibViewCtl.getNodeName(nodeName, modName)
-
-        if node[1].attr == '=':
-            val = None # XXX mib resolve
+        if ctx['varType'] == '=':
+            modName, nodeDesc, suffix = mibViewCtl.getNodeLocation(ctx['varName'])
+            mibNode, = mibViewCtl.mibBuilder.importSymbols(modName, nodeDesc)
+            if hasattr(mibNode, 'getColumnInitializer'):
+                # Table column
+                val = mibNode.getColumnInitializer().syntax
+            elif hasattr(mibNode, 'syntax'):
+                if suffix != (0,):
+                    raise error.PySnmpError(
+                        'Found MIB scalar %s but not a scalar instance given %s' %
+                        (mibNode.name + (0,), ctx['varName'])
+                        )
+                else:
+                    val = mibNode.syntax
+            else:
+                raise error.PySnmpError(
+                    'Variable %s has no syntax' % (ctx['varName'],)
+                    )
         else:
-            val = self._typeMap[node[1].attr].clone(node[2].attr)
-
+            val = self._typeMap[ctx['varType']]
+        try:
+            val = val.clone(ctx['varValue'])
+        except PyAsn1Error, why:
+            raise error.PySnmpError(why)
+        
         if not ctx.has_key('varBinds'):
-            ctx['varBinds'] = [ (oid + suffix, val) ]
+            ctx['varBinds'] = [ (ctx['varName'], val) ]
         else:
-            ctx['varBinds'].append((oid + suffix, val))
+            ctx['varBinds'].append((ctx['varName'], val))
 
 def writePduGenerator((snmpEngine, ctx), ast):
     __WritePduGenerator().preorder((snmpEngine, ctx), ast)
