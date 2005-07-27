@@ -2,19 +2,19 @@
 PySNMP command-line tools
 -------------------------
 
-Here is a bunch of SNMP applications written on top of the PySNMP package
+Here is a set of SNMP applications written on top of the PySNMP package
 (http://sourceforge.net/projects/pysnmp/). Some of these tools mimic
 their famous Net-SNMP (http://sourceforge.net/projects/net-snmp/)
 counterparts, while others are designed toward easy integration with
 other Python applications.
 
 PySNMP command-line tools are written entirely in Python and only rely 
-upon PySNMP package to run (PySNMP requires other Python packages). For 
-MIB resolution services to become available, pysnmp-mibs package should 
-be installed as well.
+upon PySNMP package to run (PySNMP requires other Python packages). For
+MIB resolution services to work for popular MIBs, pysnmp-mibs package
+should be installed as well.
 
 These tools have been tested on Linux & Windows XP, though, they might work
-on any system where Python is available.
+on any Python-populated system.
 
 The whole package is distributed under terms and conditions of BSD-style 
 license. See the LICENSE file for details.
