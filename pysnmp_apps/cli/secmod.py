@@ -1,3 +1,4 @@
+import string
 from pysnmp_apps.cli import base
 from pysnmp.entity import config
 from pysnmp import error
@@ -129,9 +130,15 @@ class __SMGenerator(base.GeneratorTemplate):
     # SNMPv3
     def n_AuthProtocol(self, (snmpEngine, ctx), node):
         if len(node) > 2:
-            ctx['authProtocol'] = node[2].attr
+            p = string.upper(node[2].attr)
         else:
-            ctx['authProtocol'] = node[1].attr
+            p = string.upper(node[1].attr)
+        if string.find(p, 'MD5') != -1:
+            ctx['authProtocol'] = config.usmHMACMD5AuthProtocol
+        elif string.find(p, 'SHA') != -1:
+            ctx['authProtocol'] = config.usmHMACSHAAuthProtocol
+        else:
+            raise error.PySnmpError('Unknown auth protocol \"%s\"' % p)
 
     def n_AuthKey(self, (snmpEngine, ctx), node):
         if len(node) > 2:
@@ -141,9 +148,13 @@ class __SMGenerator(base.GeneratorTemplate):
 
     def n_PrivProtocol(self, (snmpEngine, ctx), node):
         if len(node) > 2:
-            ctx['privProtocol'] = node[2].attr
+            p = string.upper(node[2].attr)
         else:
-            ctx['privProtocol'] = node[1].attr
+            p = string.upper(node[1].attr)
+        if string.find(p, 'DES') != -1:
+            ctx['privProtocol'] = config.usmDESPrivProtocol
+        else:
+            raise error.PySnmpError('Unknown priv protocol \"%s\"' % p)
 
     def n_PrivKey(self, (snmpEngine, ctx), node):
         if len(node) > 2:
@@ -195,13 +206,25 @@ def generator((snmpEngine, ctx), ast):
             raise error.PySnmpError('Security name not specified')
         if not ctx.has_key('securityLevel'):
             raise error.PySnmpError('Security level not specified')
+        if ctx.has_key('authKey'):
+            if not ctx.has_key('authProtocol'):
+                ctx['authProtocol'] = config.usmHMACMD5AuthProtocol
+        else:
+            ctx['authProtocol'] = config.usmNoAuthProtocol
+            ctx['authKey'] = ''
+        if ctx.has_key('privKey'):
+            if not ctx.has_key('privProtocol'):
+                ctx['privProtocol'] = config.usmDESPrivProtocol
+        else:
+            ctx['privProtocol'] = config.usmNoPrivProtocol
+            ctx['privKey'] = ''
         config.addV3User(
             snmpEngine,
             ctx['securityName'],
-            ctx.get('authKey'),
-            ctx.get('authProtocol', 'MD5'),
-            ctx.get('privKey'),
-            ctx.get('privProtocol', 'DES')
+            ctx['authProtocol'],
+            ctx['authKey'],
+            ctx['privProtocol'],
+            ctx['privKey']
             )
 
     else: # SNMPv1/v2c
