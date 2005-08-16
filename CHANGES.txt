@@ -1,7 +1,12 @@
-Wed Jul 27 22:55:46 MSD 2005
+Revision 0.2.2a
+---------------
 
-Changes to version 0.2.1a
--------------------------
+- UNSTABLE EARLY ALPHA RELEASE.
+- Adjusted to changed pysnmp.entity.config.addV3User() API
+- Fixes to command-line SNMPv3 protocols parser
+
+Revision 0.2.1a
+---------------
 
 - UNSTABLE EARLY ALPHA RELEASE.
 - Re-worked to run on top of the latest pysnmp API (4.1.x)
@@ -9,18 +14,14 @@ Changes to version 0.2.1a
   (see cli/base.py CVS log for details)
 - pysnmpset/pysnmpwalk/pysnmpbulkwalk tools added
 
-Tue Mar  1 18:42:27 MSK 2005
-
-Changes to version 0.1.1a
--------------------------
+Revision 0.1.1a
+---------------
 
 - UNSTABLE EARLY ALPHA RELEASE.
 - Fixed long-pending typo in usage formatting
 
-Mon Nov  15 08:11:59 MSD 2004
-
-Changes to version 0.1.0a
--------------------------
+Revision 0.1.0a
+---------------
 
 - UNSTABLE EARLY ALPHA RELEASE.
 - Re-worked to run on top of the latest pysnmp API (4.x)
@@ -28,27 +29,21 @@ Changes to version 0.1.0a
 - Rudimental API versioning implemented to let incompatible package
   branches to co-exist within the same Python installation.
 
-Fri Feb 27 08:57:01 MSK 2004
-
-Changes to version 0.0.3
-------------------------
+Revision 0.0.3
+--------------
 
 - Bugfix to scripts installation directive at setup.py. All apps
   now install as 'scripts'.
 - CLI classes adjucted to match new abstract ASN1 classes API
 
-Thu Feb 12 08:49:32 MSK 2004
-
-Changes to version 0.0.2
-------------------------
+Revision 0.0.2
+--------------
 
 - Bugfix to pysnmpwalk -- must always send Null value in request
   variable-bindings.
 
-Thu Jan 8 19:14:56 MSK 2004
-
-Changes to version 0.0.1
-------------------------
+Revision 0.0.1
+--------------
 - PySNMP-based applications split off the pysnmp package and re-released
   on their own
 - The command line interface to SNMP tools previously shipped along with PySNMP
