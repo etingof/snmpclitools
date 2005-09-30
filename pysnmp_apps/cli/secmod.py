@@ -206,6 +206,11 @@ def generator((snmpEngine, ctx), ast):
             raise error.PySnmpError('Security name not specified')
         if not ctx.has_key('securityLevel'):
             raise error.PySnmpError('Security level not specified')
+        if ctx['securityLevel'] == 'noAuthNoPriv':
+            if ctx.has_key('authKey'): del ctx['authKey']
+            if ctx.has_key('privKey'): del ctx['privKey']
+        elif ctx['securityLevel'] == 'authNoPriv':
+            if ctx.has_key('privKey'): del ctx['privKey']
         if ctx.has_key('authKey'):
             if not ctx.has_key('authProtocol'):
                 ctx['authProtocol'] = config.usmHMACMD5AuthProtocol
