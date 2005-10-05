@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name="pysnmp-apps",
-      version="0.2.2a",
+      version="0.2.3a",
       description="PySNMP applications",
       author="Ilya Etingof",
       author_email="ilya@glas.net ",

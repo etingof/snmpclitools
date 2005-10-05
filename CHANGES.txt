@@ -1,3 +1,9 @@
+Revision 0.2.3a
+---------------
+
+- UNSTABLE EARLY ALPHA RELEASE.
+- Minor fixes to Object Name command-line parser
+
 Revision 0.2.2a
 ---------------
 
