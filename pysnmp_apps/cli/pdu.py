@@ -1,4 +1,4 @@
-import string
+import string, types
 from pyasn1.type import univ
 from pyasn1.error import PyAsn1Error
 from pysnmp.proto import rfc1902
@@ -89,6 +89,11 @@ class __ReadPduGenerator(base.GeneratorTemplate):
             oid, label, suffix = mibViewCtl.getNodeName(objectName, modName)
         else:
             oid, label, suffix = mibViewCtl.getFirstNodeName(modName)
+        if filter(None, map(lambda x: type(x) not in
+                            (types.LongType, types.IntType), suffix)):
+            raise error.PySnmpError(
+                'Cant resolve object at: %s' % suffix
+                )            
         modName, nodeDesc, _suffix = mibViewCtl.getNodeLocation(oid)
         mibNode, = mibViewCtl.mibBuilder.importSymbols(modName, nodeDesc)
         if hasattr(mibNode, 'getColumnInitializer'):
