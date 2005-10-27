@@ -96,7 +96,11 @@ class __ReadPduGenerator(base.GeneratorTemplate):
                 )            
         modName, nodeDesc, _suffix = mibViewCtl.getNodeLocation(oid)
         mibNode, = mibViewCtl.mibBuilder.importSymbols(modName, nodeDesc)
-        if hasattr(mibNode, 'getColumnInitializer'):
+        if not hasattr(self, '_MibTableColumn'):
+            self._MibTableColumn, = mibViewCtl.mibBuilder.importSymbols(
+                'SNMPv2-SMI', 'MibTableColumn'
+                )
+        if isinstance(mibNode, self._MibTableColumn):
             # Table column
             if ctx.has_key('objectIndices'):
                 modName, nodeDesc, _suffix = mibViewCtl.getNodeLocation(
@@ -191,13 +195,10 @@ class __WritePduGenerator(__ReadPduGenerator):
         if ctx['varType'] == '=':
             modName, nodeDesc, suffix = mibViewCtl.getNodeLocation(ctx['varName'])
             mibNode, = mibViewCtl.mibBuilder.importSymbols(modName, nodeDesc)
-            if hasattr(mibNode, 'getColumnInitializer'):
-                # Table column
-                val = mibNode.getColumnInitializer().syntax
-            elif hasattr(mibNode, 'syntax'):
+            if hasattr(mibNode, 'syntax'):
                 if suffix != (0,):
                     raise error.PySnmpError(
-                        'Found MIB scalar %s but not a scalar instance given %s' %
+                        'Found MIB scalar %s but non-scalar given %s' %
                         (mibNode.name + (0,), ctx['varName'])
                         )
                 else:

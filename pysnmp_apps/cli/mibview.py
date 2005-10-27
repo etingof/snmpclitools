@@ -286,8 +286,6 @@ class MibViewProxy:
             )
         if hasattr(mibNode, 'syntax'):
             syntax = mibNode.syntax
-        elif hasattr(mibNode, 'getColumnInitializer'):
-            syntax = mibNode.getColumnInitializer().syntax
         else:
             syntax = val
         if self.buildTypeInfo:
