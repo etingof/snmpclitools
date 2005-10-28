@@ -92,7 +92,7 @@ class __MibViewGenerator(base.GeneratorTemplate):
         else:
             mibBuilder.loadModules(node[0].attr)
             
-    def n_MibDir(self, (mibViewProxy, ctx), node):
+    def n_MibDir(self, (snmpEngine, ctx), node):
         mibBuilder = snmpEngine.msgAndPduDsp.mibInstrumController.mibBuilder
         apply(mibBuilder.setMibPath, (node[0].attr,) + mibBuilder.getMibPath())
 
