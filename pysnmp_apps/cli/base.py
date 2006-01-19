@@ -47,7 +47,7 @@ class __ScannerTemplate(spark.GenericScanner):
 
 class __FirstLevelScanner(__ScannerTemplate):
     def t_string(self, s):
-        r' [=\.a-zA-Z0-9\///-][\.a-zA-Z0-9\///-]* '
+        r' [!#\$%&\'\(\)\*\+,\.//0-9<=>\?@A-Z\[\\\]\^_`a-z\{\|\}~][!#\$%&\'\(\)\*\+,\-\.//0-9<=>\?@A-Z\[\\\]\^_`a-z\{\|\}~]* '
         self.rv.append(ConfigToken('string', s))
 
 class __SecondLevelScanner(__FirstLevelScanner):
