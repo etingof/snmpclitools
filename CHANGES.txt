@@ -4,6 +4,7 @@ Revision 0.2.4a
 - UNSTABLE EARLY ALPHA RELEASE.
 - Bugfix to c/l params scanner -- allow other some printables other
   than alphas and numerics.
+- Handle syntax-less OID's whenever reported by broken Agents
 
 Revision 0.2.3a
 ---------------
