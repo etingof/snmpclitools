@@ -177,6 +177,11 @@ def generator((snmpEngine, ctx), ast):
     ctx['mibViewProxy'] = MibViewProxy(ctx['mibViewController'])
     return __MibViewGenerator().preorder((snmpEngine, ctx), ast)
 
+class UnknownSyntax:
+    def prettyOut(self, val):
+        return str(val)
+unknownSyntax = UnknownSyntax()
+    
 #  Proxy MIB view
 
 class MibViewProxy:
@@ -288,6 +293,8 @@ class MibViewProxy:
             syntax = mibNode.syntax
         else:
             syntax = val
+        if syntax is None: # lame Agent may return a non-instance OID
+            syntax = unknownSyntax
         if self.buildTypeInfo:
             out = out + '%s: ' % syntax.__class__.__name__
         if self.buildRawVals:
