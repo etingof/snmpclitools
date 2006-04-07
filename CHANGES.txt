@@ -2,6 +2,8 @@ Revision 0.2.4a
 ---------------
 
 - UNSTABLE EARLY ALPHA RELEASE.
+- pysnmp*walk tools modified to stop walking MIB on end-of-table rather 
+  than on end-of-mib to match net-snmp tools behaviour.
 - Bugfix to c/l params scanner -- allow other some printables other
   than alphas and numerics.
 - Handle syntax-less OID's whenever reported by broken Agents
