@@ -37,10 +37,12 @@ The most of PySNMP command-line tools could be run in a similar way as
 their Net-SNMP counterparts. For example:
 
 $ pysnmpbulkwalk -v3 -u myuser -l authPriv -A myauthkey -X myprivkey localhost system
-SNMPv2-MIB::sysDescr.0 = DisplayString: Linux cray.glas.net 2.4.20-13.8 #1 Mon May 12 12:20:54 EDT 2003 i686
+SNMPv2-MIB::sysDescr.0 = DisplayString: Linux grommit 2.6.16.1 #2 PREEMPT Tue Apr 4 17:04:24 MSD 2006 i686 unknown unknown GNU/Linux
 SNMPv2-MIB::sysObjectID.0 = ObjectIdentifier: iso.org.dod.internet.private.enterprises.8072.3.2.101.3.6.1.4.1.8072.3.2.10
-SNMPv2-MIB::sysUpTime.0 = SysUpTime: 43 days 1:55:47.85372214785
-^C
+SNMPv2-MIB::sysUpTime.0 = TimeTicks: 43 days 1:55:47.85372214785
+[ skipped ]
+SNMPv2-MIB::sysORUpTime."8" = TimeStamp: 0 days 0:0:0.77
+SNMPv2-MIB::sysORUpTime."9" = TimeStamp: 0 days 0:0:0.77
 
 $ pysnmpget -v3 -u myuser -l authPriv -A myauthkey -X myprivkey localhost IP-MIB::ipAdEntBcastAddr.\"127.0.0.1\"
 IP-MIB::ipAdEntBcastAddr."127.0.0.1" = Integer32: 1
