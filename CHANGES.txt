@@ -1,3 +1,9 @@
+Revision 0.2.5a
+---------------
+
+- UNSTABLE ALPHA RELEASE.
+- Minor fixes.
+
 Revision 0.2.4a
 ---------------
 
