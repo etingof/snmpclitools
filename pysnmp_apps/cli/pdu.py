@@ -82,7 +82,7 @@ class __ReadPduGenerator(base.GeneratorTemplate):
             objectName = ctx['objectName']
         else:
             objectName = None
-            
+
         modName = ctx.get('modName', '')            
 
         if objectName:
@@ -92,7 +92,7 @@ class __ReadPduGenerator(base.GeneratorTemplate):
         if filter(None, map(lambda x: type(x) not in
                             (types.LongType, types.IntType), suffix)):
             raise error.PySnmpError(
-                'Cant resolve object at: %s' % suffix
+                'Cant resolve object at: %s' % (suffix,)
                 )            
         modName, nodeDesc, _suffix = mibViewCtl.getNodeLocation(oid)
         mibNode, = mibViewCtl.mibBuilder.importSymbols(modName, nodeDesc)
@@ -115,7 +115,7 @@ class __ReadPduGenerator(base.GeneratorTemplate):
         else:
             if ctx.has_key('objectIndices'):
                 raise error.PySnmpError(
-                    'Cant resolve indices: %s' % ctx['objectIndices']
+                    'Cant resolve indices: %s' % (ctx['objectIndices'],)
                     )
         ctx['varName'] = oid + suffix
         if ctx.has_key('objectName'):
