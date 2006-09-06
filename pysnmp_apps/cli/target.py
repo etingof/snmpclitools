@@ -28,10 +28,6 @@ class TargetScannerMixIn:
         r' -t '
         self.rv.append(base.ConfigToken('timeout'))
         
-    def t_dump(self, s):
-        r' -d '
-        self.rv.append(base.ConfigToken('dump'))
-
 # Parser
 
 class TargetParserMixIn:
@@ -46,9 +42,6 @@ class TargetParserMixIn:
         CommOption ::= Timeout
         Timeout ::= timeout string
         Timeout ::= timeout whitespace string
-
-        DebugOption ::= Dump
-        Dump ::= dump
 
         Agent ::= Transport semicolon Endpoint semicolon Format
         Agent ::= Endpoint semicolon Format
