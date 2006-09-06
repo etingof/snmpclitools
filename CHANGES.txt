@@ -2,6 +2,7 @@ Revision 0.2.5a
 ---------------
 
 - UNSTABLE ALPHA RELEASE.
+- The -d and -D debugging parameters implemented.
 - Minor fixes.
 
 Revision 0.2.4a
