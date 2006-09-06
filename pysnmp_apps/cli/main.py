@@ -1,6 +1,11 @@
 from pysnmp.smi import view
 from pysnmp_apps.cli import base
 from pysnmp import error, majorVersionId
+try:
+    from pysnmp import debug
+except ImportError:
+    debug = None
+import string
 
 # Usage
 
@@ -9,7 +14,9 @@ def getUsage():
 PySNMP library version %s; http://pysnmp.sf.net\n\
    -h                    display this help message\n\
    -V                    software release information\n\
-" % majorVersionId
+   -d                    dump raw packets\n\
+   -D category           enable debugging [%s]\n\
+" % (majorVersionId, debug and reduce(lambda x,y: x+","+y, debug.flagMap.keys()) or "")
     
 # Scanner
 
@@ -21,6 +28,14 @@ class MainScannerMixIn:
     def t_versioninfo(self, s):
         r' -V '
         self.rv.append(base.ConfigToken('versioninfo'))
+
+    def t_dump(self, s):
+        r' -d '
+        self.rv.append(base.ConfigToken('dump'))
+
+    def t_debug(self, s):
+        r' -D '
+        self.rv.append(base.ConfigToken('debug'))
 
 # Parser
 
@@ -42,10 +57,18 @@ class MainParserMixIn:
 
         Option ::= Help
         Option ::= VersionInfo
-
+        Option ::= DebugOption
+        
         Help ::= help
 
         VersionInfo ::= versioninfo
+
+        DebugOption ::= Dump
+        DebugOption ::= Debug
+        Dump ::= dump
+        Debug ::= debug string
+        Debug ::= debug whitespace string
+        
         '''
 # Generator
 
@@ -56,6 +79,18 @@ class __MainGenerator(base.GeneratorTemplate):
 
     def n_Help(self, (snmpEngine, ctx), node):
         raise error.PySnmpError()
+
+    def n_Dump(self, (snmpEngine, ctx), node):
+        if debug:
+            debug.setLogger(debug.Debug(debug.flagIO))
+            
+    def n_Debug(self, (snmpEngine, ctx), node):
+        if debug:
+            if len(node) > 2:
+                f = node[2].attr
+            else:
+                f = node[1].attr
+            debug.setLogger(apply(debug.Debug, string.split(f, ",")))
 
 def generator((snmpEngine, ctx), ast):
     ctx['mibViewController'] = view.MibViewController(
