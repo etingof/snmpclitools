@@ -11,5 +11,6 @@ setup(name="pysnmp-apps",
       packages = [ 'pysnmp_apps', 'pysnmp_apps.v4',
                    'pysnmp_apps.v4.cli' ],
       scripts = [ 'tools/pysnmpget', 'tools/pysnmpset',
-                  'tools/pysnmpwalk', 'tools/pysnmpbulkwalk' ],
+                  'tools/pysnmpwalk', 'tools/pysnmpbulkwalk',
+                  'tools/pysnmptranslate' ],
       license="BSD")
