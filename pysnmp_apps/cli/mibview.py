@@ -285,7 +285,10 @@ class MibViewProxy:
                 out = out + ' = '
             else:
                 out = out + ' '
+
         # Value
+        if val is None:
+            return out
         mibNode, = mibViewController.mibBuilder.importSymbols(
             modName, nodeDesc
             )
