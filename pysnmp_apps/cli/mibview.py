@@ -174,7 +174,8 @@ class __MibViewGenerator(base.GeneratorTemplate):
                     )
 
 def generator((snmpEngine, ctx), ast):
-    ctx['mibViewProxy'] = MibViewProxy(ctx['mibViewController'])
+    if not ctx.has_key('mibViewProxy'):
+        ctx['mibViewProxy'] = MibViewProxy(ctx['mibViewController'])
     return __MibViewGenerator().preorder((snmpEngine, ctx), ast)
 
 class UnknownSyntax:
