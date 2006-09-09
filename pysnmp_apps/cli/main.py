@@ -82,7 +82,7 @@ class __MainGenerator(base.GeneratorTemplate):
 
     def n_Dump(self, (snmpEngine, ctx), node):
         if debug:
-            debug.setLogger(debug.Debug(debug.flagIO))
+            debug.setLogger(debug.Debug('io'))
             
     def n_Debug(self, (snmpEngine, ctx), node):
         if debug:
