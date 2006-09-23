@@ -50,7 +50,10 @@ class MainParserMixIn:
     def p_cmdline(self, args):
         '''
         Cmdline ::= Options Agent whitespace Params
-
+        '''
+        
+    def p_cmdlineExt(self, args):
+        '''
         Options ::= Option whitespace Options
         Options ::= Option
         Options ::=
@@ -68,8 +71,8 @@ class MainParserMixIn:
         Dump ::= dump
         Debug ::= debug string
         Debug ::= debug whitespace string
-        
         '''
+        
 # Generator
 
 class __MainGenerator(base.GeneratorTemplate):
