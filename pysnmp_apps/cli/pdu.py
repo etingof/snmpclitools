@@ -31,10 +31,13 @@ class ReadPduParserMixIn:
         VarValue ::= string        
         '''
     
-    def p_pduSpec(self, args):
+    def p_paramsSpec(self, args):
         '''
         Params ::= VarBinds
-
+        '''
+        
+    def p_pduSpec(self, args):
+        '''
         VarBinds ::= VarBind whitespace VarBinds
         VarBinds ::= VarBind
         VarBinds ::=
