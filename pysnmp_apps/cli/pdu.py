@@ -208,7 +208,11 @@ class __WritePduGenerator(__ReadPduGenerator):
                     'Variable %s has no syntax' % (ctx['varName'],)
                     )
         else:
-            val = self._typeMap[ctx['varType']]
+            try:
+                val = self._typeMap[ctx['varType']]
+            except KeyError:
+                raise error.PySnmpError('unsupported SNMP value type \"%s\"' %
+                                        ctx['varType'])
         try:
             val = val.clone(ctx['varValue'])
         except PyAsn1Error, why:
