@@ -27,8 +27,6 @@ class ReadPduParserMixIn:
     def p_varBindSpec(self, args):
         '''
         VarBind ::= VarName
-        VarType ::= string
-        VarValue ::= string        
         '''
     
     def p_paramsSpec(self, args):
