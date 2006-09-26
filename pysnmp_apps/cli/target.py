@@ -107,6 +107,7 @@ class __TargetGeneratorPassTwo(base.GeneratorTemplate):
 
     def n_Agent_exit(self, (snmpEngine, ctx), node):
         ctx['addrName'] = '%s-name' % ctx['paramsName']
+        ctx['transportTag'] = '%s-tag' % ctx['addrName']
         config.addTargetAddr(
             snmpEngine,
             ctx['addrName'],
@@ -114,7 +115,8 @@ class __TargetGeneratorPassTwo(base.GeneratorTemplate):
             apply(ctx['addrRewriteFun'], ctx['transportAddress']),
             ctx['paramsName'],
             ctx.get('timeout'),
-            ctx.get('retryCount')
+            ctx.get('retryCount'),
+            tagList=ctx['transportTag']
             )
         config.addSocketTransport(
             snmpEngine,
