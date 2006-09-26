@@ -86,6 +86,12 @@ class __TargetGeneratorPassOne(base.GeneratorTemplate):
               ctx['transportModule'],
               ctx['addrRewriteFun'] ) = self._snmpDomainMap['udp']
 
+class __TargetGeneratorTrapPassOne(__TargetGeneratorPassOne):
+    _snmpDomainMap = {
+        'udp': (udp.snmpUDPDomain, udp.UdpSocketTransport(),
+                lambda h,p='162': (socket.gethostbyname(h), string.atoi(p)))
+        }
+
 class __TargetGeneratorPassTwo(base.GeneratorTemplate):
     def n_Retries(self, (snmpEngine, ctx), node):
         try:
@@ -123,8 +129,15 @@ class __TargetGeneratorPassTwo(base.GeneratorTemplate):
             ctx['transportDomain'],
             ctx['transportModule'].openClientMode()
             )
-    
+
+__TargetGeneratorTrapPassTwo = __TargetGeneratorPassTwo
+
 def generator((snmpEngine, ctx), ast):
     __TargetGeneratorPassTwo().preorder(
         __TargetGeneratorPassOne().preorder((snmpEngine, ctx), ast), ast
+        )
+
+def generatorTrap((snmpEngine, ctx), ast):
+    __TargetGeneratorTrapPassTwo().preorder(
+        __TargetGeneratorTrapPassOne().preorder((snmpEngine, ctx), ast), ast
         )
