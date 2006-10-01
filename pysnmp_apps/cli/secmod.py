@@ -216,13 +216,13 @@ def generator((snmpEngine, ctx), ast):
                 ctx['authProtocol'] = config.usmHMACMD5AuthProtocol
         else:
             ctx['authProtocol'] = config.usmNoAuthProtocol
-            ctx['authKey'] = ''
+            ctx['authKey'] = None
         if ctx.has_key('privKey'):
             if not ctx.has_key('privProtocol'):
                 ctx['privProtocol'] = config.usmDESPrivProtocol
         else:
             ctx['privProtocol'] = config.usmNoPrivProtocol
-            ctx['privKey'] = ''
+            ctx['privKey'] = None
         config.addV3User(
             snmpEngine,
             ctx['securityName'],
