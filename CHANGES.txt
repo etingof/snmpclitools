@@ -1,3 +1,9 @@
+Revision 0.2.6a
+---------------
+
+- UNSTABLE ALPHA RELEASE.
+- Default timeout/retries set to net-snmp default values.
+
 Revision 0.2.5a
 ---------------
 
