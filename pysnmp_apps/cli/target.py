@@ -105,9 +105,9 @@ class __TargetGeneratorPassTwo(base.GeneratorTemplate):
     def n_Timeout(self, (snmpEngine, ctx), node):
         try:
             if len(node) > 2:
-                ctx['timeout'] = int(node[2].attr)*1000
+                ctx['timeout'] = int(node[2].attr)*100
             else:
-                ctx['timeout'] = int(node[1].attr)*1000
+                ctx['timeout'] = int(node[1].attr)*100
         except:
             raise error.PySnmpError('Bad timeout value')
 
@@ -120,8 +120,9 @@ class __TargetGeneratorPassTwo(base.GeneratorTemplate):
             ctx['transportDomain'],
             apply(ctx['addrRewriteFun'], ctx['transportAddress']),
             ctx['paramsName'],
-            ctx.get('timeout'),
-            ctx.get('retryCount'),
+            # net-snmp defaults
+            ctx.get('timeout', 100),
+            ctx.get('retryCount', 5),
             tagList=ctx['transportTag']
             )
         config.addSocketTransport(
