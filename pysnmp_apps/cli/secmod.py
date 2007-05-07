@@ -16,9 +16,9 @@ SNMPv3 security options:\n\
    -A AUTH-KEY           user authentication key\n\
    -x PRIV-PROTOCOL      \"DES\"\n\
    -X PRIV-KEY           user privacy key\n\
-   -e CONTEXT-ENGINE-ID  authoritative context engine ID\n\
-   -E CONTEXT-NAME       authoritative context name\n\
-   -e ENGINE-ID          authoritative SNMP engine ID (will discover)\n\
+   -E CONTEXT-ENGINE-ID  authoritative context engine ID\n\
+   -e ENGINE-ID          authoritative SNMP engine ID (will discover)\n
+   -n CONTEXT-NAME       authoritative context name\n\
    -Z ENGINE-BOOTS       local SNMP engine uptime\n\
 "
 
