@@ -14,7 +14,7 @@ SNMPv3 security options:\n\
    -l SECURITY-LEVEL     \"noAuthNoPriv\"|\"authNoPriv\"|\"authPriv\"\n\
    -a AUTH-PROTOCOL      \"MD5\"|\"SHA\"\n\
    -A AUTH-KEY           user authentication key\n\
-   -x PRIV-PROTOCOL      \"DES\"\n\
+   -x PRIV-PROTOCOL      \"DES\"|\"AES\"\n\
    -X PRIV-KEY           user privacy key\n\
    -E CONTEXT-ENGINE-ID  authoritative context engine ID\n\
    -e ENGINE-ID          authoritative SNMP engine ID (will discover)\n\
@@ -153,6 +153,8 @@ class __SMGenerator(base.GeneratorTemplate):
             p = string.upper(node[1].attr)
         if string.find(p, 'DES') != -1:
             ctx['privProtocol'] = config.usmDESPrivProtocol
+        elif string.find(p, 'AES') != -1:
+            ctx['privProtocol'] = config.usmAesCfb128Protocol
         else:
             raise error.PySnmpError('Unknown priv protocol \"%s\"' % p)
 
