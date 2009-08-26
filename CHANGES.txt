@@ -1,3 +1,8 @@
+Revision 0.2.8a
+---------------
+
+- API versioning mechanics retired (pysnmp_apps.v4 -> pysnmp_apps).
+
 Revision 0.2.7a
 ---------------
 
