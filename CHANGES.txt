@@ -3,6 +3,7 @@ Revision 0.2.8a
 
 - API versioning mechanics retired (pysnmp_apps.v4 -> pysnmp_apps).
 - Attempt to use setuptools for package management whenever available.
+- The apps are now ready for py2exe processing.
 
 Revision 0.2.7a
 ---------------
