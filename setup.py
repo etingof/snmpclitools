@@ -18,15 +18,33 @@ except ImportError:
             sys.exit(1)
     from distutils.core import setup
 
-setup(name="pysnmp-apps",
-      version="0.2.8a",
-      description="PySNMP applications",
-      author="Ilya Etingof",
-      author_email="ilya@glas.net ",
-      url="http://sourceforge.net/projects/pysnmp/",
-      packages = [ 'pysnmp_apps',
-                   'pysnmp_apps.cli' ],
-      scripts = [ 'tools/pysnmpget', 'tools/pysnmpset',
-                  'tools/pysnmpwalk', 'tools/pysnmpbulkwalk',
-                  'tools/pysnmptranslate' ],
-      license="BSD")
+options = {
+    'name': "pysnmp-apps",
+    'version': "0.2.8a",
+    'description': "PySNMP applications",
+    'author': "Ilya Etingof",
+    'author_email': "ilya@glas.net ",
+    'url': "http://sourceforge.net/projects/pysnmp/",
+    'packages': [ 'pysnmp_apps', 'pysnmp_apps.cli' ],
+    'scripts': [ 'tools/pysnmpget', 'tools/pysnmpset',
+                 'tools/pysnmpwalk', 'tools/pysnmpbulkwalk',
+                 'tools/pysnmptranslate' ],
+    'license': "BSD"
+  }
+
+if "py2exe" in sys.argv:
+    import py2exe
+    # fix executables
+    options['console'] = options['scripts']
+    del options['scripts']
+    # add files not found my modulefinder
+    options['options'] = {
+        'py2exe': {
+            'includes': [
+                'pysnmp.smi.mibs.*',
+                'pysnmp.smi.mibs.instances.*'
+                ]
+            }
+        }
+
+apply(setup, (), options)
