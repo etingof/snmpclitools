@@ -197,13 +197,14 @@ class __WritePduGenerator(__ReadPduGenerator):
             modName, nodeDesc, suffix = mibViewCtl.getNodeLocation(ctx['varName'])
             mibNode, = mibViewCtl.mibBuilder.importSymbols(modName, nodeDesc)
             if hasattr(mibNode, 'syntax'):
-                if suffix != (0,):
+                MibTableColumn, = mibViewCtl.mibBuilder.importSymbols('SNMPv2-SMI', 'MibTableColumn')
+                if isinstance(mibNode, MibTableColumn) or suffix == (0,):
+                    val = mibNode.syntax
+                else:
                     raise error.PySnmpError(
                         'Found MIB scalar %s but non-scalar given %s' %
                         (mibNode.name + (0,), ctx['varName'])
                         )
-                else:
-                    val = mibNode.syntax
             else:
                 raise error.PySnmpError(
                     'Variable %s has no syntax' % (ctx['varName'],)
