@@ -1,3 +1,8 @@
+Revision 0.2.9a
+---------------
+
+- UDP over IPv6 transport added.
+
 Revision 0.2.8a
 ---------------
 
