@@ -47,13 +47,21 @@ class __ScannerTemplate(spark.GenericScanner):
 
 class __FirstLevelScanner(__ScannerTemplate):
     def t_string(self, s):
-        r' [!#\$%&\'\(\)\*\+,\.//0-9<=>\?@A-Z\[\\\]\^_`a-z\{\|\}~][!#\$%&\'\(\)\*\+,\-\.//0-9<=>\?@A-Z\[\\\]\^_`a-z\{\|\}~]* '
+        r' [!#\$%&\'\(\)\*\+,\.//0-9<=>\?@A-Z\\\^_`a-z\{\|\}~][!#\$%&\'\(\)\*\+,\-\.//0-9<=>\?@A-Z\\\^_`a-z\{\|\}~]* '
         self.rv.append(ConfigToken('string', s))
 
 class __SecondLevelScanner(__FirstLevelScanner):
     def t_semicolon(self, s):
         r' : '
         self.rv.append(ConfigToken('semicolon'))
+
+    def t_lparen(self, s):
+        r' \[ '
+        self.rv.append(ConfigToken('lparen'))
+
+    def t_rparen(self, s):
+        r' \] '
+        self.rv.append(ConfigToken('rparen'))
 
     def t_quote(self, s):
         r' \" '
@@ -77,14 +85,6 @@ class ParserTemplate(spark.GenericASTBuilder):
     def terminal(self, token):
         #  Reduce to homogeneous AST.
         return ConfigNode(token.type, token.attr)
-
-    def nonterminal2(self, type, args):
-        #  Flatten AST a bit by not making nodes if there's only
-        #  one child.
-        if len(args) == 1:
-            return args[0]
-        return spark.GenericASTBuilder.nonterminal(self, type, args)
-
 
 # Generator
 
