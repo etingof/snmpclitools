@@ -20,7 +20,7 @@ except ImportError:
 
 options = {
     'name': "pysnmp-apps",
-    'version': "0.2.9a",
+    'version': "0.2.10a",
     'description': "PySNMP applications",
     'author': "Ilya Etingof",
     'author_email': "ilya@glas.net ",
