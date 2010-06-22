@@ -1,3 +1,11 @@
+Revision 0.2.10a
+----------------
+
+- Fix to SNMP Apps: pass contextEngineId and contextName from command line
+  to SNMP App API.
+- Fix to pysnmptrap tool to make it properly initializing SNMPv1/v2c trap
+  PDU from command line parameters.
+
 Revision 0.2.9a
 ---------------
 
