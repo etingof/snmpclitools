@@ -1,0 +1,2 @@
+include CHANGES LICENSE README
+recursive-include tools pysnmpget pysnmptranslate pysnmpwalk pysnmpbulkwalk pysnmpset pysnmptrap

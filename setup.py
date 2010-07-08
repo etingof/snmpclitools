@@ -19,17 +19,18 @@ except ImportError:
     from distutils.core import setup
 
 options = {
-    'name': "pysnmp-apps",
-    'version': "0.2.10a",
-    'description': "PySNMP applications",
-    'author': "Ilya Etingof",
-    'author_email': "ilya@glas.net ",
-    'url': "http://sourceforge.net/projects/pysnmp/",
+    'name': 'pysnmp-apps',
+    'version': '0.2.10a',
+    'description': 'PySNMP applications',
+    'author': 'Ilya Etingof',
+    'author_email': 'ilya@glas.net',
+    'url': 'http://sourceforge.net/projects/pysnmp/',
+    'license': 'BSD',
+    'requires': 'pysnmp',
     'packages': [ 'pysnmp_apps', 'pysnmp_apps.cli' ],
     'scripts': [ 'tools/pysnmpget', 'tools/pysnmpset',
                  'tools/pysnmpwalk', 'tools/pysnmpbulkwalk',
-                 'tools/pysnmptranslate' ],
-    'license': "BSD"
+                 'tools/pysnmptranslate' ]
   }
 
 if "py2exe" in sys.argv:
