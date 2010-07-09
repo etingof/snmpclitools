@@ -31,7 +31,7 @@ options = {
     'packages': [ 'pysnmp_apps', 'pysnmp_apps.cli' ],
     'scripts': [ 'tools/pysnmpget', 'tools/pysnmpset',
                  'tools/pysnmpwalk', 'tools/pysnmpbulkwalk',
-                 'tools/pysnmptranslate' ]
+                 'tools/pysnmptrap', 'tools/pysnmptranslate' ]
   }
 
 if "py2exe" in sys.argv:
