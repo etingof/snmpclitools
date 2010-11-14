@@ -1,7 +1,12 @@
-Revision 0.2.10a
+Revision 0.2.11a
 ----------------
 
 - All tools now report error OID.
+- The pysnmptrap tool code cleaned up.
+
+Revision 0.2.10a
+----------------
+
 - Fix to SNMP Apps: pass contextEngineId and contextName from command line
   to SNMP App API.
 - The missing pysnmptrap tool added to distro and fixed to make it properly
