@@ -4,6 +4,7 @@ Revision 0.2.11a
 - All tools now report error OID.
 - EOM condition detection adjusted to reflect modified pysnmp API.
 - The pysnmptrap tool code cleaned up.
+- HEX values printout improved.
 
 Revision 0.2.10a
 ----------------
