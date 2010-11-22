@@ -289,7 +289,7 @@ class MibViewProxy:
 
         # Value
         if isinstance(val, univ.Null):
-            return out + str(val)
+            return out + val.prettyPrint()
         mibNode, = mibViewController.mibBuilder.importSymbols(
             modName, nodeDesc
             )
