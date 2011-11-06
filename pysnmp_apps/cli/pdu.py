@@ -1,4 +1,4 @@
-import string, types
+import sys
 from pyasn1.type import univ
 from pyasn1.error import PyAsn1Error
 from pysnmp.proto import rfc1902
@@ -56,30 +56,34 @@ class ReadPduParserMixIn:
 # Generator
 
 class __ReadPduGenerator(base.GeneratorTemplate):
-    def n_ModName(self, (snmpEngine, ctx), node):
+    def n_ModName(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
         ctx['modName'] = node[0].attr
 
-    def n_ObjectName(self, (snmpEngine, ctx), node):
+    def n_ObjectName(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
         objectName = []
-        for subOid in string.split(node[0].attr, '.'):
+        for subOid in node[0].attr.split('.'):
             if not subOid:
                 continue
             try:
-                objectName.append(string.atol(subOid))
-            except string.atoi_error:
+                objectName.append(int(subOid))
+            except ValueError:
                 objectName.append(subOid)
         ctx['objectName'] = tuple(objectName)
         
-    def n_ObjectIndex(self, (snmpEngine, ctx), node):
-        if not ctx.has_key('objectIndices'):
+    def n_ObjectIndex(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
+        if 'objectIndices' not in ctx:
             ctx['objectIndices'] = []
         ctx['objectIndices'].append(node[1].attr)
 
-    def n_VarName_exit(self, (snmpEngine, ctx), node):
+    def n_VarName_exit(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
         mibViewCtl = ctx['mibViewController']
-        if ctx.has_key('modName'):
+        if 'modName' in ctx:
             mibViewCtl.mibBuilder.loadModules(ctx['modName'])
-        if ctx.has_key('objectName'):
+        if 'objectName' in ctx:
             objectName = ctx['objectName']
         else:
             objectName = None
@@ -90,8 +94,11 @@ class __ReadPduGenerator(base.GeneratorTemplate):
             oid, label, suffix = mibViewCtl.getNodeName(objectName, modName)
         else:
             oid, label, suffix = mibViewCtl.getFirstNodeName(modName)
-        if filter(None, map(lambda x: type(x) not in
-                            (types.LongType, types.IntType), suffix)):
+        if sys.version_info[0] < 3:
+            intTypes = (int, long)
+        else:
+            intTypes = (int,)
+        if [ x for x in suffix if not isinstance(x, intTypes) ]:
             raise error.PySnmpError(
                 'Cant resolve object at: %s' % (suffix,)
                 )            
@@ -103,40 +110,42 @@ class __ReadPduGenerator(base.GeneratorTemplate):
                 )
         if isinstance(mibNode, self._MibTableColumn):
             # Table column
-            if ctx.has_key('objectIndices'):
+            if 'objectIndices' in ctx:
                 modName, nodeDesc, _suffix = mibViewCtl.getNodeLocation(
                     mibNode.name[:-1]
                     )
                 mibNode, = mibViewCtl.mibBuilder.importSymbols(
                     modName, nodeDesc
                     )
-                suffix = suffix + apply(
-                    mibNode.getInstIdFromIndices, ctx['objectIndices']
+                suffix = suffix + mibNode.getInstIdFromIndices(
+                    *ctx['objectIndices']
                     )
         else:
-            if ctx.has_key('objectIndices'):
+            if 'objectIndices' in ctx:
                 raise error.PySnmpError(
                     'Cant resolve indices: %s' % (ctx['objectIndices'],)
                     )
         ctx['varName'] = oid + suffix
-        if ctx.has_key('objectName'):
+        if 'objectName' in ctx:
             del ctx['objectName']
-        if ctx.has_key('objectIndices'):
+        if 'objectIndices' in ctx:
             del ctx['objectIndices']
 
-    def n_VarBind_exit(self, (snmpEngine, ctx), node):
-        if not ctx.has_key('varBinds'):
+    def n_VarBind_exit(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
+        if 'varBinds' not in ctx:
             ctx['varBinds'] = [ (ctx['varName'], None) ]
         else:
             ctx['varBinds'].append((ctx['varName'], None))
         del ctx['varName']
         
-    def n_VarBinds_exit(self, (mibViewProxy, ctx), node):
-        if not ctx.has_key('varBinds') or not ctx['varBinds']:
+    def n_VarBinds_exit(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
+        if 'varBinds' not in ctx or not ctx['varBinds']:
             ctx['varBinds'] = [ ((1, 3, 6), None) ]
 
-def readPduGenerator((snmpEngine, ctx), ast):
-    __ReadPduGenerator().preorder((snmpEngine, ctx), ast)
+def readPduGenerator(cbCtx, ast):
+    __ReadPduGenerator().preorder(cbCtx, ast)
 
 # Write class
 
@@ -185,13 +194,16 @@ class __WritePduGenerator(__ReadPduGenerator):
         'a': rfc1902.IpAddress()
         }
 
-    def n_VarType(self, (snmpEngine, ctx), node):
+    def n_VarType(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
         ctx['varType'] = node[0].attr
 
-    def n_VarValue(self, (snmpEngine, ctx), node):
+    def n_VarValue(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
         ctx['varValue'] = node[0].attr
 
-    def n_VarBind_exit(self, (snmpEngine, ctx), node):
+    def n_VarBind_exit(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
         mibViewCtl = ctx['mibViewController']
         if ctx['varType'] == '=':
             modName, nodeDesc, suffix = mibViewCtl.getNodeLocation(ctx['varName'])
@@ -217,13 +229,14 @@ class __WritePduGenerator(__ReadPduGenerator):
                                         ctx['varType'])
         try:
             val = val.clone(ctx['varValue'])
-        except PyAsn1Error, why:
-            raise error.PySnmpError(why)
+        except PyAsn1Error:
+            raise error.PySnmpError(sys.exc_info()[1])
         
-        if not ctx.has_key('varBinds'):
+        if 'varBinds' not in ctx:
             ctx['varBinds'] = [ (ctx['varName'], val) ]
         else:
             ctx['varBinds'].append((ctx['varName'], val))
 
-def writePduGenerator((snmpEngine, ctx), ast):
+def writePduGenerator(cbCtx, ast):
+    snmpEngine, ctx = cbCtx
     __WritePduGenerator().preorder((snmpEngine, ctx), ast)

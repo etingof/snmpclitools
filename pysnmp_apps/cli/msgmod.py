@@ -35,18 +35,20 @@ class __MPGenerator(base.GeneratorTemplate):
         '2c': 1,
         '3':  3
         }
-    def n_SnmpVersionId(self, (snmpEngine, ctx), node):
+    def n_SnmpVersionId(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
         if len(node) > 2:
             versionId = node[2].attr
         else:
             versionId = node[1].attr
-        if self._versionIdMap.has_key(versionId):
+        if versionId in self._versionIdMap:
             ctx['versionId'] = self._versionIdMap[versionId]
         else:
             raise error.PySnmpError('Bad version value %s' % versionId)
 
-def generator((snmpEngine, ctx), ast):
+def generator(cbCtx, ast):
+    snmpEngine, ctx = cbCtx
     __MPGenerator().preorder((snmpEngine, ctx), ast)
     # Commit defaults
-    if not ctx.has_key('versionId'):
+    if 'versionId' not in ctx:
         ctx['versionId'] = 3

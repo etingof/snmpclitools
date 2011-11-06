@@ -1,4 +1,5 @@
 # Abstract interface to SNMP objects initializers
+import sys
 from pysnmp_apps.cli import spark
 
 # AST
@@ -8,10 +9,13 @@ class ConfigToken:
     def __init__(self, type, attr=None):
         self.type = type
         self.attr = attr
-    def __cmp__(self, o):
-        return cmp(self.type, o)
-    def __repr__(self):
-        return self.attr or self.type
+    def __eq__(self, other): return self.type == other
+    def __ne__(self, other): return self.type != other
+    def __lt__(self, other): return self.type < other
+    def __le__(self, other): return self.type <= other
+    def __gt__(self, other): return self.type > other
+    def __ge__(self, other): return self.type >= other
+    def __repr__(self): return self.attr or self.type
     def __str__(self):
         if self.attr is None:
             return '%s' % self.type
@@ -27,10 +31,18 @@ class ConfigNode:
         return self._kids[i]
     def __len__(self):
         return len(self._kids)
-    def __setslice__(self, low, high, seq):
-        self._kids[low:high] = seq
-    def __cmp__(self, o):
-        return cmp(self.type, o)
+    if sys.version_info[0] < 3:
+        def __setslice__(self, low, high, seq):
+            self._kids[low:high] = seq
+    else:
+        def __setitem__(self, idx, seq):
+            self._kids[idx] = seq
+    def __eq__(self, other): return self.type == other
+    def __ne__(self, other): return self.type != other
+    def __lt__(self, other): return self.type < other
+    def __le__(self, other): return self.type <= other
+    def __gt__(self, other): return self.type > other
+    def __ge__(self, other): return self.type >= other
     def __str__(self):
         if self.attr is None:
             return self.type

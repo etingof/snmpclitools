@@ -5,7 +5,6 @@ try:
     from pysnmp import debug
 except ImportError:
     debug = None
-import string
 
 # Usage
 
@@ -16,7 +15,7 @@ PySNMP library version %s; http://pysnmp.sf.net\n\
    -V                    software release information\n\
    -d                    dump raw packets\n\
    -D category           enable debugging [%s]\n\
-" % (majorVersionId, debug and reduce(lambda x,y: x+","+y, debug.flagMap.keys()) or "")
+" % (majorVersionId, debug and ','.join(debug.flagMap.keys()) or "")
     
 # Scanner
 
@@ -77,25 +76,26 @@ class MainParserMixIn:
 
 class __MainGenerator(base.GeneratorTemplate):
     # SNMPv1/v2
-    def n_VersionInfo(self, (snmpEngine, ctx), node):
+    def n_VersionInfo(self, cbCtx, node):
         raise error.PySnmpError()
 
-    def n_Help(self, (snmpEngine, ctx), node):
+    def n_Help(self, cbCtx, node):
         raise error.PySnmpError()
 
-    def n_Dump(self, (snmpEngine, ctx), node):
+    def n_Dump(self, cbCtx, node):
         if debug:
             debug.setLogger(debug.Debug('io'))
             
-    def n_Debug(self, (snmpEngine, ctx), node):
+    def n_Debug(self, cbCtx, node):
         if debug:
             if len(node) > 2:
                 f = node[2].attr
             else:
                 f = node[1].attr
-            debug.setLogger(apply(debug.Debug, string.split(f, ",")))
+            debug.setLogger(debug.Debug(*f.split(',')))
 
-def generator((snmpEngine, ctx), ast):
+def generator(cbCtx, ast):
+    snmpEngine, ctx = cbCtx
     ctx['mibViewController'] = view.MibViewController(
         snmpEngine.msgAndPduDsp.mibInstrumController.mibBuilder
         )

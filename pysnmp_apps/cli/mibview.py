@@ -1,5 +1,5 @@
 # C/L interface to MIB variables. Mimics Net-SNMP CLI.
-import os, string
+import os
 from pyasn1.type import univ
 from pysnmp_apps.cli import base
 from pysnmp.proto import rfc1902
@@ -85,24 +85,27 @@ class MibViewParserMixIn:
 
 class __MibViewGenerator(base.GeneratorTemplate):
     # Load MIB modules
-    def n_MibFile(self, (snmpEngine, ctx), node):
+    def n_MibFile(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
         mibBuilder = snmpEngine.msgAndPduDsp.mibInstrumController.mibBuilder
-        if string.lower(node[0].attr) == 'all':
+        if node[0].attr.lower() == 'all':
             mibBuilder.loadModules()
         else:
             mibBuilder.loadModules(node[0].attr)
             
-    def n_MibDir(self, (snmpEngine, ctx), node):
+    def n_MibDir(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
         mibBuilder = snmpEngine.msgAndPduDsp.mibInstrumController.mibBuilder
-        apply(mibBuilder.setMibPath, (node[0].attr,) + mibBuilder.getMibPath())
+        mibBuilder.setMibPath(*(node[0].attr,) + mibBuilder.getMibPath())
 
-    def n_OutputOption(self, (snmpEngine, ctx), node):
+    def n_OutputOption(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
         mibViewProxy = ctx['mibViewProxy']
         if len(node) > 2:
             opt = node[2].attr
         else:
             opt = node[1].attr
-        for c in map(None, opt):
+        for c in opt:
             if c == 'q':
                 mibViewProxy.buildEqualSign = 0
                 mibViewProxy.buildTypeInfo = 0
@@ -149,13 +152,14 @@ class __MibViewGenerator(base.GeneratorTemplate):
                     'Unknown output option %s at %s' % (c, self)
                     )
 
-    def n_InputOption(self, (snmpEngine, ctx), node):
+    def n_InputOption(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
         mibViewProxy = ctx['mibViewProxy']
         if len(node) > 2:
             opt = node[2].attr
         else:
             opt = node[1].attr
-        for c in map(None, opt):
+        for c in opt:
             if c == 'R':
                 pass
             elif c == 'b':
@@ -173,8 +177,9 @@ class __MibViewGenerator(base.GeneratorTemplate):
                     'Unknown input option %s at %s' % (c, self)
                     )
 
-def generator((snmpEngine, ctx), ast):
-    if not ctx.has_key('mibViewProxy'):
+def generator(cbCtx, ast):
+    snmpEngine, ctx = cbCtx
+    if 'mibViewProxy' not in ctx:
         ctx['mibViewProxy'] = MibViewProxy(ctx['mibViewController'])
     return __MibViewGenerator().preorder((snmpEngine, ctx), ast)
 
@@ -221,19 +226,18 @@ class MibViewProxy:
     parseAsDisplayHint = 1
     
     def __init__(self, mibViewController):
-        if os.environ.has_key('PYSNMPOIDPREFIX'):
+        if 'PYSNMPOIDPREFIX' in os.environ:
             self.defaultOidPrefix = os.environ['PYSNMPOIDPREFIX']
-        if os.environ.has_key('PYSNMPMIBS'):
-            self.defaultMibs = string.split(os.environ['PYSNMPMIBS'], ':')
-        if os.environ.has_key('PYSNMPMIBDIRS'):
-            self.defaultMibDirs = string.split(os.environ['MIBDIRS'], ':')
+        if 'PYSNMPMIBS' in os.environ:
+            self.defaultMibs = os.environ['PYSNMPMIBS'].split(':')
+        if 'PYSNMPMIBDIRS' in os.environ:
+            self.defaultMibDirs = os.environ['MIBDIRS'].split(':')
         if self.defaultMibDirs:
-            apply(mibViewController.mibBuilder.setMibPath,
-                  (self.defaultMibDirs) + \
-                  mibViewController.mibBuilder.getMibPath())
+            mibViewController.mibBuilder.setMibPath(
+                *(self.defaultMibDirs) + mibViewController.mibBuilder.getMibPath()
+                )
         if self.defaultMibs:
-            apply(mibViewController.mibBuilder.loadModules,
-                  self.defaultMibs)
+            mibViewController.mibBuilder.loadModules(*self.defaultMibs)
         self.__oidValue = univ.ObjectIdentifier()
         self.__intValue = univ.Integer()
         self.__timeValue = rfc1902.TimeTicks()
@@ -255,7 +259,7 @@ class MibViewProxy:
                     name = label
                 if not self.buildAbsoluteName:
                     name = name[len(self.defaultOidPrefix):]
-                out = out + string.join(map(lambda x: str(x), name), '.')
+                out = out + '.'.join([ str(x) for x in name ])
             
             if suffix:
                 if suffix == (0,):
@@ -266,9 +270,7 @@ class MibViewProxy:
                         m, n
                         )
                     if self.buildNumericIndices:
-                        out = out+'.'+string.join(
-                            map(lambda x: str(x), suffix), '.'
-                            )
+                        out = out + '.' + '.'.join([ str(x) for x in suffix ])
                     else:
                         try:
                             for i in rowNode.getIndicesFromInstId(suffix):
@@ -279,8 +281,8 @@ class MibViewProxy:
                                 else:
                                     out = out + '.\"%s\"' % i.prettyOut(i)
                         except AttributeError:
-                            out = out + '.' + string.join(
-                                map(lambda x: str(x), suffix), '.'
+                            out = out + '.' + '.'.join(
+                                [ str(x) for x in suffix ]
                                 )
             if self.buildEqualSign:
                 out = out + ' = '
@@ -305,15 +307,11 @@ class MibViewProxy:
             out = out + str(val)
         elif self.buildHexVals: # XXX make it always in hex?
             if self.__intValue.isSuperTypeOf(val):
-                out = out + '%x' % long(val)
+                out = out + '%x' % int(val)
             elif self.__oidValue.isSuperTypeOf(val):
-                out = out + ' '.join(
-                    map(lambda x: '%x' % x, tuple(val))
-                    )
+                out = out + ' '.join([ '%x' % x for x in tuple(val) ])
             else:
-                out = out + ' '.join(
-                    map(lambda x: '%.2x' % x, map(ord, str(val)))
-                    )
+                out = out + ' '.join([ '%.2x' % ord(x) for x in str(val) ])
         elif self.__timeValue.isSameTypeWith(val):
             if self.buildRawTimeTicks:
                 out = out + str(int(val))
@@ -329,8 +327,8 @@ class MibViewProxy:
                 out = out + '%d.%d' % (d, m)
         elif self.__oidValue.isSuperTypeOf(val):
             oid, label, suffix = mibViewController.getNodeName(val)
-            out = out + string.join(
-                label+tuple(map(lambda x: str(x), suffix)), '.'
+            out = out + '.'.join(
+                label + tuple([ str(x) for x in suffix ])
                 )
         else:
             out = out + syntax.prettyOut(val)
@@ -340,5 +338,5 @@ class MibViewProxy:
                 out = out + ' %s' % mibNode.getUnits()
         return out
     
-    def setPrettyOidValue(self, (oid, val, t)):
+    def setPrettyOidValue(self, oid, val, t):
         return oid, val

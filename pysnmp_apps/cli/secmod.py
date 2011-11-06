@@ -1,4 +1,3 @@
-import string
 from pysnmp_apps.cli import base
 from pysnmp.entity import config
 from pysnmp import error
@@ -121,106 +120,118 @@ class SMParserMixIn:
 
 class __SMGenerator(base.GeneratorTemplate):
     # SNMPv1/v2
-    def n_Community(self, (snmpEngine, ctx), node):
+    def n_Community(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
         if len(node) > 2:
             ctx['communityName'] = node[2].attr
         else:
             ctx['communityName'] = node[1].attr
 
     # SNMPv3
-    def n_AuthProtocol(self, (snmpEngine, ctx), node):
+    def n_AuthProtocol(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
         if len(node) > 2:
-            p = string.upper(node[2].attr)
+            p = node[2].attr.upper()
         else:
-            p = string.upper(node[1].attr)
-        if string.find(p, 'MD5') != -1:
+            p = node[1].attr.upper()
+        if p.find('MD5') != -1:
             ctx['authProtocol'] = config.usmHMACMD5AuthProtocol
-        elif string.find(p, 'SHA') != -1:
+        elif p.find('SHA') != -1:
             ctx['authProtocol'] = config.usmHMACSHAAuthProtocol
         else:
             raise error.PySnmpError('Unknown auth protocol \"%s\"' % p)
 
-    def n_AuthKey(self, (snmpEngine, ctx), node):
+    def n_AuthKey(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
         if len(node) > 2:
             ctx['authKey'] = node[2].attr
         else:
             ctx['authKey'] = node[1].attr
 
-    def n_PrivProtocol(self, (snmpEngine, ctx), node):
+    def n_PrivProtocol(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
         if len(node) > 2:
-            p = string.upper(node[2].attr)
+            p = node[2].attr.upper()
         else:
-            p = string.upper(node[1].attr)
-        if string.find(p, 'DES') != -1:
+            p = node[1].attr.upper()
+        if p.find('DES') != -1:
             ctx['privProtocol'] = config.usmDESPrivProtocol
-        elif string.find(p, 'AES') != -1:
+        elif p.find('AES') != -1:
             ctx['privProtocol'] = config.usmAesCfb128Protocol
         else:
             raise error.PySnmpError('Unknown priv protocol \"%s\"' % p)
 
-    def n_PrivKey(self, (snmpEngine, ctx), node):
+    def n_PrivKey(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
         if len(node) > 2:
             ctx['privKey'] = node[2].attr
         else:
             ctx['privKey'] = node[1].attr
 
-    def n_SecurityName(self, (snmpEngine, ctx), node):
+    def n_SecurityName(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
         if len(node) > 2:
             ctx['securityName'] = node[2].attr
         else:
             ctx['securityName'] = node[1].attr
 
-    def n_SecurityLevel(self, (snmpEngine, ctx), node):
+    def n_SecurityLevel(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
         if len(node) > 2:
             ctx['securityLevel'] = node[2].attr
         else:
             ctx['securityLevel'] = node[1].attr
 
-    def n_EngineID(self, (snmpEngine, ctx), node):
+    def n_EngineID(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
         if len(node) > 2:
             ctx['engineID'] = node[2].attr
         else:
             ctx['engineID'] = node[1].attr
 
-    def n_ContextEngineId(self, (snmpEngine, ctx), node):
+    def n_ContextEngineId(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
         if len(node) > 2:
             ctx['contextEngineId'] = node[2].attr
         else:
             ctx['contextEngineId'] = node[1].attr
 
-    def n_ContextName(self, (snmpEngine, ctx), node):
+    def n_ContextName(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
         if len(node) > 2:
             ctx['contextName'] = node[2].attr
         else:
             ctx['contextName'] = node[1].attr
 
-    def n_EngineBoots(self, (snmpEngine, ctx), node): # XXX
+    def n_EngineBoots(self, cbCtx, node): # XXX
+        snmpEngine, ctx = cbCtx
         if len(node) > 2:
             ctx['engineBoots'] = node[2].attr
         else:
             ctx['engineBoots'] = node[1].attr
 
-def generator((snmpEngine, ctx), ast):
-    __SMGenerator().preorder((snmpEngine, ctx), ast)
+def generator(cbCtx, ast):
+    snmpEngine, ctx = cbCtx
+    __SMGenerator().preorder(cbCtx, ast)
     # Commit collected data
     if ctx['versionId'] == 3:
-        if not ctx.has_key('securityName'):
+        if 'securityName' not in ctx:
             raise error.PySnmpError('Security name not specified')
-        if not ctx.has_key('securityLevel'):
+        if 'securityLevel' not in ctx:
             raise error.PySnmpError('Security level not specified')
         if ctx['securityLevel'] == 'noAuthNoPriv':
-            if ctx.has_key('authKey'): del ctx['authKey']
-            if ctx.has_key('privKey'): del ctx['privKey']
+            if 'authKey' in ctx: del ctx['authKey']
+            if 'privKey' in ctx: del ctx['privKey']
         elif ctx['securityLevel'] == 'authNoPriv':
-            if ctx.has_key('privKey'): del ctx['privKey']
-        if ctx.has_key('authKey'):
-            if not ctx.has_key('authProtocol'):
+            if 'privKey' in ctx: del ctx['privKey']
+        if 'authKey' in ctx:
+            if 'authProtocol' not in ctx:
                 ctx['authProtocol'] = config.usmHMACMD5AuthProtocol
         else:
             ctx['authProtocol'] = config.usmNoAuthProtocol
             ctx['authKey'] = None
-        if ctx.has_key('privKey'):
-            if not ctx.has_key('privProtocol'):
+        if 'privKey' in ctx:
+            if 'privProtocol' not in ctx:
                 ctx['privProtocol'] = config.usmDESPrivProtocol
         else:
             ctx['privProtocol'] = config.usmNoPrivProtocol
@@ -235,7 +246,7 @@ def generator((snmpEngine, ctx), ast):
             )
 
     else: # SNMPv1/v2c
-        if not ctx.has_key('communityName'):
+        if 'communityName' not in ctx:
             raise error.PySnmpError('Community name not specified')            
         ctx['securityName'] = 'my-agent'
         ctx['securityLevel'] = 'noAuthNoPriv'            
