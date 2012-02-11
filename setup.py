@@ -27,7 +27,7 @@ except ImportError:
 
 params.update( {
     'name': 'pysnmp-apps',
-    'version': '0.3.1',
+    'version': '0.3.2',
     'description': 'PySNMP applications',
     'author': 'Ilya Etingof',
     'author_email': 'ilya@glas.net',

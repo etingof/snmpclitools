@@ -1,3 +1,8 @@
+Revision 0.3.2
+--------------
+
+- MIB path mangiling reworked
+
 Revision 0.3.1
 --------------
 

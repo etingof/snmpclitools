@@ -3,6 +3,7 @@ import os
 from pyasn1.type import univ
 from pysnmp_apps.cli import base
 from pysnmp.proto import rfc1902
+from pysnmp.smi import builder
 from pysnmp import error
 
 # Usage
@@ -96,7 +97,9 @@ class __MibViewGenerator(base.GeneratorTemplate):
     def n_MibDir(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
         mibBuilder = snmpEngine.msgAndPduDsp.mibInstrumController.mibBuilder
-        mibBuilder.setMibPath(*(node[0].attr,) + mibBuilder.getMibPath())
+        mibBuilder.setMibSources(
+            *mibBuilder.getMibSources() + (builder.ZipMibSource(node[0].attr).init(),)
+        )
 
     def n_OutputOption(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
@@ -231,11 +234,13 @@ class MibViewProxy:
         if 'PYSNMPMIBS' in os.environ:
             self.defaultMibs = os.environ['PYSNMPMIBS'].split(':')
         if 'PYSNMPMIBDIRS' in os.environ:
-            self.defaultMibDirs = os.environ['MIBDIRS'].split(':')
+            self.defaultMibDirs = os.environ['PYSNMPMIBDIRS'].split(':')
         if self.defaultMibDirs:
-            mibViewController.mibBuilder.setMibPath(
-                *(self.defaultMibDirs) + mibViewController.mibBuilder.getMibPath()
-                )
+            mibViewController.mibBuilder.setMibSources(
+                *mibViewController.mibBuilder.getMibSources() + tuple(
+                    [ builder.ZipMibSource(m).init() for m in self.defaultMibDirs ]
+                    )
+                 )
         if self.defaultMibs:
             mibViewController.mibBuilder.loadModules(*self.defaultMibs)
         self.__oidValue = univ.ObjectIdentifier()
