@@ -1,6 +1,6 @@
 from pysnmp.smi import view
 from pysnmp_apps.cli import base
-from pysnmp import error, majorVersionId
+from pysnmp import error, __version__
 try:
     from pysnmp import debug
 except ImportError:
@@ -15,7 +15,7 @@ PySNMP library version %s; http://pysnmp.sf.net\n\
    -V                    software release information\n\
    -d                    dump raw packets\n\
    -D category           enable debugging [%s]\n\
-" % (majorVersionId, debug and ','.join(debug.flagMap.keys()) or "")
+" % (__version__, debug and ','.join(debug.flagMap.keys()) or "")
     
 # Scanner
 
