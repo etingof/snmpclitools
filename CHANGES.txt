@@ -2,6 +2,7 @@ Revision 0.3.3
 --------------
 
 - Package meta-information updated.
+- Package version is now in __init__.__version__
 
 Revision 0.3.2
 --------------
