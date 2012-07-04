@@ -1,5 +1,30 @@
 #!/usr/bin/env python
+"""SNMP command-line tools
+
+   A collection of command-line tools for SNMP management purposes built
+   on top of PySNMP package.
+"""
 import sys
+
+classifiers = """\
+Development Status :: 5 - Production/Stable
+Environment :: Console
+Intended Audience :: Developers
+Intended Audience :: Education
+Intended Audience :: Information Technology
+Intended Audience :: System Administrators
+Intended Audience :: Telecommunications Industry
+License :: OSI Approved :: BSD License
+Natural Language :: English
+Operating System :: OS Independent
+Programming Language :: Python :: 2
+Programming Language :: Python :: 3
+Topic :: Communications,
+Topic :: Software Development :: Libraries :: Python Modules
+Topic :: System :: Monitoring
+Topic :: System :: Networking :: Monitoring
+Topic :: Software Development :: Libraries :: Python Modules
+"""
 
 def howto_install_setuptools():
     print("""Error: You need setuptools Python package!
@@ -25,26 +50,19 @@ except ImportError:
     if sys.version_info[:2] > (2, 4):
         params['requires'] = [ 'pysnmp(>=4.2.2)' ]
 
+doclines = [ x.strip() for x in __doc__.split('\n') if x ]
+
 params.update( {
     'name': 'pysnmp-apps',
-    'version': '0.3.2',
-    'description': 'PySNMP applications',
+    'version': '0.3.3',
+    'description': doclines[0],
+    'long_description': ' '.join(doclines[1:]),
+    'maintainer': 'Ilya Etingof <ilya@glas.net>',
     'author': 'Ilya Etingof',
     'author_email': 'ilya@glas.net',
     'url': 'http://sourceforge.net/projects/pysnmp/',
-    'classifiers': [
-        'Development Status :: 5 - Production/Stable',
-        'Intended Audience :: System Administrators',
-        'Intended Audience :: Information Technology',
-        'Intended Audience :: Telecommunications Industry',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 3',
-        'Topic :: Communications',
-        'Topic :: System :: Monitoring',
-        'Topic :: System :: Networking :: Monitoring',
-        'License :: OSI Approved :: BSD License'
-        ],
+    'classifiers': [ x for x in classifiers.split('\n') if x ],
+    'platforms': ['any'],
     'license': 'BSD',
     'packages': [ 'pysnmp_apps', 'pysnmp_apps.cli' ],
     'scripts': [ 'tools/pysnmpget', 'tools/pysnmpset',
