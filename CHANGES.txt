@@ -1,6 +1,8 @@
 Revision 0.3.3
 --------------
 
+- Tools will report pysnmp-apps package version along with pysnmp version
+  being used.
 - Package meta-information updated.
 - Package version is now in __init__.__version__
 
