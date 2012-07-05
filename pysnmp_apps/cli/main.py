@@ -1,6 +1,8 @@
 from pysnmp.smi import view
 from pysnmp_apps.cli import base
-from pysnmp import error, __version__
+from pysnmp import error
+from pysnmp import __version__ as pysnmpVersion
+from pysnmp_apps import __version__ as pysnmpAppsVersion
 try:
     from pysnmp import debug
 except ImportError:
@@ -10,12 +12,12 @@ except ImportError:
 
 def getUsage():
     return "\
-PySNMP library version %s; http://pysnmp.sf.net\n\
+PySNMP apps version %s, library version %s ; http://pysnmp.sf.net\n\
    -h                    display this help message\n\
    -V                    software release information\n\
    -d                    dump raw packets\n\
    -D category           enable debugging [%s]\n\
-" % (__version__, debug and ','.join(debug.flagMap.keys()) or "")
+" % (pysnmpAppsVersion, pysnmpVersion, debug and ','.join(debug.flagMap.keys()) or "")
     
 # Scanner
 
