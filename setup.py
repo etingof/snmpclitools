@@ -58,7 +58,7 @@ try:
         }
 except ImportError:
     for arg in sys.argv:
-        if arg.find('egg') != -1:
+        if 'egg' in arg:
             if sys.version_info[0] > 2:
                 howto_install_distribute()
             else:
@@ -99,9 +99,16 @@ if "py2exe" in sys.argv:
         'py2exe': {
             'includes': [
                 'pysnmp.smi.mibs.*',
-                'pysnmp.smi.mibs.instances.*'
-                ]
-            }
+                'pysnmp.smi.mibs.instances.*',
+                'pysnmp.entity.rfc3413.oneliner.*'
+            ],
+            'bundle_files': 1,
+            'compressed': True
         }
+    }
+
+    params['zipfile'] = None
+
+    print("!!! Make sure your pysnmp/pyasn1 packages are NOT .egg'ed!!!")
 
 setup(**params)
