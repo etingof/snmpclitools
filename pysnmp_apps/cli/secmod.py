@@ -254,7 +254,7 @@ def generator(cbCtx, ast):
             snmpEngine,
             ctx['securityName'],
             ctx['communityName']
-            )
+        )
 
     ctx['paramsName'] = '%s-params' % ctx['securityName']
     config.addTargetParams(

@@ -160,7 +160,6 @@ class __TargetGeneratorPassTwo(base.GeneratorTemplate):
     def n_Agent_exit(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
         ctx['addrName'] = '%s-name' % ctx['paramsName']
-        ctx['transportTag'] = '%s-tag' % ctx['addrName']
         config.addTargetAddr(
             snmpEngine,
             ctx['addrName'],
@@ -170,7 +169,7 @@ class __TargetGeneratorPassTwo(base.GeneratorTemplate):
             # net-snmp defaults
             ctx.get('timeout', 100),
             ctx.get('retryCount', 5),
-            tagList=ctx['transportTag']
+            tagList=ctx.get('transportTag', '')
             )
         config.addSocketTransport(
             snmpEngine,
