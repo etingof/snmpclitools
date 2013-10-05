@@ -96,8 +96,16 @@ if "py2exe" in sys.argv:
         }
     }
 
+    try:
+        import pysnmp_mibs
+    except ImportError:
+        print('NOT including pysnmp-mibs!')
+    else:
+        print('Including pysnmp-mibs....')
+        params['packages'].append('pysnmp_mibs')
+
     params['zipfile'] = None
 
-    print("!!! Make sure your pysnmp/pyasn1 packages are NOT .egg'ed!!!")
+    print("!!! Make sure your pysnmp/pysnmp-mibs/pyasn1 packages are NOT .egg'ed!!!")
 
 setup(**params)
