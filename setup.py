@@ -102,7 +102,7 @@ if "py2exe" in sys.argv:
         print('NOT including pysnmp-mibs!')
     else:
         print('Including pysnmp-mibs....')
-        params['packages'].append('pysnmp_mibs')
+        params['options']['py2exe']['includes'].append('pysnmp_mibs.*')
 
     params['zipfile'] = None
 
