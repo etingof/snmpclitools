@@ -1,8 +1,20 @@
+import sys
 from pysnmp.smi import view
 from pysnmp_apps.cli import base
 from pysnmp import error
-from pysnmp import __version__ as pysnmpVersion
 from pysnmp_apps import __version__ as pysnmpAppsVersion
+try:
+    from pysnmp import __version__ as pysnmpVersion
+except ImportError:
+    pysnmpVersion = 'N/A'
+try:
+    from pysnmp_mibs import __version__ as pysnmpMibsVersion
+except ImportError:
+    pysnmpMibsVersion = 'N/A'
+try:
+    from pyasn1 import __version__ as pyasn1Version
+except ImportError:
+    pyasn1Version = 'N/A'
 try:
     from pysnmp import debug
 except ImportError:
@@ -12,12 +24,20 @@ except ImportError:
 
 def getUsage():
     return "\
-PySNMP apps version %s, library version %s ; http://pysnmp.sf.net\n\
+SNMP command-line tools version %s, written by Ilya Etingof <ilya@glas.net>\n\
+Using foundation libraries: pysnmp %s, pysnmp-mibs %s, pyasn1 %s\n\
+Python interpreter: %s\n\
+Software documentation and support at http://snmpsim.sf.net\n\
    -h                    display this help message\n\
    -V                    software release information\n\
    -d                    dump raw packets\n\
    -D category           enable debugging [%s]\n\
-" % (pysnmpAppsVersion, pysnmpVersion, debug and ','.join(debug.flagMap.keys()) or "")
+" % ( pysnmpAppsVersion,
+      pysnmpVersion,
+      pysnmpMibsVersion,
+      pyasn1Version,
+      sys.version,
+      debug and ','.join(debug.flagMap.keys()) or "")
     
 # Scanner
 
