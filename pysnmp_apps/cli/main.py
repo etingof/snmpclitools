@@ -27,7 +27,7 @@ def getUsage():
 SNMP command-line tools version %s, written by Ilya Etingof <ilya@glas.net>\n\
 Using foundation libraries: pysnmp %s, pysnmp-mibs %s, pyasn1 %s\n\
 Python interpreter: %s\n\
-Software documentation and support at http://snmpsim.sf.net\n\
+Software documentation and support at http://pysnmp.sf.net\n\
    -h                    display this help message\n\
    -V                    software release information\n\
    -d                    dump raw packets\n\
