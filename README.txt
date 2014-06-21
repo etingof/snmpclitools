@@ -28,7 +28,7 @@ $ python setup.py install
 
 to install the whole thing.
 
-PySNMP version 4.1.x or later is required to run these tools.
+PySNMP version 4.2.6 or later is required to run these tools.
 
 OPERATION
 ---------
