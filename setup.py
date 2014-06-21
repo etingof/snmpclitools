@@ -73,9 +73,9 @@ params.update( {
     'platforms': ['any'],
     'license': 'BSD',
     'packages': [ 'pysnmp_apps', 'pysnmp_apps.cli' ],
-    'scripts': [ 'tools/pysnmpget', 'tools/pysnmpset',
-                 'tools/pysnmpwalk', 'tools/pysnmpbulkwalk',
-                 'tools/pysnmptrap', 'tools/pysnmptranslate' ]
+    'scripts': [ 'scripts/snmpget.py', 'scripts/snmpset.py',
+                 'scripts/snmpwalk.py', 'scripts/snmpbulkwalk.py',
+                 'scripts/snmptrap.py', 'scripts/snmptranslate.py' ]
   } )
 
 if "py2exe" in sys.argv:
