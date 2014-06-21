@@ -3,6 +3,10 @@ Revision 0.3.4
 
 - License updated to vanilla BSD 2-Clause to ease package use
   (http://opensource.org/licenses/BSD-2-Clause).
+- All apps renamed into snmp*.py and moved to scripts/ directory
+  for a more conventional layout.
+- All apps updated to support the latest pysnmp Standard
+  Applications API.
 - Upper level exception handling improved for all apps.
 - Distribute is gone, switched to setuptools completely.
 - Fix to config.addTargetAddr() invocation -- since pysnmp 4.2.3, reworked
