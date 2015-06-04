@@ -8,6 +8,10 @@ try:
 except ImportError:
     pysnmpVersion = 'N/A'
 try:
+    from pysmi import __version__ as pysmiVersion
+except ImportError:
+    pysmiVersion = 'N/A'
+try:
     from pysnmp_mibs import __version__ as pysnmpMibsVersion
 except ImportError:
     pysnmpMibsVersion = 'N/A'
@@ -25,7 +29,7 @@ except ImportError:
 def getUsage():
     return "\
 SNMP command-line tools version %s, written by Ilya Etingof <ilya@glas.net>\n\
-Using foundation libraries: pysnmp %s, pysnmp-mibs %s, pyasn1 %s\n\
+Using foundation libraries: pysmi %s, pysnmp %s, pysnmp-mibs %s, pyasn1 %s\n\
 Python interpreter: %s\n\
 Software documentation and support at http://pysnmp.sf.net\n\
    -h                    display this help message\n\
@@ -33,6 +37,7 @@ Software documentation and support at http://pysnmp.sf.net\n\
    -d                    dump raw packets\n\
    -D category           enable debugging [%s]\n\
 " % ( pysnmpAppsVersion,
+      pysmiVersion,
       pysnmpVersion,
       pysnmpMibsVersion,
       pyasn1Version,
