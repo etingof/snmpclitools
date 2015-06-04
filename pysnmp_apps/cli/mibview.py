@@ -3,17 +3,25 @@ import os
 from pyasn1.type import univ
 from pysnmp_apps.cli import base
 from pysnmp.proto import rfc1902
-from pysnmp.smi import builder
+from pysnmp.smi import builder, compiler
 from pysnmp import error
+
+defaultMibSourceUrl = 'http://mibs.snmplabs.com/asn1/@mib@'
+defaultMibBorrowerUrl = 'http://mibs.snmplabs.com/pysnmp/fulltexts/@mib@'
 
 # Usage
 
 def getUsage():
     return "\
 MIB options:\n\
-   -m MIB[:...]      load given list of MIBs (ALL loads everything)\n\
-   -M DIR[:...]      look in given list of directories for MIBs\n\
-   -O OUTOPTS        Toggle various defaults controlling output display:\n\
+   -m MIB[:...]   load given list of MIBs (ALL loads all compiled MIBs)\n\
+   -M DIR[:...]   look in given list of directories for MIBs\n\
+   -P MIBOPTS     Toggle various defaults controlling MIB parsing:\n\
+              S:  search for ASN.1 MIBs in remote directories specified\n\
+                  in URL form. The @mib@ token in the URL is substituted\n\
+                  with actual MIB to be downloaded. Default repository\n\
+                  address is %s\n\
+   -O OUTOPTS     Toggle various defaults controlling output display:\n\
               q:  removes the equal sign and type information\n\
               Q:  removes the type information\n\
               f:  print full OIDs on output\n\
@@ -29,10 +37,10 @@ MIB options:\n\
               v:  print values only (not OID = value)\n\
               U:  don't print units\n\
               t:  output timeticks values as raw numbers\n\
-   -I INOPTS         Toggle various defaults controlling input parsing:\n\
+   -I INOPTS      Toggle various defaults controlling input parsing:\n\
               h:  don't apply DISPLAY-HINTs\n\
               u:  top-level OIDs must have '.' prefix (UCD-style)\n\
-"
+" % defaultMibSourceUrl
 
 # Scanner
 
@@ -44,6 +52,10 @@ class MibViewScannerMixIn:
     def t_mibdirs(self, s):
         r' -M '
         self.rv.append(base.ConfigToken('mibdirs'))
+
+    def t_parseropts(self, s):
+        r' -P '
+        self.rv.append(base.ConfigToken('parseropts'))
 
     def t_outputopts(self, s):
         r' -O '
@@ -59,6 +71,7 @@ class MibViewParserMixIn:
     def p_mibView(self, args):
         '''
         Option ::= GeneralOption
+        Option ::= ParserOption
         Option ::= OutputOption
         Option ::= InputOption
 
@@ -75,6 +88,12 @@ class MibViewParserMixIn:
         MibFiles ::= MibFile
         MibFile ::= string
 
+        ParserOption ::= parseropts string
+        ParserOption ::= parseropts whitespace string
+        ParserOption ::= parseropts string whitespace Url
+        ParserOption ::= parseropts whitespace string whitespace Url
+        Url ::= string semicolon string
+
         OutputOption ::= outputopts string
         OutputOption ::= outputopts whitespace string
 
@@ -88,7 +107,7 @@ class __MibViewGenerator(base.GeneratorTemplate):
     # Load MIB modules
     def n_MibFile(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
-        mibBuilder = snmpEngine.msgAndPduDsp.mibInstrumController.mibBuilder
+        mibBuilder = snmpEngine.getMibBuilder()
         if node[0].attr.lower() == 'all':
             mibBuilder.loadModules()
         else:
@@ -96,18 +115,30 @@ class __MibViewGenerator(base.GeneratorTemplate):
             
     def n_MibDir(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
-        mibBuilder = snmpEngine.msgAndPduDsp.mibInstrumController.mibBuilder
-        mibBuilder.setMibSources(
-            *mibBuilder.getMibSources() + (builder.ZipMibSource(node[0].attr).init(),)
-        )
+        if 'MibDir' not in ctx:
+            ctx['MibDir'] = []
+        ctx['MibDir'].append(node[0].attr)
+
+    def n_Url(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
+        ctx['Url'] = node[0].attr+':'+node[2].attr
+
+    def n_ParserOption_exit(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
+        opt = node[1].attr or node[2].attr
+        for c in opt:
+            if c == 'S':
+                if 'MibDir' not in ctx:
+                    ctx['MibDir'] = []
+                if 'Url' not in ctx:
+                    raise error.PySnmpError('Missing URL for option')
+                ctx['MibDir'].append(ctx['Url'])
+                del ctx['Url']
 
     def n_OutputOption(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
         mibViewProxy = ctx['mibViewProxy']
-        if len(node) > 2:
-            opt = node[2].attr
-        else:
-            opt = node[1].attr
+        opt = node[1].attr or node[2].attr
         for c in opt:
             if c == 'q':
                 mibViewProxy.buildEqualSign = 0
@@ -158,10 +189,7 @@ class __MibViewGenerator(base.GeneratorTemplate):
     def n_InputOption(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
         mibViewProxy = ctx['mibViewProxy']
-        if len(node) > 2:
-            opt = node[2].attr
-        else:
-            opt = node[1].attr
+        opt = node[1].attr or node[2].attr
         for c in opt:
             if c == 'R':
                 pass
@@ -184,7 +212,20 @@ def generator(cbCtx, ast):
     snmpEngine, ctx = cbCtx
     if 'mibViewProxy' not in ctx:
         ctx['mibViewProxy'] = MibViewProxy(ctx['mibViewController'])
-    return __MibViewGenerator().preorder((snmpEngine, ctx), ast)
+
+    compiler.addMibCompiler(snmpEngine.getMibBuilder())
+
+    snmpEngine, ctx = __MibViewGenerator().preorder((snmpEngine, ctx), ast)
+
+    if 'MibDir' not in ctx:
+        ctx['MibDir'] = [ defaultMibSourceUrl ]
+    if 'MibBorrowers' not in ctx:
+        ctx['MibBorrowers'] = [ defaultMibBorrowerUrl ]
+
+    compiler.addMibCompiler(snmpEngine.getMibBuilder(),
+                            sources=ctx['MibDir'],
+                            borrowers=ctx['MibBorrowers'])
+    return snmpEngine, ctx
 
 class UnknownSyntax:
     def prettyOut(self, val):

@@ -2,13 +2,13 @@
 #
 # Command-line MIB browser
 #
-# Copyright 1999-2014 by Ilya Etingof <ilya@glas.net>.
+# Copyright 1999-2015 by Ilya Etingof <ilya@glas.net>.
 #
 import sys, traceback
 from pyasn1.type import univ
 from pysnmp.entity import engine
 from pysnmp.proto import rfc3412
-from pysnmp.smi import builder, instrum
+from pysnmp.smi import builder
 from pysnmp_apps.cli import main, pdu, mibview, base
 from pysnmp.smi.error import NoSuchObjectError
 from pysnmp import error
@@ -112,7 +112,7 @@ class MibViewProxy(mibview.MibViewProxy):
                 out = out + ' [ %s ]' % '.'.join([ str(x) for x in suffix ])
                 out = out + '\n'
             else:
-                out = out + '%s::%s %s\n::= { %s }' % (
+                out = out + '%s::%s\n%s ::= { %s }' % (
                     modName,
                     nodeDesc,
                     mibNode.asn1Print(),
@@ -147,14 +147,11 @@ class MibViewProxy(mibview.MibViewProxy):
             )
         return out
 
-mibInstrumController = instrum.MibInstrumController(
-    builder.MibBuilder()
-)
+snmpEngine = engine.SnmpEngine()
+
 # Load up MIB texts (DESCRIPTION, etc.)
-mibInstrumController.mibBuilder.loadTexts = 1
-snmpEngine = engine.SnmpEngine(
-    msgAndPduDsp=rfc3412.MsgAndPduDispatcher(mibInstrumController)
-)
+mibBuilder = snmpEngine.getMibBuilder()
+mibBuilder.loadTexts = True
 
 try:
     # Parse c/l into AST
@@ -186,7 +183,8 @@ except Exception:
 
 for oid, val in ctx['varBinds']:
     while 1:
-        if val is None: val = univ.Null()
+        if val is None:
+            val = univ.Null()
         sys.stdout.write('%s\n' % ctx['mibViewProxy'].getPrettyOidVal(
                 ctx['mibViewController'], oid, val
             )
@@ -197,5 +195,3 @@ for oid, val in ctx['varBinds']:
             oid, label, suffix = ctx['mibViewController'].getNextNodeName(oid)
         except NoSuchObjectError:
             break
-        else:
-            sys.stdout.write('\n')

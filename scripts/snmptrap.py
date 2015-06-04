@@ -2,14 +2,13 @@
 #
 # Notificaton Originator
 #
-# Copyright 1999-2014 by Ilya Etingof <ilya@glas.net>.
+# Copyright 1999-2015 by Ilya Etingof <ilya@glas.net>.
 #
 import sys, socket, time, traceback
 from pysnmp_apps.cli import main, msgmod, secmod, target, pdu, mibview, base
 from pysnmp.entity import engine, config
-from pysnmp.entity.rfc3413 import ntforg, context
+from pysnmp.entity.rfc3413 import ntforg
 from pysnmp.proto.proxy import rfc2576
-from pysnmp.proto import rfc1902
 from pysnmp.proto.api import v1, v2c
 from pysnmp import error
 
@@ -123,13 +122,12 @@ class __Generator(base.GeneratorTemplate):
         snmpEngine, ctx = cbCtx
         ctx['Uptime'] = int(node[0].attr)
 
+    def n_TrapOid(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
+        ctx['TrapOid'] = node[0].attr
+
     def n_TrapV1Params_exit(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
-        # Hack SNMP engine's uptime
-        sysUpTime, = snmpEngine.msgAndPduDsp.mibInstrumController.mibBuilder.importSymbols(
-            '__SNMPv2-MIB', 'sysUpTime'
-            )
-        sysUpTime.syntax.createdAt = time.time() - float(ctx['Uptime'])/100
         # Initialize v1 PDU with passed params, then proxy it into v2c PDU
         v1Pdu = v1.TrapPDU()
         v1.apiTrapPDU.setDefaults(v1Pdu)
@@ -143,26 +141,22 @@ class __Generator(base.GeneratorTemplate):
             v1.apiTrapPDU.setSpecificTrap(v1Pdu, ctx['SpecificTrap'])
         if 'Uptime' in ctx:
             v1.apiTrapPDU.setTimeStamp(v1Pdu, ctx['Uptime'])
-        v2cPdu = rfc2576.v1ToV2(v1Pdu)
-
-        # Drop first two var-binds of v2c PDU as they are set internally by
-        # SNMP engine
-        varBinds = v2c.apiPDU.getVarBinds(v2cPdu)
-        if 'varBinds' not in ctx:
-            ctx['varBinds'] = []        
-        ctx['varBinds'] = varBinds[2:] + ctx['varBinds']
-        # Extract TrapOid from proxied PDU
-        ctx['TrapOid' ] = varBinds[1][1].prettyPrint()
-        
-    def n_TrapOid(self, cbCtx, node):
-        snmpEngine, ctx = cbCtx
-        ctx['TrapOid'] = node[0].attr
+        ctx['pdu'] = rfc2576.v1ToV2(v1Pdu)
 
     def n_TrapV2cParams_exit(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
-        # Hack SNMP engine's uptime
-        sysUpTime, = snmpEngine.msgAndPduDsp.mibInstrumController.mibBuilder.importSymbols('__SNMPv2-MIB', 'sysUpTime')
-        sysUpTime.syntax.createdAt = time.time() - float(ctx['Uptime'])/100
+        if 'informMode' in ctx:
+            pdu = v2c.InformRequestPDU()
+            v2c.apiPDU.setDefaults(pdu)
+        else:
+            pdu = v2c.TrapPDU()
+            v2c.apiTrapPDU.setDefaults(pdu)
+        v2c.apiPDU.setVarBinds(
+            pdu,
+           [ ( v2c.ObjectIdentifier('1.3.6.1.2.1.1.3.0'), v2c.TimeTicks(ctx['Uptime'])),
+             ( v2c.ObjectIdentifier('1.3.6.1.6.3.1.1.4.1.0'), v2c.ObjectIdentifier(ctx['TrapOid']) ) ]
+        )
+        ctx['pdu'] = pdu
         
 def generator(cbCtx, ast):
     snmpEngine, ctx = cbCtx
@@ -170,12 +164,27 @@ def generator(cbCtx, ast):
     
 # Run SNMP engine
 
-def cbFun(snmpEngine, sendRequestHandle, errorIndication,
-          errorStatus, errorIndex, varBinds, cbCtx):
+def cbFun(snmpEngine, notificationHandle, errorIndication, pdu, cbCtx):
     if errorIndication:
         sys.stderr.write('%s\n' % errorIndication)
         return
 
+    errorStatus = v2c.apiPDU.getErrorStatus(pdu)
+    if errorStatus:
+        errorIndex = v2c.apiPDU.getErrorIndex(pdu)
+        sys.stderr.write(
+            '%s at %s\n' %
+            ( errorStatus.prettyPrint(),
+              errorIndex and varBinds[int(errorIndex)-1] or '?' )
+        )
+        return
+
+    for oid, val in v2c.apiPDU.getVarBinds(pdu):
+        sys.stdout.write('%s\n' % cbCtx['mibViewProxy'].getPrettyOidVal(
+                cbCtx['mibViewController'], oid, val
+            )
+        )
+        
 snmpEngine = engine.SnmpEngine()
 
 try:
@@ -186,9 +195,6 @@ try:
 
     ctx = {}
 
-    ctx['notificationName'] = 'myNotifyName'
-    ctx['transportTag'] = 'mytag'
-
     # Apply configuration to SNMP entity
     main.generator((snmpEngine, ctx), ast)
     msgmod.generator((snmpEngine, ctx), ast)
@@ -198,47 +204,16 @@ try:
     pdu.writePduGenerator((snmpEngine, ctx), ast)
     generator((snmpEngine, ctx), ast)
 
-    snmpContext = context.SnmpContext(snmpEngine)
-
-    # Agent-side VACM setup
-    config.addContext(snmpEngine, '')
-    config.addVacmUser(snmpEngine, 1, ctx['securityName'],
-                       'noAuthNoPriv', (), (), (1,3,6),
-                       contextName=ctx.get('contextName', '')) # v1
-    config.addVacmUser(snmpEngine, 2, ctx['securityName'],
-                       'noAuthNoPriv', (), (), (1,3,6),
-                       contextName=ctx.get('contextName', '')) # v2c
-    config.addVacmUser(snmpEngine, 3, ctx['securityName'],
-                       'authPriv', (), (), (1,3,6),
-                       contextName=ctx.get('contextName', '')) # v3
-    config.addVacmUser(snmpEngine, 3, ctx['securityName'],
-                       'authNoPriv', (), (), (1,3,6),
-                       contextName=ctx.get('contextName', '')) # v3
-    config.addVacmUser(snmpEngine, 3, ctx['securityName'],
-                       'noAuthNoPriv', (), (), (1,3,6),
-                       contextName=ctx.get('contextName', '')) # v3
-
-    if ctx.get('contextName', ''):
-        snmpContext.registerContextName(
-            ctx['contextName'],
-            # ref to base MIB instrum
-            snmpEngine.msgAndPduDsp.mibInstrumController
-        )
-
-    config.addNotificationTarget(
-        snmpEngine, ctx['notificationName'], ctx['paramsName'],
-        ctx['transportTag'], 'informMode' in ctx and 'inform' or 'trap'
+    v2c.apiPDU.setVarBinds(
+        ctx['pdu'], v2c.apiPDU.getVarBinds(ctx['pdu']) + ctx['varBinds']
     )
 
-    ntforg.NotificationOriginator(snmpContext).sendVarBinds(
+    ntforg.NotificationOriginator().sendPdu(
         snmpEngine,
-        ctx['notificationName'],
-        snmpContext,
+        ctx['addrName'],
+        ctx.get('contextEngineId'),
         ctx.get('contextName', ''),
-        ctx['TrapOid'],
-        # managed objects instance index  XXX TODO
-        None,
-        ctx['varBinds'],
+        ctx['pdu'],
         cbFun, ctx
     )
 

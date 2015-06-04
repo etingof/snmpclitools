@@ -2,7 +2,7 @@
 #
 # SET command generator
 #
-# Copyright 1999-2014 by Ilya Etingof <ilya@glas.net>.
+# Copyright 1999-2015 by Ilya Etingof <ilya@glas.net>.
 #
 import sys, traceback
 from pysnmp_apps.cli import main, msgmod, secmod, target, pdu, mibview, base

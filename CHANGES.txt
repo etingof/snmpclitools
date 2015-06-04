@@ -5,8 +5,10 @@ Revision 0.3.4
   (http://opensource.org/licenses/BSD-2-Clause).
 - All apps renamed into snmp*.py and moved to scripts/ directory
   for a more conventional layout.
-- All apps updated to support the latest pysnmp Standard
-  Applications API.
+- All apps updated to support the latest pysnmp Standard Applications API.
+- Initial integration with the PySMI MIB compiler. The -P<x> option now
+  partially supported. All tools try to download missing ASN.1 MIBs from 
+  snmplabs.com web site by default.
 - Upper level exception handling improved for all apps.
 - Distribute is gone, switched to setuptools completely.
 - Fix to config.addTargetAddr() invocation -- since pysnmp 4.2.3, reworked

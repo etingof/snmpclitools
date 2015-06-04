@@ -119,6 +119,6 @@ class __MainGenerator(base.GeneratorTemplate):
 def generator(cbCtx, ast):
     snmpEngine, ctx = cbCtx
     ctx['mibViewController'] = view.MibViewController(
-        snmpEngine.msgAndPduDsp.mibInstrumController.mibBuilder
-        )
+        snmpEngine.getMibBuilder()
+    )
     return __MainGenerator().preorder((snmpEngine, ctx), ast)
