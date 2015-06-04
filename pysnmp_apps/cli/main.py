@@ -43,11 +43,11 @@ Software documentation and support at http://pysnmp.sf.net\n\
 
 class MainScannerMixIn:
     def t_help(self, s):
-        r' -h '
+        r' -h|--help '
         self.rv.append(base.ConfigToken('help'))
 
     def t_versioninfo(self, s):
-        r' -V '
+        r' -V|--version '
         self.rv.append(base.ConfigToken('versioninfo'))
 
     def t_dump(self, s):
@@ -55,7 +55,7 @@ class MainScannerMixIn:
         self.rv.append(base.ConfigToken('dump'))
 
     def t_debug(self, s):
-        r' -D '
+        r' -D|--debug '
         self.rv.append(base.ConfigToken('debug'))
 
 # Parser
