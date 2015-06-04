@@ -18,7 +18,7 @@ SNMPv3 security options:\n\
    -E CONTEXT-ENGINE-ID  authoritative context engine ID\n\
    -e ENGINE-ID          authoritative SNMP engine ID (will discover)\n\
    -n CONTEXT-NAME       authoritative context name\n\
-   -Z ENGINE-BOOTS       local SNMP engine uptime\n\
+   -Z BOOTS,TIME         destination SNMP engine boots/uptime\n\
 "
 
 # Scanner
@@ -209,6 +209,10 @@ class __SMGenerator(base.GeneratorTemplate):
             ctx['engineBoots'] = node[2].attr
         else:
             ctx['engineBoots'] = node[1].attr
+        if ',' in ctx['engineBoots']:
+            ctx['engineBoots'], ctx['engineTime'] = ctx['engineBoots'].split(',', 1)
+        else:
+            ctx['engineTime'] = 0
 
 def generator(cbCtx, ast):
     snmpEngine, ctx = cbCtx
@@ -244,7 +248,17 @@ def generator(cbCtx, ast):
             ctx['privProtocol'],
             ctx['privKey']
             )
-
+        # edit SNMP engine boots/uptime
+        if 'engineBoots' in ctx:
+            snmpEngineBoots, = snmpEngine.msgAndPduDsp.mibInstrumController.mibBuilder.importSymbols('__SNMP-FRAMEWORK-MIB', 'snmpEngineBoots')
+            snmpEngineBoots.setSyntax(
+                snmpEngineBoots.getSyntax().clone(ctx['engineBoots'])
+            )
+        if 'engineTime' in ctx:
+            snmpEngineTime, = snmpEngine.msgAndPduDsp.mibInstrumController.mibBuilder.importSymbols('__SNMP-FRAMEWORK-MIB', 'snmpEngineTime')
+            snmpEngineTime.setSyntax(
+                snmpEngineTime.getSyntax().clone(ctx['engineTime'])
+            )
     else: # SNMPv1/v2c
         if 'communityName' not in ctx:
             raise error.PySnmpError('Community name not specified')            
