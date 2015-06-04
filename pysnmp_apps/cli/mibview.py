@@ -17,7 +17,11 @@ MIB options:\n\
    -m MIB[:...]   load given list of MIBs (ALL loads all compiled MIBs)\n\
    -M DIR[:...]   look in given list of directories for MIBs\n\
    -P MIBOPTS     Toggle various defaults controlling MIB parsing:\n\
-              S:  search for ASN.1 MIBs in remote directories specified\n\
+              XS: search for ASN.1 MIBs in remote directories specified\n\
+                  in URL form. The @mib@ token in the URL is substituted\n\
+                  with actual MIB to be downloaded. Default repository\n\
+                  address is %s\n\
+              XB: search for pysnmp MIBs in remote directories specified\n\
                   in URL form. The @mib@ token in the URL is substituted\n\
                   with actual MIB to be downloaded. Default repository\n\
                   address is %s\n\
@@ -40,7 +44,7 @@ MIB options:\n\
    -I INOPTS      Toggle various defaults controlling input parsing:\n\
               h:  don't apply DISPLAY-HINTs\n\
               u:  top-level OIDs must have '.' prefix (UCD-style)\n\
-" % defaultMibSourceUrl
+" % (defaultMibSourceUrl, defaultMibBorrowerUrl)
 
 # Scanner
 
@@ -127,12 +131,19 @@ class __MibViewGenerator(base.GeneratorTemplate):
         snmpEngine, ctx = cbCtx
         opt = node[1].attr or node[2].attr
         for c in opt:
-            if c == 'S':
+            if c == 'XS':
                 if 'MibDir' not in ctx:
                     ctx['MibDir'] = []
                 if 'Url' not in ctx:
                     raise error.PySnmpError('Missing URL for option')
                 ctx['MibDir'].append(ctx['Url'])
+                del ctx['Url']
+            elif c == 'XB':
+                if 'MibBorrowers' not in ctx:
+                    ctx['MibBorrowers'] = []
+                if 'Url' not in ctx:
+                    raise error.PySnmpError('Missing URL for option')
+                ctx['MibBorrowers'].append(ctx['Url'])
                 del ctx['Url']
 
     def n_OutputOption(self, cbCtx, node):
