@@ -28,8 +28,8 @@ except ImportError:
 
 def getUsage():
     return "\
-SNMP command-line tools version %s, written by Ilya Etingof <ilya@glas.net>\n\
-Using foundation libraries: pysmi %s, pysnmp %s, pysnmp-mibs %s, pyasn1 %s\n\
+Command-line SNMP tools version %s, written by Ilya Etingof <ilya@glas.net>\n\
+Foundation libraries: pysmi %s, pysnmp %s, pysnmp-mibs %s, pyasn1 %s\n\
 Python interpreter: %s\n\
 Software documentation and support at http://pysnmp.sf.net\n\
    -h                    display this help message\n\
@@ -41,7 +41,7 @@ Software documentation and support at http://pysnmp.sf.net\n\
       pysnmpVersion,
       pysnmpMibsVersion,
       pyasn1Version,
-      sys.version,
+      sys.version.replace('\n', ''),
       debug and ','.join(debug.flagMap.keys()) or "")
     
 # Scanner
