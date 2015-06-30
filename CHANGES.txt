@@ -11,6 +11,8 @@ Revision 0.3.4
   snmplabs.com web site by default.
 - Upper level exception handling improved for all apps.
 - Distribute is gone, switched to setuptools completely.
+- Conditional variable buildValueOnly replaced with two buildObjectName
+  and buildValue at MibViewProxy.
 - Fix to config.addTargetAddr() invocation -- since pysnmp 4.2.3, reworked
   pysnmp LCD model does not require tagging transport address to bind it 
   with communityName. 

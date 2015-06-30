@@ -181,6 +181,8 @@ except Exception:
         sys.stderr.write(line.replace('\n', ';'))
     sys.exit(-1)
 
+ctx['mibViewProxy'].buildValue = 0  # disable value printout
+
 for oid, val in ctx['varBinds']:
     while 1:
         if val is None:

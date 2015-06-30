@@ -184,7 +184,7 @@ class __MibViewGenerator(base.GeneratorTemplate):
             elif c == 'T':
                 mibViewProxy.buildHexVals = 1
             elif c == 'v':
-                mibViewProxy.buildValueOnly = 1
+                mibViewProxy.buildObjectName = 0
             elif c == 'U':
                 mibViewProxy.buildUnits = 0
             elif c == 't':
@@ -257,6 +257,8 @@ class MibViewProxy:
     # currently N/A
     
     # MIB output options
+    buildObjectName = 1
+    buildValue = 1
     buildModInfo = 1
     buildObjectDesc = 1
     buildNumericName = 0
@@ -270,7 +272,6 @@ class MibViewProxy:
     buildRawVals = 0
     buildRawTimeTicks = 0
     buildGuessedStringVals = 1
-    buildValueOnly = 0
     buildUnits = 1
     
     # MIB input options
@@ -304,7 +305,7 @@ class MibViewProxy:
         modName, nodeDesc, _suffix = mibViewController.getNodeLocation(prefix)
         out = ''
         # object name
-        if not self.buildValueOnly:        
+        if self.buildObjectName:        
             if self.buildModInfo:
                 out = '%s::' % modName
             if self.buildObjectDesc:
@@ -341,58 +342,62 @@ class MibViewProxy:
                             out = out + '.' + '.'.join(
                                 [ str(x) for x in suffix ]
                                 )
+
+        if self.buildObjectName and self.buildValue:
             if self.buildEqualSign:
                 out = out + ' = '
             else:
                 out = out + ' '
 
         # Value
-        if isinstance(val, univ.Null):
-            return out + val.prettyPrint()
-        mibNode, = mibViewController.mibBuilder.importSymbols(
-            modName, nodeDesc
+        if self.buildValue:
+            if isinstance(val, univ.Null):
+                return out + val.prettyPrint()
+            mibNode, = mibViewController.mibBuilder.importSymbols(
+                modName, nodeDesc
             )
-        if hasattr(mibNode, 'syntax'):
-            syntax = mibNode.syntax
-        else:
-            syntax = val
-        if syntax is None: # lame Agent may return a non-instance OID
-            syntax = unknownSyntax
-        if self.buildTypeInfo:
-            out = out + '%s: ' % syntax.__class__.__name__
-        if self.buildRawVals:
-            out = out + str(val)
-        elif self.buildHexVals: # XXX make it always in hex?
-            if self.__intValue.isSuperTypeOf(val):
-                out = out + '%x' % int(val)
-            elif self.__oidValue.isSuperTypeOf(val):
-                out = out + ' '.join([ '%x' % x for x in tuple(val) ])
+            if hasattr(mibNode, 'syntax'):
+                syntax = mibNode.syntax
             else:
-                out = out + ' '.join([ '%.2x' % ord(x) for x in str(val) ])
-        elif self.__timeValue.isSameTypeWith(val):
-            if self.buildRawTimeTicks:
-                out = out + str(int(val))
-            else: # TimeTicks is not a TC
-                val = int(val)
-                d, m = divmod(val, 8640000)
-                out = out + '%d days ' % d
-                d, m = divmod(m, 360000)
-                out = out + '%d:' % d
-                d, m = divmod(m, 6000)
-                out = out + '%d:' % d
-                d, m = divmod(m, 100)
-                out = out + '%d.%d' % (d, m)
-        elif self.__oidValue.isSuperTypeOf(val):
-            oid, label, suffix = mibViewController.getNodeName(val)
-            out = out + '.'.join(
-                label + tuple([ str(x) for x in suffix ])
+                syntax = val
+            if syntax is None: # lame Agent may return a non-instance OID
+                syntax = unknownSyntax
+            if self.buildTypeInfo:
+                out = out + '%s: ' % syntax.__class__.__name__
+            if self.buildRawVals:
+                out = out + str(val)
+            elif self.buildHexVals: # XXX make it always in hex?
+                if self.__intValue.isSuperTypeOf(val):
+                    out = out + '%x' % int(val)
+                elif self.__oidValue.isSuperTypeOf(val):
+                    out = out + ' '.join([ '%x' % x for x in tuple(val) ])
+                else:
+                    out = out + ' '.join([ '%.2x' % ord(x) for x in str(val) ])
+            elif self.__timeValue.isSameTypeWith(val):
+                if self.buildRawTimeTicks:
+                    out = out + str(int(val))
+                else: # TimeTicks is not a TC
+                    val = int(val)
+                    d, m = divmod(val, 8640000)
+                    out = out + '%d days ' % d
+                    d, m = divmod(m, 360000)
+                    out = out + '%d:' % d
+                    d, m = divmod(m, 6000)
+                    out = out + '%d:' % d
+                    d, m = divmod(m, 100)
+                    out = out + '%d.%d' % (d, m)
+            elif self.__oidValue.isSuperTypeOf(val):
+                oid, label, suffix = mibViewController.getNodeName(val)
+                out = out + '.'.join(
+                    label + tuple([ str(x) for x in suffix ])
                 )
-        else:
-            out = out + syntax.prettyOut(val)
+            else:
+                out = out + syntax.prettyOut(val)
 
-        if self.buildUnits:
-            if hasattr(mibNode, 'getUnits'):
-                out = out + ' %s' % mibNode.getUnits()
+            if self.buildUnits:
+                if hasattr(mibNode, 'getUnits'):
+                    out = out + ' %s' % mibNode.getUnits()
+
         return out
     
     def setPrettyOidValue(self, oid, val, t):
