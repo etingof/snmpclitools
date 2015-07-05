@@ -45,7 +45,7 @@ if sys.version_info[:2] < (2, 4):
 try:
     from setuptools import setup
     params = {
-        'install_requires': [ 'pysnmp>=4.2.6', 'pysmi' ],
+        'install_requires': [ 'pysnmp>=4.3.0', 'pysmi' ],
         'zip_safe': True
         }
 except ImportError:
@@ -56,7 +56,7 @@ except ImportError:
     from distutils.core import setup
     params = {}
     if sys.version_info[:2] > (2, 4):
-        params['requires'] = [ 'pysnmp(>=4.2.6)', 'pysmi' ]
+        params['requires'] = [ 'pysnmp(>=4.3.0)', 'pysmi' ]
 
 doclines = [ x.strip() for x in __doc__.split('\n') if x ]
 
