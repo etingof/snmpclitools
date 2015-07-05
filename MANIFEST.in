@@ -1,2 +1,2 @@
-include CHANGES LICENSE README
+include *.txt
 recursive-include scripts *.py
