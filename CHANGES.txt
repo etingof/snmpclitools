@@ -1,38 +1,42 @@
 Revision 0.4.0, released 28-09-2015
 -----------------------------------
 
-- License updated to vanilla BSD 2-Clause to ease package use
-  (http://opensource.org/licenses/BSD-2-Clause).
 - All apps renamed into snmp*.py and moved to scripts/ directory
   for a more conventional layout.
 - All apps updated to support the latest pysnmp Standard Applications API.
 - Initial integration with the PySMI MIB compiler. The -P<x> option now
   partially supported. All tools try to download missing ASN.1 MIBs from 
   snmplabs.com web site by default.
-- Upper level exception handling improved for all apps.
-- Distribute is gone, switched to setuptools completely.
 - Conditional variable buildValueOnly replaced with two buildObjectName
   and buildValue at MibViewProxy.
+
+Revision 0.3.4, released 05-10-2013
+-----------------------------------
+
+- License updated to vanilla BSD 2-Clause to ease package use
+  (http://opensource.org/licenses/BSD-2-Clause).
+- Upper level exception handling improved for all apps.
+- Distribute is gone, switched to setuptools completely.
 - Fix to config.addTargetAddr() invocation -- since pysnmp 4.2.3, reworked
   pysnmp LCD model does not require tagging transport address to bind it 
   with communityName. 
 
-Revision 0.3.3
---------------
+Revision 0.3.3, released 30-01-2013
+-----------------------------------
 
 - Tools will report pysnmp-apps package version along with pysnmp version
   being used.
 - Package meta-information updated.
 - Package version is now in __init__.__version__
 
-Revision 0.3.2
---------------
+Revision 0.3.2, released 21-04-2012
+-----------------------------------
 
 - MIB path mangiling reworked
 - Fix to make pysnmptrap INFORM C/L switch operational
 
-Revision 0.3.1
---------------
+Revision 0.3.1, released 06-11-2011
+-----------------------------------
 
 - Major overhawl for Python 2.4 -- 3.2 compatibility:
   + get rid of old-style types
