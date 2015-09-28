@@ -1,5 +1,5 @@
-Revision 0.4.0
---------------
+Revision 0.4.0, released 28-09-2015
+-----------------------------------
 
 - License updated to vanilla BSD 2-Clause to ease package use
   (http://opensource.org/licenses/BSD-2-Clause).

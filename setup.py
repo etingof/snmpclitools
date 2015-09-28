@@ -88,24 +88,15 @@ if "py2exe" in sys.argv:
         'py2exe': {
             'includes': [
                 'pysnmp.smi.mibs.*',
-                'pysnmp.smi.mibs.instances.*',
-                'pysnmp.entity.rfc3413.oneliner.*'
+                'pysnmp.smi.mibs.instances.*'
             ],
             'bundle_files': 1,
             'compressed': True
         }
     }
 
-    try:
-        import pysnmp_mibs
-    except ImportError:
-        print('NOT including pysnmp-mibs!')
-    else:
-        print('Including pysnmp-mibs....')
-        params['options']['py2exe']['includes'].append('pysnmp_mibs.*')
-
     params['zipfile'] = None
 
-    print("!!! Make sure your pysnmp/pysnmp-mibs/pyasn1 packages are NOT .egg'ed!!!")
+    print("!!! Make sure your pysnmp/pyasn1 packages are NOT .egg'ed!!!")
 
 setup(**params)
