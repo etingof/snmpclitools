@@ -95,15 +95,15 @@ def cbFun(snmpEngine, sendRequestHandle, errorIndication,
     for varBindRow in varBindTable:
         colIdx = -1; inTableFlag = 0
         for oid, val in varBindRow:
-            colIdx = colIdx + 1
-            sys.stdout.write('%s\n' % cbCtx['mibViewProxy'].getPrettyOidVal(
-                    cbCtx['mibViewController'], oid, val
-                )
-            )
+            colIdx += 1
             if cbCtx['myHeadVars'][colIdx].isPrefixOf(oid):
-                inTableFlag = 1
+                sys.stdout.write('%s\n' % cbCtx['mibViewProxy'].getPrettyOidVal(
+                        cbCtx['mibViewController'], oid, val
+                    )
+                )
+                inTableFlag += 1
         if cbCtx.get('reportFoundVars'):
-            cbCtx['reportFoundVars'] = cbCtx['reportFoundVars'] + len(varBindRow)
+            cbCtx['reportFoundVars'] += inTableFlag
         if not inTableFlag:
             return # stop on end-of-table
     return 1 # continue walking
