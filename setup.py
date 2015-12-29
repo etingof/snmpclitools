@@ -5,6 +5,11 @@
 # Copyright (c) 2005-2016, Ilya Etingof <ilya@glas.net>
 # License: http://pysnmp.sf.net/license.html
 #
+"""SNMP command-line tools
+
+   A collection of command-line tools for SNMP management purposes built
+   on top of PySNMP package.
+"""
 import sys
 
 classifiers = """\
