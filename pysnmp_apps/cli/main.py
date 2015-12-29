@@ -1,3 +1,9 @@
+#
+# This file is part of pysnmp-apps software.
+#
+# Copyright (c) 2005-2016, Ilya Etingof <ilya@glas.net>
+# License: http://pysnmp.sf.net/license.html
+#
 import sys
 from pysnmp.smi import view
 from pysnmp_apps.cli import base

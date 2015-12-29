@@ -1,4 +1,11 @@
+#
+# This file is part of pysnmp-apps software.
+#
+# Copyright (c) 2005-2016, Ilya Etingof <ilya@glas.net>
+# License: http://pysnmp.sf.net/license.html
+#
 # C/L interface to MIB variables. Mimics Net-SNMP CLI.
+#
 import os
 from pyasn1.type import univ
 from pysnmp_apps.cli import base

@@ -1,3 +1,9 @@
+#
+# This file is part of pysnmp-apps software.
+#
+# Copyright (c) 2005-2016, Ilya Etingof <ilya@glas.net>
+# License: http://pysnmp.sf.net/license.html
+#
 import sys
 from pyasn1.type import univ
 from pyasn1.error import PyAsn1Error

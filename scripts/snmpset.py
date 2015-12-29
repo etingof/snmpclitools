@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 #
-# SET command generator
+# This file is part of pysnmp-apps software.
 #
-# Copyright 1999-2015 by Ilya Etingof <ilya@glas.net>.
+# Copyright (c) 2005-2016, Ilya Etingof <ilya@glas.net>
+# License: http://pysnmp.sf.net/license.html
+#
+# SET command generator
 #
 import sys, traceback
 from pysnmp_apps.cli import main, msgmod, secmod, target, pdu, mibview, base

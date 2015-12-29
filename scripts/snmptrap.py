@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 #
-# Notificaton Originator
+# This file is part of pysnmp-apps software.
 #
-# Copyright 1999-2015 by Ilya Etingof <ilya@glas.net>.
+# Copyright (c) 2005-2016, Ilya Etingof <ilya@glas.net>
+# License: http://pysnmp.sf.net/license.html
+#
+# Notificaton Originator
 #
 import sys, socket, time, traceback
 from pysnmp_apps.cli import main, msgmod, secmod, target, pdu, mibview, base

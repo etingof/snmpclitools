@@ -1,9 +1,10 @@
 #!/usr/bin/env python
-"""SNMP command-line tools
-
-   A collection of command-line tools for SNMP management purposes built
-   on top of PySNMP package.
-"""
+#
+# This file is part of pysnmp-apps software.
+#
+# Copyright (c) 2005-2016, Ilya Etingof <ilya@glas.net>
+# License: http://pysnmp.sf.net/license.html
+#
 import sys
 
 classifiers = """\

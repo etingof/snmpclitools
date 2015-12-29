@@ -1,3 +1,9 @@
+#
+# This file is part of pysnmp-apps software.
+#
+# Copyright (c) 2005-2016, Ilya Etingof <ilya@glas.net>
+# License: http://pysnmp.sf.net/license.html
+#
 import socket
 from pysnmp_apps.cli import base
 from pysnmp.carrier.asynsock.dgram import udp, udp6
