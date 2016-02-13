@@ -1,4 +1,4 @@
-Revision 0.4.1, released XX-XX-2015
+Revision 0.4.1, released 12-02-2016
 -----------------------------------
 
 - Fix to stray trailing OID lurking to snmp*walk.py output.
