@@ -1,6 +1,7 @@
 Revision 0.4.1, released 12-02-2016
 -----------------------------------
 
+- Copyright notice added to non-trivial source code files.
 - Fix to stray trailing OID lurking to snmp*walk.py output.
 - Fix to __doc__ use in setup.py to make -O0 installation mode working.
 
