@@ -1,2 +1,2 @@
-include *.txt
+include *.txt *.md
 recursive-include scripts *.py
