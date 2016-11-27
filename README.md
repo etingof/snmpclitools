@@ -2,8 +2,8 @@
 Pure-Python SNMP management tools
 ---------------------------------
 
-[![Downloads](https://img.shields.io/pypi/dm/pysnmp-apps.svg)](https://pypi.python.org/pypi/pysnmp-apps)
 [![PyPI](https://img.shields.io/pypi/v/pysnmp-apps.svg?maxAge=2592000)](https://pypi.python.org/pypi/pysnmp-apps)
+[![Python Versions](https://img.shields.io/pypi/pyversions/pysnmp-apps.svg)](https://pypi.python.org/pypi/pysnmp-apps/)
 [![Build status](https://travis-ci.org/etingof/pysnmp-apps.svg?branch=master)](https://secure.travis-ci.org/etingof/pysnmp-apps)
 [![GitHub license](https://img.shields.io/badge/license-BSD-blue.svg)](https://raw.githubusercontent.com/etingof/pysnmp-apps/master/LICENSE.txt)
 
@@ -20,7 +20,7 @@ Features
 * Interface compatible (almost) with Net-SNMP's snmp\* tools.
 * Automatically downloads required MIBs from the Internet
 * Cross-platform: work on Linux, Windows and OS X.
-* 100% Python, works with Python 2.4 up to Python 3.5
+* 100% Python, works with Python 2.4 up to Python 3.6
 
 Download
 --------
