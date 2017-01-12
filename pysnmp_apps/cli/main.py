@@ -1,7 +1,7 @@
 #
 # This file is part of pysnmp-apps software.
 #
-# Copyright (c) 2005-2016, Ilya Etingof <ilya@glas.net>
+# Copyright (c) 2005-2017, Ilya Etingof <etingof@gmail.com>
 # License: http://pysnmp.sf.net/license.html
 #
 import sys
@@ -34,7 +34,7 @@ except ImportError:
 
 def getUsage():
     return "\
-Command-line SNMP tools version %s, written by Ilya Etingof <ilya@glas.net>\n\
+Command-line SNMP tools version %s, written by Ilya Etingof <etingof@gmail.com>\n\
 Foundation libraries: pysmi %s, pysnmp %s, pysnmp-mibs %s, pyasn1 %s\n\
 Python interpreter: %s\n\
 Software documentation and support at http://pysnmp.sf.net\n\

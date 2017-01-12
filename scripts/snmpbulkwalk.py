@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # This file is part of pysnmp-apps software.
 #
-# Copyright (c) 2005-2016, Ilya Etingof <ilya@glas.net>
+# Copyright (c) 2005-2017, Ilya Etingof <etingof@gmail.com>
 # License: http://pysnmp.sf.net/license.html
 #
 # GETBULK command generator
