@@ -2,6 +2,7 @@
 Revision 0.4.2, released 09-08-2017
 -----------------------------------
 
+- Bumped pysnmp dependency to 4.3.9
 - Fixed crash on string value rendering due to improper
   low-level pyasn1 .prettyOut() call
 - Author's e-mail changed, copyright extended towards 2017

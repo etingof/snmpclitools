@@ -39,13 +39,14 @@ Topic :: System :: Monitoring
 Topic :: System :: Networking :: Monitoring
 """
 
+
 def howto_install_setuptools():
     print("""
    Error: You need setuptools Python package!
 
-   It's very easy to install it, just type (as root on Linux):
+   It's very easy to install it, just type:
 
-   wget https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py
+   wget https://bootstrap.pypa.io/ez_setup.py
    python ez_setup.py
 
    Then you could make eggs from this package.
@@ -57,36 +58,47 @@ if sys.version_info[:2] < (2, 4):
 
 try:
     from setuptools import setup
-    params = {'install_requires': [ 'pysnmp>=4.3.0' ],
-              'zip_safe': True}
+
+    params = {
+        'install_requires': ['pysnmp>=4.3.9'],
+        'zip_safe': True
+    }
+
 except ImportError:
     for arg in sys.argv:
         if 'egg' in arg:
             howto_install_setuptools()
             sys.exit(1)
     from distutils.core import setup
+
     params = {}
+
     if sys.version_info[:2] > (2, 4):
-        params['requires'] = [ 'pysnmp(>=4.3.0)' ]
+        params['requires'] = ['pysnmp(>=4.3.9)']
 
 doclines = [x.strip() for x in (__doc__ or '').split('\n') if x]
 
 params.update(
-    {'name': 'pysnmp-apps',
-     'version': open('pysnmp_apps/__init__.py').read().split('\'')[1],
-     'description': doclines[0],
-     'long_description': ' '.join(doclines[1:]),
-     'maintainer': 'Ilya Etingof <etingof@gmail.com>',
-     'author': 'Ilya Etingof',
-     'author_email': 'etingof@gmail.com',
-     'url': 'https://github.com/etingof/pysnmp-apps',
-     'classifiers': [ x for x in classifiers.split('\n') if x ],
-     'platforms': ['any'],
-     'license': 'BSD',
-     'packages': ['pysnmp_apps', 'pysnmp_apps.cli'],
-     'scripts': ['scripts/snmpget.py', 'scripts/snmpset.py',
-                  'scripts/snmpwalk.py', 'scripts/snmpbulkwalk.py',
-                  'scripts/snmptrap.py', 'scripts/snmptranslate.py']}
+    {
+        'name': 'pysnmp-apps',
+        'version': open('pysnmp_apps/__init__.py').read().split('\'')[1],
+        'description': doclines[0],
+        'long_description': ' '.join(doclines[1:]),
+        'maintainer': 'Ilya Etingof <etingof@gmail.com>',
+        'author': 'Ilya Etingof',
+        'author_email': 'etingof@gmail.com',
+        'url': 'https://github.com/etingof/pysnmp-apps',
+        'classifiers': [ x for x in classifiers.split('\n') if x ],
+        'platforms': ['any'],
+        'license': 'BSD',
+        'packages': ['pysnmp_apps', 'pysnmp_apps.cli'],
+        'scripts': ['scripts/snmpget.py',
+                    'scripts/snmpset.py',
+                    'scripts/snmpwalk.py',
+                    'scripts/snmpbulkwalk.py',
+                    'scripts/snmptrap.py',
+                    'scripts/snmptranslate.py']
+     }
 )
 
 if "py2exe" in sys.argv:
