@@ -376,10 +376,12 @@ class MibViewProxy:
             elif self.buildHexVals: # XXX make it always in hex?
                 if self.__intValue.isSuperTypeOf(val):
                     out = out + '%x' % int(val)
+                elif self.__timeValue.isSameTypeWith(val):
+                    out = out + '%x' % int(val)
                 elif self.__oidValue.isSuperTypeOf(val):
                     out = out + ' '.join([ '%x' % x for x in tuple(val) ])
                 else:
-                    out = out + ' '.join([ '%.2x' % ord(x) for x in str(val) ])
+                    out = out + ' '.join([ '%.2x' % x for x in val.asNumbers()])
             elif self.__timeValue.isSameTypeWith(val):
                 if self.buildRawTimeTicks:
                     out = out + str(int(val))
@@ -396,7 +398,7 @@ class MibViewProxy:
             elif self.__oidValue.isSuperTypeOf(val):
                 oid, label, suffix = mibViewController.getNodeName(val)
                 out = out + '.'.join(
-                    label + tuple([ str(x) for x in suffix ])
+                    label + tuple([str(x) for x in suffix])
                 )
             else:
                 out = out + syntax.clone(val).prettyPrint()
