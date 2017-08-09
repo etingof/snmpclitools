@@ -7,30 +7,34 @@
 #
 # GETNEXT command generator
 #
-import sys, time, traceback
+import sys
+import time
+import traceback
 from pysnmp_apps.cli import main, msgmod, secmod, target, pdu, mibview, base
 from pysnmp.entity import engine
 from pysnmp.entity.rfc3413 import cmdgen
 from pysnmp.proto import rfc1902
 from pysnmp import error
 
+
 def getUsage():
-    return "Usage: %s [OPTIONS] <AGENT> <PARAMETERS>\n\
-%s%s%s%s%s%s\
-GETNEXT options:\n\
-   -C<NEXTOPT>    set various application specific behaviours:\n\
-              c:  do not check returned OIDs are increasing\n\
-              t:  display wall-clock time to complete the request\n\
-              p:  print the number of variables found\n\
-" % (sys.argv[0],
-     main.getUsage(),
-     msgmod.getUsage(),
-     secmod.getUsage(),
-     mibview.getUsage(),
-     target.getUsage(),
-     pdu.getReadUsage())
+    return """Usage: %s [OPTIONS] <AGENT> <PARAMETERS>
+%s%s%s%s%s%s
+GETNEXT options:
+   -C<NEXTOPT>    set various application specific behaviours:
+              c:  do not check returned OIDs are increasing
+              t:  display wall-clock time to complete the request
+              p:  print the number of variables found
+""" % (sys.argv[0],
+       main.getUsage(),
+       msgmod.getUsage(),
+       secmod.getUsage(),
+       mibview.getUsage(),
+       target.getUsage(),
+       pdu.getReadUsage())
 
 # Construct c/l interpreter for this app
+
 
 class Scanner(msgmod.MPScannerMixIn,
               secmod.SMScannerMixIn,
@@ -42,6 +46,7 @@ class Scanner(msgmod.MPScannerMixIn,
     def t_appopts(self, s):
         r' -C '
         self.rv.append(base.ConfigToken('appopts'))
+
 
 class Parser(msgmod.MPParserMixIn,
              secmod.SMParserMixIn,
@@ -57,6 +62,7 @@ class Parser(msgmod.MPParserMixIn,
         ApplicationOption ::= appopts whitespace string
         ApplicationOption ::= appopts string
         '''
+
 
 class __Generator(base.GeneratorTemplate):
     def n_ApplicationOption(self, cbCtx, node):
@@ -75,32 +81,36 @@ class __Generator(base.GeneratorTemplate):
             else:
                 raise error.PySnmpError('bad -C option - "%s"' % c)
 
+
 def generator(cbCtx, ast):
     snmpEngine, ctx = cbCtx
     return __Generator().preorder((snmpEngine, ctx), ast)
 
 # Run SNMP engine
 
+
 def cbFun(snmpEngine, sendRequestHandle, errorIndication,
           errorStatus, errorIndex, varBindTable, cbCtx):
     if errorIndication:
-        if errorIndication != 'oidNotIncreasing' or \
-               not ctx.get('ignoreNonIncreasingOids'):
+        if (errorIndication != 'oidNotIncreasing' or
+                not ctx.get('ignoreNonIncreasingOids')):
             sys.stderr.write('Error: %s\n' % errorIndication)
             return
     if errorStatus:
         sys.stderr.write(
             '%s at %s\n' %
-            ( errorStatus.prettyPrint(),
-              errorIndex and varBindTable[0][int(errorIndex)-1] or '?' )
+            (errorStatus.prettyPrint(),
+             errorIndex and varBindTable[0][int(errorIndex) - 1] or '?')
         )
         return
     for varBindRow in varBindTable:
-        colIdx = -1; inTableFlag = 0
+        colIdx = -1
+        inTableFlag = 0
         for oid, val in varBindRow:
             colIdx += 1
             if cbCtx['myHeadVars'][colIdx].isPrefixOf(oid):
-                sys.stdout.write('%s\n' % cbCtx['mibViewProxy'].getPrettyOidVal(
+                sys.stdout.write(
+                    '%s\n' % cbCtx['mibViewProxy'].getPrettyOidVal(
                         cbCtx['mibViewController'], oid, val
                     )
                 )
@@ -108,18 +118,18 @@ def cbFun(snmpEngine, sendRequestHandle, errorIndication,
         if cbCtx.get('reportFoundVars'):
             cbCtx['reportFoundVars'] += inTableFlag
         if not inTableFlag:
-            return # stop on end-of-table
-    return 1 # continue walking
+            return  # stop on end-of-table
+    return 1  # continue walking
 
 snmpEngine = engine.SnmpEngine()
+
+ctx = {}
 
 try:
     # Parse c/l into AST
     ast = Parser().parse(
         Scanner().tokenize(' '.join(sys.argv[1:]))
     )
-
-    ctx = {}
 
     # Apply configuration to SNMP entity
     main.generator((snmpEngine, ctx), ast)
@@ -130,7 +140,7 @@ try:
     pdu.readPduGenerator((snmpEngine, ctx), ast)
     generator((snmpEngine, ctx), ast)
     
-    ctx['myHeadVars'] = [ rfc1902.ObjectName(x[0]) for x in ctx['varBinds'] ]
+    ctx['myHeadVars'] = [rfc1902.ObjectName(x[0]) for x in ctx['varBinds']]
 
     cmdgen.NextCommandGenerator().sendVarBinds(
         snmpEngine,

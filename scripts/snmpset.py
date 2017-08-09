@@ -7,11 +7,13 @@
 #
 # SET command generator
 #
-import sys, traceback
+import sys
+import traceback
 from pysnmp_apps.cli import main, msgmod, secmod, target, pdu, mibview, base
 from pysnmp.entity import engine
 from pysnmp.entity.rfc3413 import cmdgen
 from pysnmp import error
+
 
 def getUsage():
     return "Usage: %s [OPTIONS] <AGENT> <PARAMETERS>\n\
@@ -25,13 +27,16 @@ def getUsage():
 
 # Construct c/l interpreter for this app
 
+
 class Scanner(msgmod.MPScannerMixIn,
               secmod.SMScannerMixIn,
               mibview.MibViewScannerMixIn,
               target.TargetScannerMixIn,
               pdu.WritePduScannerMixIn,
               main.MainScannerMixIn,
-              base.ScannerTemplate): pass
+              base.ScannerTemplate):
+    pass
+
 
 class Parser(msgmod.MPParserMixIn,
              secmod.SMParserMixIn,
@@ -39,9 +44,12 @@ class Parser(msgmod.MPParserMixIn,
              target.TargetParserMixIn,
              pdu.WritePduParserMixIn,
              main.MainParserMixIn,
-             base.ParserTemplate): pass
+             base.ParserTemplate):
+    pass
 
 # Run SNMP engine
+
+
 
 def cbFun(snmpEngine, sendRequestHandle, errorIndication,
           errorStatus, errorIndex, varBinds, cbCtx):
@@ -50,12 +58,13 @@ def cbFun(snmpEngine, sendRequestHandle, errorIndication,
     elif errorStatus:
         sys.stderr.write(
             '%s at %s\n' %
-            ( errorStatus.prettyPrint(),
-              errorIndex and varBinds[int(errorIndex)-1] or '?' )
+            (errorStatus.prettyPrint(),
+             errorIndex and varBinds[int(errorIndex) - 1] or '?')
         )
     else:
         for oid, val in varBinds:
-            sys.stdout.write('%s\n' % cbCtx['mibViewProxy'].getPrettyOidVal(
+            sys.stdout.write(
+                '%s\n' % cbCtx['mibViewProxy'].getPrettyOidVal(
                     cbCtx['mibViewController'], oid, val
                 )
             )

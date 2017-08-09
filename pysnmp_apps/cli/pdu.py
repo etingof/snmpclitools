@@ -15,6 +15,7 @@ from pysnmp_apps.cli import base
 
 # Usage
 
+
 def getReadUsage():
     return "\
 Management parameters:\n\
@@ -25,9 +26,12 @@ Management parameters:\n\
 
 # Scanner
 
-class ReadPduScannerMixIn: pass
+
+class ReadPduScannerMixIn:
+    pass
 
 # Parser
+
 
 class ReadPduParserMixIn:
     def p_varBindSpec(self, args):
@@ -60,6 +64,7 @@ class ReadPduParserMixIn:
         '''
 
 # Generator
+
 
 class __ReadPduGenerator(base.GeneratorTemplate):
     def n_ModName(self, cbCtx, node):
@@ -104,33 +109,33 @@ class __ReadPduGenerator(base.GeneratorTemplate):
             intTypes = (int, long)
         else:
             intTypes = (int,)
-        if [ x for x in suffix if not isinstance(x, intTypes) ]:
+        if [x for x in suffix if not isinstance(x, intTypes)]:
             raise error.PySnmpError(
                 'Cant resolve object at: %s' % (suffix,)
-                )            
+            )
         modName, nodeDesc, _suffix = mibViewCtl.getNodeLocation(oid)
         mibNode, = mibViewCtl.mibBuilder.importSymbols(modName, nodeDesc)
         if not hasattr(self, '_MibTableColumn'):
             self._MibTableColumn, = mibViewCtl.mibBuilder.importSymbols(
                 'SNMPv2-SMI', 'MibTableColumn'
-                )
+            )
         if isinstance(mibNode, self._MibTableColumn):
             # Table column
             if 'objectIndices' in ctx:
                 modName, nodeDesc, _suffix = mibViewCtl.getNodeLocation(
                     mibNode.name[:-1]
-                    )
+                )
                 mibNode, = mibViewCtl.mibBuilder.importSymbols(
                     modName, nodeDesc
-                    )
+                )
                 suffix = suffix + mibNode.getInstIdFromIndices(
                     *ctx['objectIndices']
-                    )
+                )
         else:
             if 'objectIndices' in ctx:
                 raise error.PySnmpError(
                     'Cant resolve indices: %s' % (ctx['objectIndices'],)
-                    )
+                )
         ctx['varName'] = oid + suffix
         if 'objectName' in ctx:
             del ctx['objectName']
@@ -140,7 +145,7 @@ class __ReadPduGenerator(base.GeneratorTemplate):
     def n_VarBind_exit(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
         if 'varBinds' not in ctx:
-            ctx['varBinds'] = [ (ctx['varName'], None) ]
+            ctx['varBinds'] = [(ctx['varName'], None)]
         else:
             ctx['varBinds'].append((ctx['varName'], None))
         del ctx['varName']
@@ -148,36 +153,39 @@ class __ReadPduGenerator(base.GeneratorTemplate):
     def n_VarBinds_exit(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
         if 'varBinds' not in ctx or not ctx['varBinds']:
-            ctx['varBinds'] = [ ((1, 3, 6), None) ]
+            ctx['varBinds'] = [((1, 3, 6), None)]
+
 
 def readPduGenerator(cbCtx, ast):
     __ReadPduGenerator().preorder(cbCtx, ast)
 
 # Write class
 
+
 def getWriteUsage():
-    return "\
-Management parameters:\n\
-   <[\"mib-module\"::]\"object-name\"|\"oid\" \"type\"|\"=\" value> ...\n\
-              mib-module:           MIB name (such as SNMPv2-MIB)\n\
-              object-name:          MIB symbol (sysDescr.0) or OID\n\
-              type:                 MIB value type\n\
-                    i               integer\n\
-                    u               unsigned integer\n\
-                    s               string\n\
-                    n               NULL\n\
-                    o               ObjectIdentifier\n\
-                    t               TimeTicks\n\
-                    a               IP address\n\
-              =:                    use MIB for value type lookup\n\
-              value:                value to write\n\
-"                  
+    return """\
+Management parameters:
+   <["mib-module"::]"object-name"|"oid" "type"|"=" value> ...
+              mib-module:           MIB name (such as SNMPv2-MIB)
+              object-name:          MIB symbol (sysDescr.0) or OID
+              type:                 MIB value type
+                    i               integer
+                    u               unsigned integer
+                    s               string
+                    n               NULL
+                    o               ObjectIdentifier
+                    t               TimeTicks
+                    a               IP address
+              =:                    use MIB for value type lookup
+              value:                value to write
+"""
 
 # Scanner
 
 WritePduScannerMixIn = ReadPduScannerMixIn
 
 # Parser
+
 
 class WritePduParserMixIn(ReadPduParserMixIn):
     def p_varBindSpec(self, args):
@@ -189,6 +197,7 @@ class WritePduParserMixIn(ReadPduParserMixIn):
 
 # Generator
 
+
 class __WritePduGenerator(__ReadPduGenerator):
     _typeMap = {
         'i': rfc1902.Integer(),
@@ -198,7 +207,7 @@ class __WritePduGenerator(__ReadPduGenerator):
         'o': univ.ObjectIdentifier(),
         't': rfc1902.TimeTicks(),
         'a': rfc1902.IpAddress()
-        }
+    }
 
     def n_VarType(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
@@ -222,11 +231,11 @@ class __WritePduGenerator(__ReadPduGenerator):
                     raise error.PySnmpError(
                         'Found MIB scalar %s but non-scalar given %s' %
                         (mibNode.name + (0,), ctx['varName'])
-                        )
+                    )
             else:
                 raise error.PySnmpError(
                     'Variable %s has no syntax' % (ctx['varName'],)
-                    )
+                )
         else:
             try:
                 val = self._typeMap[ctx['varType']]
@@ -239,9 +248,10 @@ class __WritePduGenerator(__ReadPduGenerator):
             raise error.PySnmpError(sys.exc_info()[1])
         
         if 'varBinds' not in ctx:
-            ctx['varBinds'] = [ (ctx['varName'], val) ]
+            ctx['varBinds'] = [(ctx['varName'], val)]
         else:
             ctx['varBinds'].append((ctx['varName'], val))
+
 
 def writePduGenerator(cbCtx, ast):
     snmpEngine, ctx = cbCtx

@@ -10,24 +10,26 @@ from pysnmp import error
 
 # Usage
 
+
 def getUsage():
-    return "\
-SNMPv1/v2c security options:\n\
-   -c COMMUNITY          community name\n\
-SNMPv3 security options:\n\
-   -u SECURITY-NAME      USM user security name\n\
-   -l SECURITY-LEVEL     \"noAuthNoPriv\"|\"authNoPriv\"|\"authPriv\"\n\
-   -a AUTH-PROTOCOL      \"MD5\"|\"SHA\"\n\
-   -A AUTH-KEY           user authentication key\n\
-   -x PRIV-PROTOCOL      \"DES\"|\"AES\"\n\
-   -X PRIV-KEY           user privacy key\n\
-   -E CONTEXT-ENGINE-ID  authoritative context engine ID\n\
-   -e ENGINE-ID          authoritative SNMP engine ID (will discover)\n\
-   -n CONTEXT-NAME       authoritative context name\n\
-   -Z BOOTS,TIME         destination SNMP engine boots/uptime\n\
-"
+    return """\
+SNMPv1/v2c security options:
+   -c COMMUNITY          community name
+SNMPv3 security options:
+   -u SECURITY-NAME      USM user security name
+   -l SECURITY-LEVEL     "noAuthNoPriv"|"authNoPriv"|"authPriv"
+   -a AUTH-PROTOCOL      "MD5"|"SHA"
+   -A AUTH-KEY           user authentication key
+   -x PRIV-PROTOCOL      "DES"|"AES"
+   -X PRIV-KEY           user privacy key
+   -E CONTEXT-ENGINE-ID  authoritative context engine ID
+   -e ENGINE-ID          authoritative SNMP engine ID (will discover)
+   -n CONTEXT-NAME       authoritative context name
+   -Z BOOTS,TIME         destination SNMP engine boots/uptime
+"""
 
 # Scanner
+
 
 class SMScannerMixIn:
     # SNMPv1/v2
@@ -80,6 +82,7 @@ class SMScannerMixIn:
 
 # Parser
 
+
 class SMParserMixIn:
     def p_smSpec(self, args):
         '''
@@ -123,6 +126,7 @@ class SMParserMixIn:
         EngineBoots ::= engineBoots whitespace string
         '''
 # Generator
+
 
 class __SMGenerator(base.GeneratorTemplate):
     # SNMPv1/v2
@@ -209,7 +213,7 @@ class __SMGenerator(base.GeneratorTemplate):
         else:
             ctx['contextName'] = node[1].attr
 
-    def n_EngineBoots(self, cbCtx, node): # XXX
+    def n_EngineBoots(self, cbCtx, node):  # XXX
         snmpEngine, ctx = cbCtx
         if len(node) > 2:
             ctx['engineBoots'] = node[2].attr
@@ -219,6 +223,7 @@ class __SMGenerator(base.GeneratorTemplate):
             ctx['engineBoots'], ctx['engineTime'] = ctx['engineBoots'].split(',', 1)
         else:
             ctx['engineTime'] = 0
+
 
 def generator(cbCtx, ast):
     snmpEngine, ctx = cbCtx
@@ -230,10 +235,13 @@ def generator(cbCtx, ast):
         if 'securityLevel' not in ctx:
             raise error.PySnmpError('Security level not specified')
         if ctx['securityLevel'] == 'noAuthNoPriv':
-            if 'authKey' in ctx: del ctx['authKey']
-            if 'privKey' in ctx: del ctx['privKey']
+            if 'authKey' in ctx:
+                del ctx['authKey']
+            if 'privKey' in ctx:
+                del ctx['privKey']
         elif ctx['securityLevel'] == 'authNoPriv':
-            if 'privKey' in ctx: del ctx['privKey']
+            if 'privKey' in ctx:
+                del ctx['privKey']
         if 'authKey' in ctx:
             if 'authProtocol' not in ctx:
                 ctx['authProtocol'] = config.usmHMACMD5AuthProtocol
@@ -253,7 +261,7 @@ def generator(cbCtx, ast):
             ctx['authKey'],
             ctx['privProtocol'],
             ctx['privKey']
-            )
+        )
         # edit SNMP engine boots/uptime
         if 'engineBoots' in ctx:
             snmpEngineBoots, = snmpEngine.msgAndPduDsp.mibInstrumController.mibBuilder.importSymbols('__SNMP-FRAMEWORK-MIB', 'snmpEngineBoots')
@@ -265,7 +273,7 @@ def generator(cbCtx, ast):
             snmpEngineTime.setSyntax(
                 snmpEngineTime.getSyntax().clone(ctx['engineTime'])
             )
-    else: # SNMPv1/v2c
+    else:  # SNMPv1/v2c
         if 'communityName' not in ctx:
             raise error.PySnmpError('Community name not specified')            
         ctx['securityName'] = 'my-agent'
@@ -278,6 +286,6 @@ def generator(cbCtx, ast):
 
     ctx['paramsName'] = '%s-params' % ctx['securityName']
     config.addTargetParams(
-        snmpEngine, ctx['paramsName'],ctx['securityName'],
+        snmpEngine, ctx['paramsName'], ctx['securityName'],
         ctx['securityLevel'], ctx['versionId']
-        )
+    )

@@ -7,7 +7,9 @@
 #
 # Notificaton Originator
 #
-import sys, socket, time, traceback
+import sys
+import socket
+import traceback
 from pysnmp_apps.cli import main, msgmod, secmod, target, pdu, mibview, base
 from pysnmp.entity import engine, config
 from pysnmp.entity.rfc3413 import ntforg
@@ -15,28 +17,31 @@ from pysnmp.proto.proxy import rfc2576
 from pysnmp.proto.api import v1, v2c
 from pysnmp import error
 
+
 def getUsage():
-    return "Usage: %s [OPTIONS] <MANAGER> <PARAMETERS>\n\
-%s%s%s%s\
-TRAP options:\n\
-   -C<TRAPOPT>:   set various application specific behaviours:\n\
-              i:  send INFORM-PDU, expect a response\n\
-%s\
-SNMPv1 TRAP management parameters:\n\
-   enterprise-oid agent generic-trap specific-trap uptime <management-params>\n\
-   where:\n\
+    return """\
+Usage: %s [OPTIONS] <MANAGER> <PARAMETERS>
+%s%s%s%s
+TRAP options:
+   -C<TRAPOPT>:   set various application specific behaviours:
+              i:  send INFORM-PDU, expect a response
+%s
+SNMPv1 TRAP management parameters:
+   enterprise-oid agent generic-trap specific-trap uptime <management-params>
+   where:
               generic-trap:         coldStart|warmStart|linkDown|linkUp|authenticationFailure|egpNeighborLoss|enterpriseSpecific\n\
-SNMPv2/SNMPv3 management parameters:\n\
-   uptime trap-oid <management-params>\n\
-%s" % (sys.argv[0],
-       main.getUsage(),
-       msgmod.getUsage(),
-       secmod.getUsage(),
-       mibview.getUsage(),
-       target.getUsage(),
-       pdu.getWriteUsage())
+SNMPv2/SNMPv3 management parameters:
+   uptime trap-oid <management-params>
+%s""" % (sys.argv[0],
+         main.getUsage(),
+         msgmod.getUsage(),
+         secmod.getUsage(),
+         mibview.getUsage(),
+         target.getUsage(),
+         pdu.getWriteUsage())
 
 # Construct c/l interpreter for this app
+
 
 class Scanner(msgmod.MPScannerMixIn,
               secmod.SMScannerMixIn,
@@ -53,6 +58,7 @@ class Scanner(msgmod.MPScannerMixIn,
         r' coldStart|warmStart|linkDown|linkUp|authenticationFailure|egpNeighborLoss|enterpriseSpecific '
         self.rv.append(base.ConfigToken('genericTrap', s))
         
+
 class Parser(msgmod.MPParserMixIn,
              secmod.SMParserMixIn,
              mibview.MibViewParserMixIn,
@@ -87,6 +93,7 @@ class Parser(msgmod.MPParserMixIn,
         ApplicationOption ::= appopts string
         '''
 
+
 class __Generator(base.GeneratorTemplate):
     def n_ApplicationOption(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
@@ -101,7 +108,7 @@ class __Generator(base.GeneratorTemplate):
                 raise error.PySnmpError('bad -C option - "%s"' % c)
 
     def n_EnterpriseOid(self, cbCtx, node):
-        snmpEngine, ctx= cbCtx
+        snmpEngine, ctx = cbCtx
         ctx['EnterpriseOid'] = node[0].attr
 
     def n_AgentName(self, cbCtx, node):
@@ -111,7 +118,7 @@ class __Generator(base.GeneratorTemplate):
         except socket.error:
             raise error.PySnmpError(
                 'Bad agent name %s: %s' % (node[0].attr, sys.exc_info()[1])
-                )
+            )
 
     def n_GenericTrap(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
@@ -156,16 +163,18 @@ class __Generator(base.GeneratorTemplate):
             v2c.apiTrapPDU.setDefaults(pdu)
         v2c.apiPDU.setVarBinds(
             pdu,
-           [ ( v2c.ObjectIdentifier('1.3.6.1.2.1.1.3.0'), v2c.TimeTicks(ctx['Uptime'])),
-             ( v2c.ObjectIdentifier('1.3.6.1.6.3.1.1.4.1.0'), v2c.ObjectIdentifier(ctx['TrapOid']) ) ]
+            [(v2c.ObjectIdentifier('1.3.6.1.2.1.1.3.0'), v2c.TimeTicks(ctx['Uptime'])),
+             (v2c.ObjectIdentifier('1.3.6.1.6.3.1.1.4.1.0'), v2c.ObjectIdentifier(ctx['TrapOid']))]
         )
         ctx['pdu'] = pdu
         
+
 def generator(cbCtx, ast):
     snmpEngine, ctx = cbCtx
     return __Generator().preorder((snmpEngine, ctx), ast)
     
 # Run SNMP engine
+
 
 def cbFun(snmpEngine, notificationHandle, errorIndication, pdu, cbCtx):
     if errorIndication:
@@ -173,17 +182,20 @@ def cbFun(snmpEngine, notificationHandle, errorIndication, pdu, cbCtx):
         return
 
     errorStatus = v2c.apiPDU.getErrorStatus(pdu)
+    varBinds = v2c.apiPDU.getVarBinds(pdu)
+
     if errorStatus:
         errorIndex = v2c.apiPDU.getErrorIndex(pdu)
         sys.stderr.write(
             '%s at %s\n' %
-            ( errorStatus.prettyPrint(),
-              errorIndex and varBinds[int(errorIndex)-1] or '?' )
+            (errorStatus.prettyPrint(),
+             errorIndex and varBinds[int(errorIndex) - 1] or '?')
         )
         return
 
-    for oid, val in v2c.apiPDU.getVarBinds(pdu):
-        sys.stdout.write('%s\n' % cbCtx['mibViewProxy'].getPrettyOidVal(
+    for oid, val in varBinds:
+        sys.stdout.write(
+            '%s\n' % cbCtx['mibViewProxy'].getPrettyOidVal(
                 cbCtx['mibViewController'], oid, val
             )
         )

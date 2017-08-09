@@ -6,12 +6,15 @@
 #
 # GETBULK command generator
 #
-import sys, time, traceback
+import sys
+import time
+import traceback
 from pysnmp_apps.cli import main, msgmod, secmod, target, pdu, mibview, base
 from pysnmp.entity import engine
 from pysnmp.entity.rfc3413 import cmdgen
 from pysnmp.proto import rfc1902
 from pysnmp import error
+
 
 def getUsage():
     return "Usage: %s [OPTIONS] <AGENT> <PARAMETERS>\n\
@@ -33,6 +36,7 @@ GETBULK options:\n\
 
 # Construct c/l interpreter for this app
 
+
 class Scanner(msgmod.MPScannerMixIn,
               secmod.SMScannerMixIn,
               mibview.MibViewScannerMixIn,
@@ -43,6 +47,7 @@ class Scanner(msgmod.MPScannerMixIn,
     def t_appopts(self, s):
         r' -C '
         self.rv.append(base.ConfigToken('appopts'))
+
 
 class Parser(msgmod.MPParserMixIn,
              secmod.SMParserMixIn,
@@ -58,6 +63,7 @@ class Parser(msgmod.MPParserMixIn,
         ApplicationOption ::= appopts whitespace string
         ApplicationOption ::= appopts string
         '''
+
 
 class __Generator(base.GeneratorTemplate):
     def n_ApplicationOption(self, cbCtx, node):
@@ -81,7 +87,7 @@ class __Generator(base.GeneratorTemplate):
             elif c == 'p':
                 ctx['reportFoundVars'] = 1
                 p = None
-            elif p is not None and c >= '0' and c <= '9':
+            elif p is not None and '0' <= c <= '9':
                 p.append(c)
             else:
                 raise error.PySnmpError('bad -C option - "%s"' % c)
@@ -90,51 +96,56 @@ class __Generator(base.GeneratorTemplate):
         if r is not None:
             ctx['maxRepetitions'] = int(''.join(r))
         
+
 def generator(cbCtx, ast):
     snmpEngine, ctx = cbCtx
     return __Generator().preorder((snmpEngine, ctx), ast)
     
+
 def cbFun(snmpEngine, sendRequestHandle, errorIndication,
           errorStatus, errorIndex, varBindTable, cbCtx):
     if errorIndication:
-        if errorIndication != 'oidNotIncreasing' or \
-               not ctx.get('ignoreNonIncreasingOids'):
+        if (errorIndication != 'oidNotIncreasing' or
+                not ctx.get('ignoreNonIncreasingOids')):
             sys.stderr.write('Error: %s\n' % errorIndication)
             return
     if errorStatus:
         sys.stderr.write(
             '%s at %s\n' %
-            ( errorStatus.prettyPrint(),
-              errorIndex and varBindTable[0][int(errorIndex)-1] or '?' )
-            )        
+            (errorStatus.prettyPrint(),
+             errorIndex and varBindTable[0][int(errorIndex) - 1] or '?')
+        )
         return
     for varBindRow in varBindTable:
-        colIdx = -1; inTableFlag = 0
+        colIdx = -1
+        inTableFlag = 0
         for oid, val in varBindRow:
             colIdx += 1
             if cbCtx['myHeadVars'][colIdx].isPrefixOf(oid):
-                sys.stdout.write('%s\n' % cbCtx['mibViewProxy'].getPrettyOidVal(
-                    cbCtx['mibViewController'], oid, val
+                sys.stdout.write(
+                    '%s\n' % cbCtx['mibViewProxy'].getPrettyOidVal(
+                        cbCtx['mibViewController'], oid, val
                     )
                 )
                 inTableFlag += 1
         if cbCtx.get('reportFoundVars'):
             cbCtx['reportFoundVars'] += inTableFlag
         if not inTableFlag:
-            return # stop on end-of-table
-    return 1 # continue walking
+            return  # stop on end-of-table
+    return 1  # continue walking
 
 # Run SNMP engine
 
 snmpEngine = engine.SnmpEngine()
- 
+
+ctx = {}
+
 try:
     # Parse c/l into AST
     ast = Parser().parse(
         Scanner().tokenize(' '.join(sys.argv[1:]))
     )
 
-    ctx = {}
 
     # Apply configuration to SNMP entity
     main.generator((snmpEngine, ctx), ast)
@@ -145,7 +156,7 @@ try:
     pdu.readPduGenerator((snmpEngine, ctx), ast)
     generator((snmpEngine, ctx), ast)
 
-    ctx['myHeadVars'] = [ rfc1902.ObjectName(x[0]) for x in ctx['varBinds'] ]
+    ctx['myHeadVars'] = [rfc1902.ObjectName(x[0]) for x in ctx['varBinds']]
 
     cmdgen.BulkCommandGenerator().sendVarBinds(
         snmpEngine,

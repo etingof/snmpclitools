@@ -88,7 +88,7 @@ params.update(
         'author': 'Ilya Etingof',
         'author_email': 'etingof@gmail.com',
         'url': 'https://github.com/etingof/pysnmp-apps',
-        'classifiers': [ x for x in classifiers.split('\n') if x ],
+        'classifiers': [x for x in classifiers.split('\n') if x],
         'platforms': ['any'],
         'license': 'BSD',
         'packages': ['pysnmp_apps', 'pysnmp_apps.cli'],
@@ -98,7 +98,7 @@ params.update(
                     'scripts/snmpbulkwalk.py',
                     'scripts/snmptrap.py',
                     'scripts/snmptranslate.py']
-     }
+    }
 )
 
 if "py2exe" in sys.argv:

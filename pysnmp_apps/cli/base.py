@@ -9,31 +9,50 @@ from pysnmp_apps.cli import spark
 
 # AST
 
+
 class ConfigToken:
     # Abstract grammar token
-    def __init__(self, type, attr=None):
-        self.type = type
+    def __init__(self, typ, attr=None):
+        self.type = typ
         self.attr = attr
-    def __eq__(self, other): return self.type == other
-    def __ne__(self, other): return self.type != other
-    def __lt__(self, other): return self.type < other
-    def __le__(self, other): return self.type <= other
-    def __gt__(self, other): return self.type > other
-    def __ge__(self, other): return self.type >= other
-    def __repr__(self): return self.attr or self.type
+
+    def __eq__(self, other):
+        return self.type == other
+
+    def __ne__(self, other):
+        return self.type != other
+
+    def __lt__(self, other):
+        return self.type < other
+
+    def __le__(self, other):
+        return self.type <= other
+
+    def __gt__(self, other):
+        return self.type > other
+
+    def __ge__(self, other):
+        return self.type >= other
+
+    def __repr__(self):
+        return self.attr or self.type
+
     def __str__(self):
         if self.attr is None:
             return '%s' % self.type
         else:
             return '%s(%s)' % (self.type, self.attr)
     
+
 class ConfigNode:
     # AST node class -- N-ary tree
-    def __init__(self, type, attr=None):
-        self.type, self.attr = type, attr
+    def __init__(self, typ, attr=None):
+        self.type, self.attr = typ, attr
         self._kids = []
+
     def __getitem__(self, i):
         return self._kids[i]
+
     def __len__(self):
         return len(self._kids)
     if sys.version_info[0] < 3:
@@ -42,30 +61,46 @@ class ConfigNode:
     else:
         def __setitem__(self, idx, seq):
             self._kids[idx] = seq
-    def __eq__(self, other): return self.type == other
-    def __ne__(self, other): return self.type != other
-    def __lt__(self, other): return self.type < other
-    def __le__(self, other): return self.type <= other
-    def __gt__(self, other): return self.type > other
-    def __ge__(self, other): return self.type >= other
+
+    def __eq__(self, other):
+        return self.type == other
+
+    def __ne__(self, other):
+        return self.type != other
+
+    def __lt__(self, other):
+        return self.type < other
+
+    def __le__(self, other):
+        return self.type <= other
+
+    def __gt__(self, other):
+        return self.type > other
+
+    def __ge__(self, other):
+        return self.type >= other
+
     def __str__(self):
         if self.attr is None:
             return self.type
         else:
             return '%s(%s)' % (self.type, self.attr)
 
+
 # Scanner
 
 class __ScannerTemplate(spark.GenericScanner):
-    def tokenize(self, input):
+    def tokenize(self, data):
         self.rv = []
-        spark.GenericScanner.tokenize(self, input)
+        spark.GenericScanner.tokenize(self, data)
         return self.rv
+
 
 class __FirstLevelScanner(__ScannerTemplate):
     def t_string(self, s):
         r' [!#\$%&\'\(\)\*\+,\.//0-9<=>\?@A-Z\\\^_`a-z\{\|\}~][!#\$%&\'\(\)\*\+,\-\.//0-9<=>\?@A-Z\\\^_`a-z\{\|\}~]* '
         self.rv.append(ConfigToken('string', s))
+
 
 class __SecondLevelScanner(__FirstLevelScanner):
     def t_semicolon(self, s):
@@ -90,10 +125,12 @@ class __SecondLevelScanner(__FirstLevelScanner):
 
 ScannerTemplate = __SecondLevelScanner
 
+
 # Parser
 
 class ParserTemplate(spark.GenericASTBuilder):
     initialSymbol = None
+
     def __init__(self, startSymbol=None):
         if startSymbol is None:
             startSymbol = self.initialSymbol
@@ -103,10 +140,12 @@ class ParserTemplate(spark.GenericASTBuilder):
         #  Reduce to homogeneous AST.
         return ConfigNode(token.type, token.attr)
 
+
 # Generator
 
 class GeneratorTemplate(spark.GenericASTTraversal):
-    def __init__(self): pass  # Skip superclass constructor
+    def __init__(self):  # Skip superclass constructor
+        pass
 
     def typestring(self, node):
         return node.type
@@ -132,4 +171,5 @@ class GeneratorTemplate(spark.GenericASTTraversal):
 
         return client
     
-    def default(self, client, node): pass
+    def default(self, client, node):
+        pass

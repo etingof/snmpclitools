@@ -32,6 +32,7 @@ except ImportError:
 
 # Usage
 
+
 def getUsage():
     return "\
 Command-line SNMP tools version %s, written by Ilya Etingof <etingof@gmail.com>\n\
@@ -42,14 +43,15 @@ Software documentation and support at http://pysnmp.sf.net\n\
    -V                    software release information\n\
    -d                    dump raw packets\n\
    -D category           enable debugging [%s]\n\
-" % ( pysnmpAppsVersion,
-      pysmiVersion,
-      pysnmpVersion,
-      pysnmpMibsVersion,
-      pyasn1Version,
-      sys.version.replace('\n', ''),
-      debug and ','.join(debug.flagMap.keys()) or "")
+" % (pysnmpAppsVersion,
+     pysmiVersion,
+     pysnmpVersion,
+     pysnmpMibsVersion,
+     pyasn1Version,
+     sys.version.replace('\n', ''),
+     debug and ','.join(debug.flagMap.keys()) or "")
     
+
 # Scanner
 
 class MainScannerMixIn:
@@ -71,13 +73,14 @@ class MainScannerMixIn:
 
 # Parser
 
+
 class MainParserMixIn:
     initialSymbol = 'Cmdline'
 
     def error(self, token):
         raise error.PySnmpError(
             'Command-line parser error at token %s\n' % token
-            )
+        )
         
     def p_cmdline(self, args):
         '''
@@ -104,8 +107,9 @@ class MainParserMixIn:
         Debug ::= debug string
         Debug ::= debug whitespace string
         '''
-        
+
 # Generator
+
 
 class __MainGenerator(base.GeneratorTemplate):
     # SNMPv1/v2
@@ -126,6 +130,7 @@ class __MainGenerator(base.GeneratorTemplate):
             else:
                 f = node[1].attr
             debug.setLogger(debug.Debug(*f.split(',')))
+
 
 def generator(cbCtx, ast):
     snmpEngine, ctx = cbCtx

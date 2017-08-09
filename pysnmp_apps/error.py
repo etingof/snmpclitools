@@ -6,4 +6,6 @@
 #
 from pysnmp import error
 
-class SnmpApplicationError(error.PySnmpError): pass
+
+class SnmpApplicationError(error.PySnmpError):
+    pass

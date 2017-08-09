@@ -18,42 +18,44 @@ defaultMibBorrowerUrl = 'http://mibs.snmplabs.com/pysnmp/fulltexts/@mib@'
 
 # Usage
 
+
 def getUsage():
-    return "\
-MIB options:\n\
-   -m MIB[:...]   load given list of MIBs (ALL loads all compiled MIBs)\n\
-   -M DIR[:...]   look in given list of directories for MIBs\n\
-   -P MIBOPTS     Toggle various defaults controlling MIB parsing:\n\
-              XS: search for ASN.1 MIBs in remote directories specified\n\
-                  in URL form. The @mib@ token in the URL is substituted\n\
-                  with actual MIB to be downloaded. Default repository\n\
-                  address is %s\n\
-              XB: search for pysnmp MIBs in remote directories specified\n\
-                  in URL form. The @mib@ token in the URL is substituted\n\
-                  with actual MIB to be downloaded. Default repository\n\
-                  address is %s\n\
-   -O OUTOPTS     Toggle various defaults controlling output display:\n\
-              q:  removes the equal sign and type information\n\
-              Q:  removes the type information\n\
-              f:  print full OIDs on output\n\
-              s:  print only last symbolic element of OID\n\
-              S:  print MIB module-id plus last element\n\
-              u:  print OIDs using UCD-style prefix suppression\n\
-              n:  print OIDs numerically\n\
-              e:  print enums numerically\n\
-              b:  do not break OID indexes down\n\
-              E:  include a \" to escape the quotes in indices\n\
-              X:  place square brackets around each index\n\
-              T:  print value in hex\n\
-              v:  print values only (not OID = value)\n\
-              U:  don't print units\n\
-              t:  output timeticks values as raw numbers\n\
-   -I INOPTS      Toggle various defaults controlling input parsing:\n\
-              h:  don't apply DISPLAY-HINTs\n\
-              u:  top-level OIDs must have '.' prefix (UCD-style)\n\
-" % (defaultMibSourceUrl, defaultMibBorrowerUrl)
+    return """\
+MIB options:
+   -m MIB[:...]   load given list of MIBs (ALL loads all compiled MIBs)
+   -M DIR[:...]   look in given list of directories for MIBs
+   -P MIBOPTS     Toggle various defaults controlling MIB parsing:
+              XS: search for ASN.1 MIBs in remote directories specified
+                  in URL form. The @mib@ token in the URL is substituted
+                  with actual MIB to be downloaded. Default repository
+                  address is %s
+              XB: search for pysnmp MIBs in remote directories specified
+                  in URL form. The @mib@ token in the URL is substituted
+                  with actual MIB to be downloaded. Default repository
+                  address is %s
+   -O OUTOPTS     Toggle various defaults controlling output display:
+              q:  removes the equal sign and type information
+              Q:  removes the type information
+              f:  print full OIDs on output
+              s:  print only last symbolic element of OID
+              S:  print MIB module-id plus last element
+              u:  print OIDs using UCD-style prefix suppression
+              n:  print OIDs numerically
+              e:  print enums numerically
+              b:  do not break OID indexes down
+              E:  include a " to escape the quotes in indices
+              X:  place square brackets around each index
+              T:  print value in hex
+              v:  print values only (not OID = value)
+              U:  don't print units
+              t:  output timeticks values as raw numbers
+   -I INOPTS      Toggle various defaults controlling input parsing:
+              h:  don't apply DISPLAY-HINTs
+              u:  top-level OIDs must have '.' prefix (UCD-style)
+""" % (defaultMibSourceUrl, defaultMibBorrowerUrl)
 
 # Scanner
+
 
 class MibViewScannerMixIn:
     def t_mibfiles(self, s):
@@ -77,6 +79,7 @@ class MibViewScannerMixIn:
         self.rv.append(base.ConfigToken('inputopts'))
 
 # Parser
+
 
 class MibViewParserMixIn:
     def p_mibView(self, args):
@@ -114,6 +117,7 @@ class MibViewParserMixIn:
 
 # Generator
 
+
 class __MibViewGenerator(base.GeneratorTemplate):
     # Load MIB modules
     def n_MibFile(self, cbCtx, node):
@@ -132,7 +136,7 @@ class __MibViewGenerator(base.GeneratorTemplate):
 
     def n_Url(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
-        ctx['Url'] = node[0].attr+':'+node[2].attr
+        ctx['Url'] = node[0].attr + ':' + node[2].attr
 
     def n_ParserOption_exit(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
@@ -202,7 +206,7 @@ class __MibViewGenerator(base.GeneratorTemplate):
             else:
                 raise error.PySnmpError(
                     'Unknown output option %s at %s' % (c, self)
-                    )
+                )
 
     def n_InputOption(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
@@ -216,7 +220,7 @@ class __MibViewGenerator(base.GeneratorTemplate):
             elif c == 'u':
                 mibViewProxy.defaultOidPrefix = (
                     'iso', 'org', 'dod', 'internet', 'mgmt', 'mib-2'
-                    )
+                )
             elif c == 'r':
                 pass
             elif c == 'h':
@@ -224,7 +228,8 @@ class __MibViewGenerator(base.GeneratorTemplate):
             else:
                 raise error.PySnmpError(
                     'Unknown input option %s at %s' % (c, self)
-                    )
+                )
+
 
 def generator(cbCtx, ast):
     snmpEngine, ctx = cbCtx
@@ -236,27 +241,29 @@ def generator(cbCtx, ast):
     snmpEngine, ctx = __MibViewGenerator().preorder((snmpEngine, ctx), ast)
 
     if 'MibDir' not in ctx:
-        ctx['MibDir'] = [ defaultMibSourceUrl ]
+        ctx['MibDir'] = [defaultMibSourceUrl]
     if 'MibBorrowers' not in ctx:
-        ctx['MibBorrowers'] = [ defaultMibBorrowerUrl ]
+        ctx['MibBorrowers'] = [defaultMibBorrowerUrl]
 
     compiler.addMibCompiler(snmpEngine.getMibBuilder(),
                             sources=ctx['MibDir'],
                             borrowers=ctx['MibBorrowers'])
     return snmpEngine, ctx
 
+
 class UnknownSyntax:
     def prettyOut(self, val):
         return str(val)
 unknownSyntax = UnknownSyntax()
-    
+
 #  Proxy MIB view
+
 
 class MibViewProxy:
     # Defaults
     defaultOidPrefix = (
         'iso', 'org', 'dod', 'internet', 'mgmt', 'mib-2', 'system'
-        )
+    )
     defaultMibs = ('SNMPv2-MIB',)
     defaultMibDirs = ()
 
@@ -297,10 +304,9 @@ class MibViewProxy:
             self.defaultMibDirs = os.environ['PYSNMPMIBDIRS'].split(':')
         if self.defaultMibDirs:
             mibViewController.mibBuilder.setMibSources(
-                *mibViewController.mibBuilder.getMibSources() + tuple(
-                    [ builder.ZipMibSource(m).init() for m in self.defaultMibDirs ]
-                    )
-                 )
+                *(mibViewController.mibBuilder.getMibSources() +
+                  tuple([builder.ZipMibSource(m).init() for m in self.defaultMibDirs]))
+            )
         if self.defaultMibs:
             mibViewController.mibBuilder.loadModules(*self.defaultMibs)
         self.__oidValue = univ.ObjectIdentifier()
@@ -324,7 +330,7 @@ class MibViewProxy:
                     name = label
                 if not self.buildAbsoluteName:
                     name = name[len(self.defaultOidPrefix):]
-                out = out + '.'.join([ str(x) for x in name ])
+                out = out + '.'.join([str(x) for x in name])
             
             if suffix:
                 if suffix == (0,):
@@ -333,9 +339,9 @@ class MibViewProxy:
                     m, n, s = mibViewController.getNodeLocation(prefix[:-1])
                     rowNode, = mibViewController.mibBuilder.importSymbols(
                         m, n
-                        )
+                    )
                     if self.buildNumericIndices:
-                        out = out + '.' + '.'.join([ str(x) for x in suffix ])
+                        out = out + '.' + '.'.join([str(x) for x in suffix])
                     else:
                         try:
                             for i in rowNode.getIndicesFromInstId(suffix):
@@ -367,25 +373,25 @@ class MibViewProxy:
                 syntax = mibNode.syntax
             else:
                 syntax = val
-            if syntax is None: # lame Agent may return a non-instance OID
+            if syntax is None:  # lame Agent may return a non-instance OID
                 syntax = unknownSyntax
             if self.buildTypeInfo:
                 out = out + '%s: ' % syntax.__class__.__name__
             if self.buildRawVals:
                 out = out + str(val)
-            elif self.buildHexVals: # XXX make it always in hex?
+            elif self.buildHexVals:  # XXX make it always in hex?
                 if self.__intValue.isSuperTypeOf(val):
                     out = out + '%x' % int(val)
                 elif self.__timeValue.isSameTypeWith(val):
                     out = out + '%x' % int(val)
                 elif self.__oidValue.isSuperTypeOf(val):
-                    out = out + ' '.join([ '%x' % x for x in tuple(val) ])
+                    out = out + ' '.join(['%x' % x for x in tuple(val)])
                 else:
-                    out = out + ' '.join([ '%.2x' % x for x in val.asNumbers()])
+                    out = out + ' '.join(['%.2x' % x for x in val.asNumbers()])
             elif self.__timeValue.isSameTypeWith(val):
                 if self.buildRawTimeTicks:
                     out = out + str(int(val))
-                else: # TimeTicks is not a TC
+                else:  # TimeTicks is not a TC
                     val = int(val)
                     d, m = divmod(val, 8640000)
                     out = out + '%d days ' % d

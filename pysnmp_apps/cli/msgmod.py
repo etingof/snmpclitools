@@ -9,13 +9,15 @@ from pysnmp import error
 
 # Usage
 
+
 def getUsage():
-    return "\
-SNMP message processing options:\n\
-   -v VERSION             SNMP version: \"1\"|\"2c\"|\"3\"\n\
-"
+    return """\
+SNMP message processing options:
+   -v VERSION             SNMP version: "1"|"2c"|"3"
+"""
 
 # Scanner
+
 
 class MPScannerMixIn:
     def t_version(self, s):
@@ -23,6 +25,7 @@ class MPScannerMixIn:
         self.rv.append(base.ConfigToken('version'))
 
 # Parser
+
 
 class MPParserMixIn:
     def p_mpSpec(self, args):
@@ -34,13 +37,15 @@ class MPParserMixIn:
 
 # Generator
 
+
 class __MPGenerator(base.GeneratorTemplate):
     _versionIdMap = {
         '1':  0,
         '2':  1,
         '2c': 1,
         '3':  3
-        }
+    }
+
     def n_SnmpVersionId(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
         if len(node) > 2:
@@ -51,6 +56,7 @@ class __MPGenerator(base.GeneratorTemplate):
             ctx['versionId'] = self._versionIdMap[versionId]
         else:
             raise error.PySnmpError('Bad version value %s' % versionId)
+
 
 def generator(cbCtx, ast):
     snmpEngine, ctx = cbCtx
