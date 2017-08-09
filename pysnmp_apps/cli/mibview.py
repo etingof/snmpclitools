@@ -399,7 +399,7 @@ class MibViewProxy:
                     label + tuple([ str(x) for x in suffix ])
                 )
             else:
-                out = out + syntax.prettyOut(val)
+                out = out + syntax.clone(val).prettyPrint()
 
             if self.buildUnits:
                 if hasattr(mibNode, 'getUnits'):
