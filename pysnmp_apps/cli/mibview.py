@@ -345,10 +345,10 @@ class MibViewProxy:
                                     out = out + '.[%s]' % i.prettyOut(i)
                                 else:
                                     out = out + '.\"%s\"' % i.prettyOut(i)
-                        except AttributeError:
+                        except Exception:
                             out = out + '.' + '.'.join(
-                                [ str(x) for x in suffix ]
-                                )
+                                [str(x) for x in suffix]
+                            )
 
         if self.buildObjectName and self.buildValue:
             if self.buildEqualSign:
