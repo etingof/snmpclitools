@@ -2,7 +2,7 @@
 # This file is part of pysnmp-apps software.
 #
 # Copyright (c) 2005-2017, Ilya Etingof <etingof@gmail.com>
-# License: http://pysnmp.sf.net/license.html
+# License: http://snmplabs.com/pysnmp/license.html
 #
 import socket
 from pysnmp_apps.cli import base
@@ -11,18 +11,16 @@ from pysnmp_apps.error import SnmpApplicationError
 from pysnmp.entity import config
 from pysnmp import error
 
-# Usage
-
 
 def getUsage():
     return """\
-Communication options
+General communication options
    -r RETRIES        number of retries when sending request
    -t TIMEOUT        request timeout (in seconds)
 Agent address:
    [<transport-domain>:]<transport-endpoint>
-              transport-domain:    "udp"|"udp6"
-              transport-endpoint:  "IP"|"IPv6"|"FQDN"[:"port"]
+              transport-domain:    (udp|udp6)
+              transport-endpoint:  (IP|IPv6|FQDN[:port])
 """
 
 # Scanner
@@ -48,7 +46,7 @@ class TargetParserMixIn:
     def p_targetSpec(self, args):
         '''
         Option ::= CommOption
-        
+
         CommOption ::= Retries
         Retries ::= retries string
         Retries ::= retries whitespace string

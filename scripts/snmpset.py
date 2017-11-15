@@ -3,7 +3,7 @@
 # This file is part of pysnmp-apps software.
 #
 # Copyright (c) 2005-2017, Ilya Etingof <etingof@gmail.com>
-# License: http://pysnmp.sf.net/license.html
+# License: http://snmplabs.com/pysnmp/license.html
 #
 # SET command generator
 #
@@ -82,7 +82,7 @@ try:
     # Apply configuration to SNMP entity
     main.generator((snmpEngine, ctx), ast)
     msgmod.generator((snmpEngine, ctx), ast)
-    secmod.generator((snmpEngine, ctx), ast)    
+    secmod.generator((snmpEngine, ctx), ast)
     mibview.generator((snmpEngine, ctx), ast)
     target.generator((snmpEngine, ctx), ast)
     pdu.writePduGenerator((snmpEngine, ctx), ast)
