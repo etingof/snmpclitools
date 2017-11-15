@@ -4,6 +4,7 @@ Revision 0.5.1, released XX-11-2017
 
 - CLI tools usage aligned with the Net-SNMP prototypes for
   mocking consistency
+- Migrated references from SourceForge
 
 Revision 0.4.2, released 09-08-2017
 -----------------------------------
