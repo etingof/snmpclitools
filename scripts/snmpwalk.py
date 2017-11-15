@@ -134,12 +134,12 @@ try:
     # Apply configuration to SNMP entity
     main.generator((snmpEngine, ctx), ast)
     msgmod.generator((snmpEngine, ctx), ast)
-    secmod.generator((snmpEngine, ctx), ast)    
+    secmod.generator((snmpEngine, ctx), ast)
     mibview.generator((snmpEngine, ctx), ast)
     target.generator((snmpEngine, ctx), ast)
     pdu.readPduGenerator((snmpEngine, ctx), ast)
     generator((snmpEngine, ctx), ast)
-    
+
     ctx['myHeadVars'] = [rfc1902.ObjectName(x[0]) for x in ctx['varBinds']]
 
     cmdgen.NextCommandGenerator().sendVarBinds(

@@ -42,7 +42,7 @@ class ConfigToken:
             return '%s' % self.type
         else:
             return '%s(%s)' % (self.type, self.attr)
-    
+
 
 class ConfigNode:
     # AST node class -- N-ary tree
@@ -170,6 +170,6 @@ class GeneratorTemplate(spark.GenericASTTraversal):
             func(client, node)
 
         return client
-    
+
     def default(self, client, node):
         pass

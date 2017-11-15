@@ -32,13 +32,13 @@ SNMPv3 security options:
 class SMScannerMixIn:
 
     # SNMPv1/v2
-    
+
     def t_community(self, s):
         r' -c '
         self.rv.append(base.ConfigToken('community'))
 
     # SNMPv3
-    
+
     def t_authProtocol(self, s):
         r' -a '
         self.rv.append(base.ConfigToken('authProtocol'))
@@ -87,7 +87,7 @@ class SMParserMixIn:
         '''
         Option ::= SnmpV1Option
         Option ::= SnmpV3Option
-        
+
         SnmpV1Option ::= Community
         Community ::= community string
         Community ::= community whitespace string
@@ -284,9 +284,9 @@ def generator(cbCtx, ast):
             )
     else:  # SNMPv1/v2c
         if 'communityName' not in ctx:
-            raise error.PySnmpError('Community name not specified')            
+            raise error.PySnmpError('Community name not specified')
         ctx['securityName'] = 'my-agent'
-        ctx['securityLevel'] = 'noAuthNoPriv'            
+        ctx['securityLevel'] = 'noAuthNoPriv'
         config.addV1System(
             snmpEngine,
             ctx['securityName'],

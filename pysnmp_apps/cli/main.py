@@ -47,7 +47,7 @@ Software documentation and support at http://snmplabs.com
      pyasn1Version,
      sys.version.replace('\n', ''),
      debug and ','.join(debug.flagMap.keys()) or "")
-    
+
 
 # Scanner
 
@@ -78,12 +78,12 @@ class MainParserMixIn:
         raise error.PySnmpError(
             'Command-line parser error at token %s\n' % token
         )
-        
+
     def p_cmdline(self, args):
         '''
         Cmdline ::= Options Agent whitespace Params
         '''
-        
+
     def p_cmdlineExt(self, args):
         '''
         Options ::= Option whitespace Options
@@ -93,7 +93,7 @@ class MainParserMixIn:
         Option ::= Help
         Option ::= VersionInfo
         Option ::= DebugOption
-        
+
         Help ::= help
 
         VersionInfo ::= versioninfo
@@ -119,7 +119,7 @@ class __MainGenerator(base.GeneratorTemplate):
     def n_Dump(self, cbCtx, node):
         if debug:
             debug.setLogger(debug.Debug('io'))
-            
+
     def n_Debug(self, cbCtx, node):
         if debug:
             if len(node) > 2:

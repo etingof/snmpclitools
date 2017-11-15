@@ -46,7 +46,7 @@ class TargetParserMixIn:
     def p_targetSpec(self, args):
         '''
         Option ::= CommOption
-        
+
         CommOption ::= Retries
         Retries ::= retries string
         Retries ::= retries whitespace string

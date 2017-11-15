@@ -125,7 +125,7 @@ class __MibViewGenerator(base.GeneratorTemplate):
             mibBuilder.loadModules()
         else:
             mibBuilder.loadModules(node[0].attr)
-            
+
     def n_MibDir(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
         if 'MibDir' not in ctx:
@@ -161,46 +161,46 @@ class __MibViewGenerator(base.GeneratorTemplate):
         opt = node[1].attr or node[2].attr
         for c in opt:
             if c == 'q':
-                mibViewProxy.buildEqualSign = 0
-                mibViewProxy.buildTypeInfo = 0
+                mibViewProxy.buildEqualSign = False
+                mibViewProxy.buildTypeInfo = False
             elif c == 'Q':
-                mibViewProxy.buildTypeInfo = 0
+                mibViewProxy.buildTypeInfo = False
             elif c == 'f':
-                mibViewProxy.buildModInfo = 0
-                mibViewProxy.buildObjectDesc = 0
-                mibViewProxy.buildAbsoluteName = 1
+                mibViewProxy.buildModInfo = False
+                mibViewProxy.buildObjectDesc = False
+                mibViewProxy.buildAbsoluteName = True
             elif c == 's':
-                mibViewProxy.buildModInfo = 0
-                mibViewProxy.buildObjectDesc = 1
+                mibViewProxy.buildModInfo = False
+                mibViewProxy.buildObjectDesc = True
             elif c == 'S':
-                mibViewProxy.buildObjectDesc = 1
+                mibViewProxy.buildObjectDesc = True
             elif c == 'u':
                 pass
             elif c == 'n':
-                mibViewProxy.buildObjectDesc = 0
-                mibViewProxy.buildModInfo = 0
-                mibViewProxy.buildNumericName = 1
-                mibViewProxy.buildNumericIndices = 1
-                mibViewProxy.buildAbsoluteName = 1
+                mibViewProxy.buildObjectDesc = False
+                mibViewProxy.buildModInfo = False
+                mibViewProxy.buildNumericName = True
+                mibViewProxy.buildNumericIndices = True
+                mibViewProxy.buildAbsoluteName = True
             elif c == 'e':
                 raise error.PySnmpError('Option not implemented')
             elif c == 'b':
-                mibViewProxy.buildNumericIndices = 1
+                mibViewProxy.buildNumericIndices = True
             elif c == 'E':
-                mibViewProxy.buildEscQuotes = 1
+                mibViewProxy.buildEscQuotes = True
             elif c == 'X':
-                mibViewProxy.buildSquareBrackets = 1
+                mibViewProxy.buildSquareBrackets = True
             elif c == 'T':
-                mibViewProxy.buildHexVals = 1
+                mibViewProxy.buildHexVals = True
             elif c == 'v':
-                mibViewProxy.buildObjectName = 0
+                mibViewProxy.buildObjectName = False
             elif c == 'U':
-                mibViewProxy.buildUnits = 0
+                mibViewProxy.buildUnits = False
             elif c == 't':
-                mibViewProxy.buildRawTimeTicks = 1
+                mibViewProxy.buildRawTimeTicks = True
                 pass
             elif c == 'R':
-                mibViewProxy.buildRawVals = 1
+                mibViewProxy.buildRawVals = True
             else:
                 raise error.PySnmpError(
                     'Unknown output option %s at %s' % (c, self)
@@ -267,32 +267,32 @@ class MibViewProxy:
 
     # MIB parsing options
     # currently N/A
-    
+
     # MIB output options
-    buildObjectName = 1
-    buildValue = 1
-    buildModInfo = 1
-    buildObjectDesc = 1
-    buildNumericName = 0
-    buildAbsoluteName = 0
-    buildNumericIndices = 0
-    buildEqualSign = 1
-    buildTypeInfo = 1
-    buildEscQuotes = 0
-    buildSquareBrackets = 0
-    buildHexVals = 0
-    buildRawVals = 0
-    buildRawTimeTicks = 0
-    buildGuessedStringVals = 1
-    buildUnits = 1
-    
+    buildObjectName = True
+    buildValue = True
+    buildModInfo = True
+    buildObjectDesc = True
+    buildNumericName = False
+    buildAbsoluteName = False
+    buildNumericIndices = False
+    buildEqualSign = True
+    buildTypeInfo = True
+    buildEscQuotes = False
+    buildSquareBrackets = False
+    buildHexVals = False
+    buildRawVals = False
+    buildRawTimeTicks = False
+    buildGuessedStringVals = True
+    buildUnits = True
+
     # MIB input options
-    parseAsRandomAccessMib = 1
-    parseAsRegExp = 0
-    parseAsRelativeOid = 1
-    parseAndCheckIndices = 1
-    parseAsDisplayHint = 1
-    
+    parseAsRandomAccessMib = True
+    parseAsRegExp = False
+    parseAsRelativeOid = True
+    parseAndCheckIndices = True
+    parseAsDisplayHint = True
+
     def __init__(self, mibViewController):
         if 'PYSNMPOIDPREFIX' in os.environ:
             self.defaultOidPrefix = os.environ['PYSNMPOIDPREFIX']
@@ -310,13 +310,13 @@ class MibViewProxy:
         self.__oidValue = univ.ObjectIdentifier()
         self.__intValue = univ.Integer()
         self.__timeValue = rfc1902.TimeTicks()
-        
+
     def getPrettyOidVal(self, mibViewController, oid, val):
         prefix, label, suffix = mibViewController.getNodeName(oid)
         modName, nodeDesc, _suffix = mibViewController.getNodeLocation(prefix)
         out = ''
         # object name
-        if self.buildObjectName:        
+        if self.buildObjectName:
             if self.buildModInfo:
                 out = '%s::' % modName
             if self.buildObjectDesc:
@@ -329,7 +329,7 @@ class MibViewProxy:
                 if not self.buildAbsoluteName:
                     name = name[len(self.defaultOidPrefix):]
                 out = out + '.'.join([str(x) for x in name])
-            
+
             if suffix:
                 if suffix == (0,):
                     out = out + '.0'
@@ -412,6 +412,6 @@ class MibViewProxy:
                     out = out + ' %s' % mibNode.getUnits()
 
         return out
-    
+
     def setPrettyOidValue(self, oid, val, t):
         return oid, val

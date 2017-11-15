@@ -57,7 +57,7 @@ class Scanner(msgmod.MPScannerMixIn,
     def t_genericTrap(self, s):
         r' coldStart|warmStart|linkDown|linkUp|authenticationFailure|egpNeighborLoss|enterpriseSpecific '
         self.rv.append(base.ConfigToken('genericTrap', s))
-        
+
 
 class Parser(msgmod.MPParserMixIn,
              secmod.SMParserMixIn,
@@ -167,12 +167,12 @@ class __Generator(base.GeneratorTemplate):
              (v2c.ObjectIdentifier('1.3.6.1.6.3.1.1.4.1.0'), v2c.ObjectIdentifier(ctx['TrapOid']))]
         )
         ctx['pdu'] = pdu
-        
+
 
 def generator(cbCtx, ast):
     snmpEngine, ctx = cbCtx
     return __Generator().preorder((snmpEngine, ctx), ast)
-    
+
 # Run SNMP engine
 
 
@@ -199,7 +199,7 @@ def cbFun(snmpEngine, notificationHandle, errorIndication, pdu, cbCtx):
                 cbCtx['mibViewController'], oid, val
             )
         )
-        
+
 snmpEngine = engine.SnmpEngine()
 
 try:
@@ -213,7 +213,7 @@ try:
     # Apply configuration to SNMP entity
     main.generator((snmpEngine, ctx), ast)
     msgmod.generator((snmpEngine, ctx), ast)
-    secmod.generator((snmpEngine, ctx), ast)    
+    secmod.generator((snmpEngine, ctx), ast)
     mibview.generator((snmpEngine, ctx), ast)
     target.generatorTrap((snmpEngine, ctx), ast)
     pdu.writePduGenerator((snmpEngine, ctx), ast)
