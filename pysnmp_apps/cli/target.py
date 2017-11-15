@@ -11,18 +11,16 @@ from pysnmp_apps.error import SnmpApplicationError
 from pysnmp.entity import config
 from pysnmp import error
 
-# Usage
-
 
 def getUsage():
     return """\
-Communication options
+General communication options
    -r RETRIES        number of retries when sending request
    -t TIMEOUT        request timeout (in seconds)
 Agent address:
    [<transport-domain>:]<transport-endpoint>
-              transport-domain:    "udp"|"udp6"
-              transport-endpoint:  "IP"|"IPv6"|"FQDN"[:"port"]
+              transport-domain:    (udp|udp6)
+              transport-endpoint:  (IP|IPv6|FQDN[:port])
 """
 
 # Scanner

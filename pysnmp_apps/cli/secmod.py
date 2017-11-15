@@ -8,30 +8,29 @@ from pysnmp_apps.cli import base
 from pysnmp.entity import config
 from pysnmp import error
 
-# Usage
-
 
 def getUsage():
     return """\
 SNMPv1/v2c security options:
-   -c COMMUNITY          community name
+   -c COMMUNITY          SNMP community string (e.g. public)
 SNMPv3 security options:
-   -u SECURITY-NAME      USM user security name
-   -l SECURITY-LEVEL     "noAuthNoPriv"|"authNoPriv"|"authPriv"
-   -a AUTH-PROTOCOL      "MD5"|"SHA"
-   -A AUTH-KEY           user authentication key
-   -x PRIV-PROTOCOL      "DES"|"AES"
-   -X PRIV-KEY           user privacy key
-   -E CONTEXT-ENGINE-ID  authoritative context engine ID
-   -e ENGINE-ID          authoritative SNMP engine ID (will discover)
-   -n CONTEXT-NAME       authoritative context name
-   -Z BOOTS,TIME         destination SNMP engine boots/uptime
+   -u SECURITY-NAME      SNMP USM user security name (e.g. bert)
+   -l SECURITY-LEVEL     security level (noAuthNoPriv|authNoPriv|authPriv)
+   -a AUTH-PROTOCOL      authentication protocol (MD5|SHA)
+   -A PASSPHRASE         authentication protocol pass phrase (8+ chars)
+   -x PRIV-PROTOCOL      privacey protocol (DES|AES)
+   -X PASSPHRASE         privacy protocol pass phrase (8+ chars)
+   -E CONTEXT-ENGINE-ID  context engine ID (e.g. 800000020109840301)
+   -e ENGINE-ID          security SNMP engine ID (e.g. 800000020109840301)
+   -n CONTEXT-NAME       SNMP context name (e.g. bridge1)
+   -Z BOOTS,TIME         destination SNMP engine boots/time
 """
 
 # Scanner
 
 
 class SMScannerMixIn:
+
     # SNMPv1/v2
     
     def t_community(self, s):
@@ -149,14 +148,19 @@ class __SMGenerator(base.GeneratorTemplate):
         elif p.find('SHA') != -1:
             ctx['authProtocol'] = config.usmHMACSHAAuthProtocol
         else:
-            raise error.PySnmpError('Unknown auth protocol \"%s\"' % p)
+            raise error.PySnmpError('Unknown authentication protocol "%s"' % p)
 
     def n_AuthKey(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
         if len(node) > 2:
-            ctx['authKey'] = node[2].attr
+            p = node[2].attr
         else:
-            ctx['authKey'] = node[1].attr
+            p = node[1].attr
+
+        if len(p) < 8:
+            raise error.PySnmpError('Short authentication key (8+ chars required)')
+
+        ctx['authKey'] = p
 
     def n_PrivProtocol(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
@@ -169,14 +173,19 @@ class __SMGenerator(base.GeneratorTemplate):
         elif p.find('AES') != -1:
             ctx['privProtocol'] = config.usmAesCfb128Protocol
         else:
-            raise error.PySnmpError('Unknown priv protocol \"%s\"' % p)
+            raise error.PySnmpError('Unknown privacy protocol "%s"' % p)
 
     def n_PrivKey(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
         if len(node) > 2:
-            ctx['privKey'] = node[2].attr
+            p = node[2].attr
         else:
-            ctx['privKey'] = node[1].attr
+            p = node[1].attr
+
+        if len(p) < 8:
+            raise error.PySnmpError('Short privacy key (8+ chars required)')
+
+        ctx['privKey'] = p
 
     def n_SecurityName(self, cbCtx, node):
         snmpEngine, ctx = cbCtx

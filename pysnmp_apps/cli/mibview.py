@@ -16,8 +16,6 @@ from pysnmp import error
 defaultMibSourceUrl = 'http://mibs.snmplabs.com/asn1/@mib@'
 defaultMibBorrowerUrl = 'http://mibs.snmplabs.com/pysnmp/fulltexts/@mib@'
 
-# Usage
-
 
 def getUsage():
     return """\

@@ -13,16 +13,14 @@ from pysnmp_apps.cli import base
 
 # Read class
 
-# Usage
-
 
 def getReadUsage():
-    return "\
-Management parameters:\n\
-   [\"mib-module\"::]\"object-name\"|\"oid\" ...\n\
-              mib-module:           MIB name (such as SNMPv2-MIB)\n\
-              object-name:          MIB symbol (sysDescr.0) or OID\n\
-"
+    return """\
+Management parameters:
+   [mib-module::]object-name|oid ...
+              mib-module:           MIB name (e.g. SNMPv2-MIB)
+              object-name:          MIB symbol (e.g. sysDescr.0) or OID
+"""
 
 # Scanner
 
@@ -165,9 +163,9 @@ def readPduGenerator(cbCtx, ast):
 def getWriteUsage():
     return """\
 Management parameters:
-   <["mib-module"::]"object-name"|"oid" "type"|"=" value> ...
-              mib-module:           MIB name (such as SNMPv2-MIB)
-              object-name:          MIB symbol (sysDescr.0) or OID
+   <[mib-module::]object-name|oid type| = value> ...
+              mib-module:           MIB name (e.g. SNMPv2-MIB)
+              object-name:          MIB symbol (e.g. sysDescr.0) or OID
               type:                 MIB value type
                     i               integer
                     u               unsigned integer
@@ -240,8 +238,7 @@ class __WritePduGenerator(__ReadPduGenerator):
             try:
                 val = self._typeMap[ctx['varType']]
             except KeyError:
-                raise error.PySnmpError('unsupported SNMP value type \"%s\"' %
-                                        ctx['varType'])
+                raise error.PySnmpError('unsupported SNMP value type "%s"' % ctx['varType'])
         try:
             val = val.clone(ctx['varValue'])
         except PyAsn1Error:

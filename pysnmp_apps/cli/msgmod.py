@@ -7,13 +7,11 @@
 from pysnmp_apps.cli import base
 from pysnmp import error
 
-# Usage
-
 
 def getUsage():
     return """\
 SNMP message processing options:
-   -v VERSION             SNMP version: "1"|"2c"|"3"
+   -v VERSION            SNMP version (1|2c|3)
 """
 
 # Scanner
