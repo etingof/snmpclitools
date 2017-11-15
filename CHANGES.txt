@@ -1,4 +1,9 @@
 
+Revision 0.5.1, released XX-11-2017
+-----------------------------------
+
+- Added strong crypto support
+
 Revision 0.4.2, released 09-08-2017
 -----------------------------------
 

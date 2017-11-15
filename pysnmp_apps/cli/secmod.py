@@ -8,7 +8,27 @@ from pysnmp_apps.cli import base
 from pysnmp.entity import config
 from pysnmp import error
 
-# Usage
+
+authProtocols = {
+    'MD5': config.usmHMACMD5AuthProtocol,
+    'SHA': config.usmHMACSHAAuthProtocol,
+    'SHA96': config.usmHMACSHAAuthProtocol,
+    'SHA128': config.usmHMAC128SHA224AuthProtocol,
+    'SHA192': config.usmHMAC192SHA256AuthProtocol,
+    'SHA256': config.usmHMAC256SHA384AuthProtocol,
+    'SHA512': config.usmHMAC384SHA512AuthProtocol,
+    'NONE': config.usmNoAuthProtocol
+}
+
+privProtocols = {
+  'DES': config.usmDESPrivProtocol,
+  '3DES': config.usm3DESEDEPrivProtocol,
+  'AES': config.usmAesCfb128Protocol,
+  'AES128': config.usmAesCfb128Protocol,
+  'AES192': config.usmAesCfb192Protocol,
+  'AES256': config.usmAesCfb256Protocol,
+  'NONE': config.usmNoPrivProtocol
+}
 
 
 def getUsage():
@@ -18,28 +38,28 @@ SNMPv1/v2c security options:
 SNMPv3 security options:
    -u SECURITY-NAME      USM user security name
    -l SECURITY-LEVEL     "noAuthNoPriv"|"authNoPriv"|"authPriv"
-   -a AUTH-PROTOCOL      "MD5"|"SHA"
+   -a AUTH-PROTOCOL      %s
    -A AUTH-KEY           user authentication key
-   -x PRIV-PROTOCOL      "DES"|"AES"
+   -x PRIV-PROTOCOL      %s
    -X PRIV-KEY           user privacy key
    -E CONTEXT-ENGINE-ID  authoritative context engine ID
    -e ENGINE-ID          authoritative SNMP engine ID (will discover)
    -n CONTEXT-NAME       authoritative context name
    -Z BOOTS,TIME         destination SNMP engine boots/uptime
-"""
+""" % ('|'.join(sorted(authProtocols)), '|'.join(sorted(privProtocols)))
 
 # Scanner
 
 
 class SMScannerMixIn:
     # SNMPv1/v2
-    
+
     def t_community(self, s):
         r' -c '
         self.rv.append(base.ConfigToken('community'))
 
     # SNMPv3
-    
+
     def t_authProtocol(self, s):
         r' -a '
         self.rv.append(base.ConfigToken('authProtocol'))
@@ -88,7 +108,7 @@ class SMParserMixIn:
         '''
         Option ::= SnmpV1Option
         Option ::= SnmpV3Option
-        
+
         SnmpV1Option ::= Community
         Community ::= community string
         Community ::= community whitespace string
@@ -144,12 +164,11 @@ class __SMGenerator(base.GeneratorTemplate):
             p = node[2].attr.upper()
         else:
             p = node[1].attr.upper()
-        if p.find('MD5') != -1:
-            ctx['authProtocol'] = config.usmHMACMD5AuthProtocol
-        elif p.find('SHA') != -1:
-            ctx['authProtocol'] = config.usmHMACSHAAuthProtocol
-        else:
-            raise error.PySnmpError('Unknown auth protocol \"%s\"' % p)
+        try:
+            ctx['authProtocol'] = authProtocols[p]
+
+        except KeyError:
+            raise error.PySnmpError('Unknown auth protocol "%s"' % p)
 
     def n_AuthKey(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
@@ -164,12 +183,11 @@ class __SMGenerator(base.GeneratorTemplate):
             p = node[2].attr.upper()
         else:
             p = node[1].attr.upper()
-        if p.find('DES') != -1:
-            ctx['privProtocol'] = config.usmDESPrivProtocol
-        elif p.find('AES') != -1:
-            ctx['privProtocol'] = config.usmAesCfb128Protocol
-        else:
-            raise error.PySnmpError('Unknown priv protocol \"%s\"' % p)
+        try:
+            ctx['privProtocol'] = privProtocols[p]
+
+        except KeyError:
+            raise error.PySnmpError('Unknown priv protocol "%s"' % p)
 
     def n_PrivKey(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
@@ -275,9 +293,9 @@ def generator(cbCtx, ast):
             )
     else:  # SNMPv1/v2c
         if 'communityName' not in ctx:
-            raise error.PySnmpError('Community name not specified')            
+            raise error.PySnmpError('Community name not specified')
         ctx['securityName'] = 'my-agent'
-        ctx['securityLevel'] = 'noAuthNoPriv'            
+        ctx['securityLevel'] = 'noAuthNoPriv'
         config.addV1System(
             snmpEngine,
             ctx['securityName'],

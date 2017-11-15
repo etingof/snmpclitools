@@ -18,8 +18,10 @@ Features
 
 * Complete SNMPv1/v2c and SNMPv3 support
 * Interface compatible (almost) with Net-SNMP's snmp\* tools.
+* SNMPv3 supports MD5/SHA authentication and DES/AES/3DES/AES256 privacy protocols
 * Automatically downloads required MIBs from the Internet
-* Cross-platform: work on Linux, Windows and OS X.
+* Runs over IPv4 and/or IPv6 transports
+* Cross-platform: works on Linux, Windows and OS X.
 * 100% Python, works with Python 2.4 up to Python 3.6
 
 Download
@@ -61,6 +63,9 @@ notWritable(17)
 ```
 
 For more information, please, run any of these tools with --help option.
+
+You can play with different security protocols against the publicly available SNMP
+agent like [this one @snmplabs.com](http://snmplabs.com/snmpsim/public-snmp-agent-simulator.html>).
 
 Getting help
 ------------
