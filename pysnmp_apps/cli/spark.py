@@ -1,9 +1,4 @@
 #
-# This file is part of pysnmp-apps software.
-#
-# Copyright (c) 2005-2017, Ilya Etingof <etingof@gmail.com>
-# License: http://pysnmp.sf.net/license.html
-#
 # Copyright (c) 1998-2000 John Aycock
 #  
 # Permission is hereby granted, free of charge, to any person obtaining
@@ -150,7 +145,7 @@ class GenericParser:
 	def makeFIRST(self):
 		union = {}
 		self.first = {}
-		
+
 		for rulelist in self.rules.values():
 			for lhs, rhs in rulelist:
 				if lhs not in self.first:
@@ -180,7 +175,7 @@ class GenericParser:
 	#  "An Efficient Context-Free Parsing Algorithm", Ph.D. thesis,
 	#  Carnegie-Mellon University, August 1968, p. 27.
 	#
-	
+
 	def typestring(self, token):
 		return None
 
@@ -192,7 +187,7 @@ class GenericParser:
 		tree = {}
 		tokens.append(self._EOF)
 		states = { 0: [ (self.startRule, 0, 0) ] }
-		
+
 		if self.ruleschanged:
 			self.makeFIRST()
 
@@ -200,7 +195,7 @@ class GenericParser:
 			states[i+1] = []
 
 			if states[i] == []:
-				break				
+                            break
 			self.buildState(tokens[i], states, i, tree)
 
 #		_dump(tokens, states)
@@ -217,7 +212,7 @@ class GenericParser:
 		needsCompletion = {}
 		state = states[i]
 		predicted = {}
-		
+
 		for item in state:
 			rule, pos, parent = item
 			lhs, rhs = rule
@@ -237,9 +232,7 @@ class GenericParser:
 					plhs, prhs = prule
 
 					if prhs[ppos:ppos+1] == (lhs,):
-						new = (prule,
-						       ppos+1,
-						       pparent)
+						new = prule, ppos + 1, pparent
 						if new not in state:
 							state.append(new)
 							tree[(new, i)] = [(item, i)]

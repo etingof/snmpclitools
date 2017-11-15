@@ -3,7 +3,7 @@
 # This file is part of pysnmp-apps software.
 #
 # Copyright (c) 2005-2017, Ilya Etingof <etingof@gmail.com>
-# License: http://pysnmp.sf.net/license.html
+# License: http://snmplabs.com/pysnmp/license.html
 #
 # Command-line MIB browser
 #
@@ -69,7 +69,7 @@ class __Generator(base.GeneratorTemplate):
         else:
             opt = node[1].attr
         for c in opt:
-            mibViewProxy.translateMassMode = 1            
+            mibViewProxy.translateMassMode = 1
             if c == 'd':
                 mibViewProxy.translateFullDetails = 1
                 mibViewProxy.translateMassMode = 0
@@ -83,7 +83,7 @@ class __Generator(base.GeneratorTemplate):
                 mibViewProxy.translateSymbolicOid = 1
             else:
                 raise error.PySnmpError('unsupported sub-option \"%s\"' % c)
-            
+
 
 def generator(cbCtx, ast):
     snmpEngine, ctx = cbCtx
@@ -100,18 +100,18 @@ class MibViewProxy(mibview.MibViewProxy):
 
     # Implies SNMPWALK mode
     translateMassMode = 0
-    
+
     # Override base class defaults
     buildEqualSign = 0
 
     _null = univ.Null()
-    
+
     def getPrettyOidVal(self, mibViewController, oid, val):
         prefix, label, suffix = mibViewController.getNodeName(oid)
         modName, nodeDesc, _suffix = mibViewController.getNodeLocation(prefix)
         mibNode, = mibViewController.mibBuilder.importSymbols(
             modName, nodeDesc
-        )        
+        )
         out = ''
         if self.translateFullDetails:
             if suffix:

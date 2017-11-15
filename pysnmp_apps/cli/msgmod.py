@@ -2,18 +2,16 @@
 # This file is part of pysnmp-apps software.
 #
 # Copyright (c) 2005-2017, Ilya Etingof <etingof@gmail.com>
-# License: http://pysnmp.sf.net/license.html
+# License: http://snmplabs.com/pysnmp/license.html
 #
 from pysnmp_apps.cli import base
 from pysnmp import error
-
-# Usage
 
 
 def getUsage():
     return """\
 SNMP message processing options:
-   -v VERSION             SNMP version: "1"|"2c"|"3"
+   -v VERSION            SNMP version (1|2c|3)
 """
 
 # Scanner

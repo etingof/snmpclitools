@@ -8,7 +8,7 @@ Pure-Python SNMP management tools
 [![GitHub license](https://img.shields.io/badge/license-BSD-blue.svg)](https://raw.githubusercontent.com/etingof/pysnmp-apps/master/LICENSE.txt)
 
 Here is a set of SNMP applications written on top of
-[pysnmp](http://pysnmp.sf.net) library. Some of these tools mimic
+[pysnmp](http://snmplabs.com/pysnmp/) library. Some of these tools mimic
 their famous [Net-SNMP](http://sourceforge.net/projects/net-snmp/)
 counterparts, while the rest are designed to ease integration with
 other Python applications.
@@ -28,7 +28,7 @@ Download
 --------
 
 The pysnmp-apps package is distributed under terms and conditions of 2-clause
-BSD [license](http://pysnmp.sourceforge.net/license.html). Source code is freely
+BSD [license](http://snmplabs.com/pysnmp/license.html). Source code is freely
 available as a Github [repo](https://github.com/etingof/pysnmp-apps).
 
 Installation

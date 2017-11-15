@@ -2,7 +2,7 @@
 # This file is part of pysnmp-apps software.
 #
 # Copyright (c) 2005-2017, Ilya Etingof <etingof@gmail.com>
-# License: http://pysnmp.sf.net/license.html
+# License: http://snmplabs.com/pysnmp/license.html
 #
 import sys
 from pyasn1.type import univ
@@ -13,16 +13,14 @@ from pysnmp_apps.cli import base
 
 # Read class
 
-# Usage
-
 
 def getReadUsage():
-    return "\
-Management parameters:\n\
-   [\"mib-module\"::]\"object-name\"|\"oid\" ...\n\
-              mib-module:           MIB name (such as SNMPv2-MIB)\n\
-              object-name:          MIB symbol (sysDescr.0) or OID\n\
-"
+    return """\
+Management parameters:
+   [mib-module::]object-name|oid ...
+              mib-module:           MIB name (e.g. SNMPv2-MIB)
+              object-name:          MIB symbol (e.g. sysDescr.0) or OID
+"""
 
 # Scanner
 
@@ -38,12 +36,12 @@ class ReadPduParserMixIn:
         '''
         VarBind ::= VarName
         '''
-    
+
     def p_paramsSpec(self, args):
         '''
         Params ::= VarBinds
         '''
-        
+
     def p_pduSpec(self, args):
         '''
         VarBinds ::= VarBind whitespace VarBinds
@@ -60,7 +58,7 @@ class ReadPduParserMixIn:
         ObjectIndices ::= ObjectIndex ObjectIndices
         ObjectIndices ::= ObjectIndex
         ObjectIndices ::=
-        ObjectIndex ::= quote string quote        
+        ObjectIndex ::= quote string quote
         '''
 
 # Generator
@@ -82,7 +80,7 @@ class __ReadPduGenerator(base.GeneratorTemplate):
             except ValueError:
                 objectName.append(subOid)
         ctx['objectName'] = tuple(objectName)
-        
+
     def n_ObjectIndex(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
         if 'objectIndices' not in ctx:
@@ -99,7 +97,7 @@ class __ReadPduGenerator(base.GeneratorTemplate):
         else:
             objectName = None
 
-        modName = ctx.get('modName', '')            
+        modName = ctx.get('modName', '')
 
         if objectName:
             oid, label, suffix = mibViewCtl.getNodeName(objectName, modName)
@@ -149,7 +147,7 @@ class __ReadPduGenerator(base.GeneratorTemplate):
         else:
             ctx['varBinds'].append((ctx['varName'], None))
         del ctx['varName']
-        
+
     def n_VarBinds_exit(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
         if 'varBinds' not in ctx or not ctx['varBinds']:
@@ -165,9 +163,9 @@ def readPduGenerator(cbCtx, ast):
 def getWriteUsage():
     return """\
 Management parameters:
-   <["mib-module"::]"object-name"|"oid" "type"|"=" value> ...
-              mib-module:           MIB name (such as SNMPv2-MIB)
-              object-name:          MIB symbol (sysDescr.0) or OID
+   <[mib-module::]object-name|oid type| = value> ...
+              mib-module:           MIB name (e.g. SNMPv2-MIB)
+              object-name:          MIB symbol (e.g. sysDescr.0) or OID
               type:                 MIB value type
                     i               integer
                     u               unsigned integer
@@ -192,7 +190,7 @@ class WritePduParserMixIn(ReadPduParserMixIn):
         '''
         VarBind ::= VarName whitespace VarType whitespace VarValue
         VarType ::= string
-        VarValue ::= string        
+        VarValue ::= string
         '''
 
 # Generator
@@ -240,13 +238,12 @@ class __WritePduGenerator(__ReadPduGenerator):
             try:
                 val = self._typeMap[ctx['varType']]
             except KeyError:
-                raise error.PySnmpError('unsupported SNMP value type \"%s\"' %
-                                        ctx['varType'])
+                raise error.PySnmpError('unsupported SNMP value type "%s"' % ctx['varType'])
         try:
             val = val.clone(ctx['varValue'])
         except PyAsn1Error:
             raise error.PySnmpError(sys.exc_info()[1])
-        
+
         if 'varBinds' not in ctx:
             ctx['varBinds'] = [(ctx['varName'], val)]
         else:

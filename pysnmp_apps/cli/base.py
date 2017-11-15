@@ -2,7 +2,7 @@
 # This file is part of pysnmp-apps software.
 #
 # Copyright (c) 2005-2017, Ilya Etingof <etingof@gmail.com>
-# License: http://pysnmp.sf.net/license.html
+# License: http://snmplabs.com/pysnmp/license.html
 #
 import sys
 from pysnmp_apps.cli import spark
@@ -42,7 +42,7 @@ class ConfigToken:
             return '%s' % self.type
         else:
             return '%s(%s)' % (self.type, self.attr)
-    
+
 
 class ConfigNode:
     # AST node class -- N-ary tree
@@ -170,6 +170,6 @@ class GeneratorTemplate(spark.GenericASTTraversal):
             func(client, node)
 
         return client
-    
+
     def default(self, client, node):
         pass
