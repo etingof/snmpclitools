@@ -9,6 +9,28 @@ from pysnmp.entity import config
 from pysnmp import error
 
 
+authProtocols = {
+    'MD5': config.usmHMACMD5AuthProtocol,
+    'SHA': config.usmHMACSHAAuthProtocol,
+    'SHA96': config.usmHMACSHAAuthProtocol,
+    'SHA128': config.usmHMAC128SHA224AuthProtocol,
+    'SHA192': config.usmHMAC192SHA256AuthProtocol,
+    'SHA256': config.usmHMAC256SHA384AuthProtocol,
+    'SHA512': config.usmHMAC384SHA512AuthProtocol,
+    'NONE': config.usmNoAuthProtocol
+}
+
+privProtocols = {
+  'DES': config.usmDESPrivProtocol,
+  '3DES': config.usm3DESEDEPrivProtocol,
+  'AES': config.usmAesCfb128Protocol,
+  'AES128': config.usmAesCfb128Protocol,
+  'AES192': config.usmAesCfb192Protocol,
+  'AES256': config.usmAesCfb256Protocol,
+  'NONE': config.usmNoPrivProtocol
+}
+
+
 def getUsage():
     return """\
 SNMPv1/v2c security options:
@@ -16,15 +38,15 @@ SNMPv1/v2c security options:
 SNMPv3 security options:
    -u SECURITY-NAME      SNMP USM user security name (e.g. bert)
    -l SECURITY-LEVEL     security level (noAuthNoPriv|authNoPriv|authPriv)
-   -a AUTH-PROTOCOL      authentication protocol (MD5|SHA)
+   -a AUTH-PROTOCOL      authentication protocol (%s)
    -A PASSPHRASE         authentication protocol pass phrase (8+ chars)
-   -x PRIV-PROTOCOL      privacey protocol (DES|AES)
+   -x PRIV-PROTOCOL      privacey protocol (%s)
    -X PASSPHRASE         privacy protocol pass phrase (8+ chars)
    -E CONTEXT-ENGINE-ID  context engine ID (e.g. 800000020109840301)
    -e ENGINE-ID          security SNMP engine ID (e.g. 800000020109840301)
    -n CONTEXT-NAME       SNMP context name (e.g. bridge1)
    -Z BOOTS,TIME         destination SNMP engine boots/time
-"""
+""" % ('|'.join(sorted(authProtocols)), '|'.join(sorted(privProtocols)))
 
 # Scanner
 
@@ -143,11 +165,11 @@ class __SMGenerator(base.GeneratorTemplate):
             p = node[2].attr.upper()
         else:
             p = node[1].attr.upper()
-        if p.find('MD5') != -1:
-            ctx['authProtocol'] = config.usmHMACMD5AuthProtocol
-        elif p.find('SHA') != -1:
-            ctx['authProtocol'] = config.usmHMACSHAAuthProtocol
-        else:
+
+        try:
+            ctx['authProtocol'] = authProtocols[p]
+
+        except KeyError:
             raise error.PySnmpError('Unknown authentication protocol "%s"' % p)
 
     def n_AuthKey(self, cbCtx, node):
@@ -168,11 +190,11 @@ class __SMGenerator(base.GeneratorTemplate):
             p = node[2].attr.upper()
         else:
             p = node[1].attr.upper()
-        if p.find('DES') != -1:
-            ctx['privProtocol'] = config.usmDESPrivProtocol
-        elif p.find('AES') != -1:
-            ctx['privProtocol'] = config.usmAesCfb128Protocol
-        else:
+
+        try:
+            ctx['privProtocol'] = privProtocols[p]
+
+        except KeyError:
             raise error.PySnmpError('Unknown privacy protocol "%s"' % p)
 
     def n_PrivKey(self, cbCtx, node):

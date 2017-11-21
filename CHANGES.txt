@@ -2,6 +2,7 @@
 Revision 0.5.1, released XX-11-2017
 -----------------------------------
 
+- Added strong crypto support
 - CLI tools usage aligned with the Net-SNMP prototypes for
   mocking consistency
 - Migrated references from SourceForge
