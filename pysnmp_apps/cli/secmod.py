@@ -12,7 +12,6 @@ from pysnmp import error
 authProtocols = {
     'MD5': config.usmHMACMD5AuthProtocol,
     'SHA': config.usmHMACSHAAuthProtocol,
-    'SHA96': config.usmHMACSHAAuthProtocol,
     'SHA224': config.usmHMAC128SHA224AuthProtocol,
     'SHA256': config.usmHMAC192SHA256AuthProtocol,
     'SHA384': config.usmHMAC256SHA384AuthProtocol,
@@ -38,15 +37,16 @@ SNMPv1/v2c security options:
 SNMPv3 security options:
    -u SECURITY-NAME      SNMP USM user security name (e.g. bert)
    -l SECURITY-LEVEL     security level (noAuthNoPriv|authNoPriv|authPriv)
-   -a AUTH-PROTOCOL      authentication protocol (%s)
+   -a AUTH-PROTOCOL      authentication protocol ID (%s)
    -A PASSPHRASE         authentication protocol pass phrase (8+ chars)
-   -x PRIV-PROTOCOL      privacey protocol (%s)
+   -x PRIV-PROTOCOL      privacy protocol ID (%s)
    -X PASSPHRASE         privacy protocol pass phrase (8+ chars)
    -E CONTEXT-ENGINE-ID  context engine ID (e.g. 800000020109840301)
    -e ENGINE-ID          security SNMP engine ID (e.g. 800000020109840301)
    -n CONTEXT-NAME       SNMP context name (e.g. bridge1)
    -Z BOOTS,TIME         destination SNMP engine boots/time
-""" % ('|'.join(sorted(authProtocols)), '|'.join(sorted(privProtocols)))
+""" % ('|'.join(sorted([x for x in authProtocols if x != 'NONE'])),
+       '|'.join(sorted([x for x in privProtocols if x != 'NONE'])))
 
 # Scanner
 
