@@ -4,6 +4,7 @@ Revision 0.5.2, released 18-12-2017
 
 - Fixed SNMP crypto algorithm identifiers to be named consistently after
   key length rather than MAC length
+- Added strong AES privacy algorithms with Blumenthal key localization
 
 Revision 0.5.1, released 21-11-2017
 -----------------------------------
