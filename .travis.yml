@@ -13,7 +13,8 @@ python:
 # temporary broken
 #  - "pypy3"
 install:
+  - pip install codecov
   - pip install -r requirements.txt
-  - python setup.py install
+  - pip install -e .
 script:
   - sh runtests.sh
