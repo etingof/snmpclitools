@@ -18,7 +18,8 @@ Features
 
 * Complete SNMPv1/v2c and SNMPv3 support
 * Interface compatible (almost) with Net-SNMP's snmp\* tools.
-* SNMPv3 supports MD5/SHA authentication and DES/AES/3DES/AES256 privacy protocols
+* USM supports MD5/SHA/SHA224/SHA256/SHA385/SHA512 auth and
+  DES/3DES/AES128/AES192/AES256 privacy crypto algorithms
 * Automatically downloads required MIBs from the Internet
 * Runs over IPv4 and/or IPv6 transports
 * Cross-platform: works on Linux, Windows and OS X.
