@@ -171,7 +171,7 @@ class __TargetGeneratorPassTwo(base.GeneratorTemplate):
 
     def n_Agent_exit(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
-        ctx['addrName'] = '%s-name' % ctx['paramsName']
+        ctx['addrName'] = ctx['paramsName']
         config.addTargetAddr(
             snmpEngine,
             ctx['addrName'],
