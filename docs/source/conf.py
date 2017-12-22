@@ -51,7 +51,7 @@ source_suffix = '.rst'
 master_doc = 'contents'
 
 # General information about the project.
-project = 'PySNMP Applications'
+project = 'SNMP Commands'
 copyright = '2005-2017, Ilya Etingof <etingof@gmail.com>'
 author = 'Ilya Etingof <etingof@gmail.com>'
 
@@ -95,6 +95,19 @@ html_theme = 'alabaster'
 # documentation.
 #
 # html_theme_options = {}
+html_theme_options = {
+    'logo': 'logo.svg',
+    'description': '<p align=left><i><b>Brewing free software for the greater good</i></b></p>',
+    'show_powered_by': False,
+    'github_user': 'etingof',
+    'github_repo': 'pysnmp-apps',
+    'fixed_sidebar': True,
+}
+
+# The name of an image file (within the static path) to use as favicon of the
+# docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
+# pixels large.
+html_favicon = '.static/favicon.ico'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -108,11 +121,19 @@ html_static_path = ['.static']
 # refs: http://alabaster.readthedocs.io/en/latest/installation.html#sidebars
 html_sidebars = {
     '**': [
-        'relations.html',  # needs 'show_related': True theme option to display
+        'about.html',
+        'navigation.html',
+        'relations.html',
         'searchbox.html',
+        'donate.html',
     ]
 }
 
+# If true, links to the reST sources are added to the pages.
+html_show_sourcelink = False
+
+# If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
+html_show_sphinx = False
 
 # -- Options for HTMLHelp output ------------------------------------------
 
@@ -170,8 +191,27 @@ texinfo_documents = [
      'Miscellaneous'),
 ]
 
+# Configuration for Intersphinx
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3.4/', None),
+    'pyasn1': ('http://snmplabs.com/pyasn1/', None),
+    'pysmi': ('http://snmplabs.com/pysmi/', None),
+    'twisted': ('https://twistedmatrix.com/documents/15.4.0/api/', None)
+}
 
+# this merges constructor docstring with class docstring
+autoclass_content = 'both'
+# Sort members by type
+autodoc_member_order = 'bysource'
 
-
-# Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'https://docs.python.org/': None}
+# Napoleon settings
+napoleon_google_docstring = False
+napoleon_numpy_docstring = True
+napoleon_include_private_with_doc = False
+napoleon_include_special_with_doc = True
+napoleon_use_admonition_for_examples = False
+napoleon_use_admonition_for_notes = False
+napoleon_use_admonition_for_references = False
+napoleon_use_ivar = False
+napoleon_use_param = False
+napoleon_use_rtype = False
