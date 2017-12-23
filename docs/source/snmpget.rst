@@ -62,45 +62,158 @@ identification token between SNMP parties.
    This is the sole reason why SNMP is sometimes jokingly referred to as
    *Security -- Not My Problem*.
 
-SNMP USM security name
-++++++++++++++++++++++
+SNMPv3 USM security name
+++++++++++++++++++++++++
 
 The *-u* option sets SNMP user name to the User Security Module subsystem. This
 is a string from 1 to 32 octets of length. Should be configured in the same way
 at both SNMP entities trying to communicate.
 
-SNMP USM security level
-+++++++++++++++++++++++
+SNMPv3 USM security level
++++++++++++++++++++++++++
 
-The *-l* option configures authentication and encryption features to be used.
+The *-l* option configures authentication and encryption features to be
+used. In SNMP parlance this is known as *Security Level*. Valid values are:
 
 * *noAuthNoPriv*   - no authentication and no encryption
 * *authNoPriv*     - use authentication but no encryption
 * *authPriv*       - use both authentication and encryption
 
+SNMPv3 authentication protocol
+++++++++++++++++++++++++++++++
+
+SNMPv3 messages can be authenticated. The following authentication protocols
+can be chosen via the *-a* option:
+
++--------+----------------+-------------+
+| *ID*   | *Algorithm*    | *Reference* |
++--------+----------------+-------------+
+| NONE   | -              | RFC3414     |
++--------+----------------+-------------+
+| MD5    | HMAC MD5       | RFC3414     |
++--------+----------------+-------------+
+| SHA    | HMAC SHA-1 128 | RFC3414     |
++--------+----------------+-------------+
+| SHA224 | HMAC SHA-2 224 | RFC7860     |
++--------+----------------+-------------+
+| SHA256 | HMAC SHA-2 256 | RFC7860     |
++--------+----------------+-------------+
+| SHA384 | HMAC SHA-2 384 | RFC7860     |
++--------+----------------+-------------+
+| SHA512 | HMAC SHA-2 512 | RFC7860     |
++--------+----------------+-------------+
+
+SNMPv3 authentication key
++++++++++++++++++++++++++
+
+SNMPv3 message authentication involves a shared secret key known to both SNMP
+parties engaged in message exchange. This secret authentication key (AKA
+as passphrase) can be conveyed via the *-A* option.
+
+.. note::
+
+   SNMP authentication key must be at least eight octets long.
+
+SNMPv3 encryption protocol
+++++++++++++++++++++++++++
+
+SNMPv3 messages can be encrypted (AKA as privacy). The following encryption
+protocols can be chosen via the *-x* option:
+
++------------+------------------------+----------------------+
+| *ID*       | *Algorithm*            | *Reference*          |
++------------+------------------------+----------------------+
+| NONE       | -                      | RFC3414              |
++------------+------------------------+----------------------+
+| DES        | DES                    | RFC3414              |
++------------+------------------------+----------------------+
+| AES        | AES CFB 128            | RFC3826              |
++------------+------------------------+----------------------+
+| AES192     | AES CFB 192            | RFC Draft            |
++------------+------------------------+----------------------+
+| AES256     | AES CFB 256            | RFC Draft            |
++------------+------------------------+----------------------+
+| AES192BLMT | AES CFB 192 Blumenthal | RFC Draft            |
++------------+------------------------+----------------------+
+| AES256BLMT | AES CFB 256 Blumenthal | RFC Draft            |
++------------+------------------------+----------------------+
+| 3DES       | Triple DES EDE         | RFC Draft            |
++------------+------------------------+----------------------+
+
+SNMPv3 encryption key
++++++++++++++++++++++
+
+SNMPv3 message encryption involves a shared secret key known to both SNMP
+parties engaged in message exchange. This secret encryption key (AKA
+as passphrase) can be conveyed via the *-A* option.
+
+.. note::
+
+   SNMP encryption (e.g. privacy)  key must be at least eight octets long.
+
+SNMPv3 context engine ID
+++++++++++++++++++++++++
+
+The *-E* option sets the context engineID used for SNMPv3 REQUEST messages
+scopedPdu, given as a hexadecimal string. If not specified, this will
+default to the authoritative engineID.
+
+SNMPv3 engine ID
+++++++++++++++++
+
+The *-e* option sets the authoritative (security) engineID used for SNMPv3
+REQUEST messages, given as a hexadecimal string.  It is typically not
+necessary to specify engine ID, as it will usually be discovered
+automatically.
+
+SNMPv3 context name
++++++++++++++++++++
+
+The *-n* option sets the SNMPv3 context name to SNMPv3 REQUEST messages.
+The default is the empty string. SNMP context name is used to address a
+specific instance of SNMP managed objects behind a single SNMP agent.
+
+SNMPv3 engine boots and time
+++++++++++++++++++++++++++++
+
+The *-Z* option sets SNMP engine boot counter and its timeline values to
+SNMPv3 REQUEST message. These values are used for message authentication.
+It is typically not necessary to specify this option, as these values will
+usually be discovered automatically.
+
+MIB options
+-----------
+
+Pre-load MIBs
++++++++++++++
+
+You may want to pre-load some of the MIB modules to let the tool rendering
+SNMP responses in a more meaningful way.
+
+The *-m* option specifies a colon separated list of MIB modules (not files)
+to load. The tool will first try to find pre-compiled pysnmp MIB files (by
+default in *~/.pysnmp/mibs* in UNIX), then try to find required ASN.1 MIB
+file on local filesystem or on Web (by default it will look it up at
+*http://mibs.snmplabs.com/asn1/*). If ASN.1 MIB file is found, it will be
+compiled into pysnmp form and cached for future use.
+
+The special keyword ALL is used to load all pre-compiled pysnmp MIB modules
+in the MIB directory search list.
+
+MIB files search path
++++++++++++++++++++++
+
+The *-M* option specifies a colon separated list of local directories and/or
+URLs pointing to remote HTTP/FTP servers where to search for MIBs.
+
+.. note::
+
+   Default MIB search path is *http://mibs.snmplabs.com/asn1/*
+
+Output options
+--------------
 
 
-   -l SECURITY-LEVEL     security level (noAuthNoPriv|authNoPriv|authPriv)
-   -a AUTH-PROTOCOL      authentication protocol ID (MD5|SHA|SHA224|SHA256|SHA384|SHA512)
-   -A PASSPHRASE         authentication protocol pass phrase (8+ chars)
-   -x PRIV-PROTOCOL      privacy protocol ID (3DES|AES|AES128|AES192|AES192BLMT|AES256|AES256BLMT|DES)
-   -X PASSPHRASE         privacy protocol pass phrase (8+ chars)
-   -E CONTEXT-ENGINE-ID  context engine ID (e.g. 800000020109840301)
-   -e ENGINE-ID          security SNMP engine ID (e.g. 800000020109840301)
-   -n CONTEXT-NAME       SNMP context name (e.g. bridge1)
-   -Z BOOTS,TIME         destination SNMP engine boots/time
-MIB options:
-   -m MIB[:...]   load given list of MIBs (ALL loads all compiled MIBs)
-   -M DIR[:...]   look in given list of directories for MIBs
-   -P MIBOPTS     Toggle various defaults controlling MIB parsing:
-              XS: search for ASN.1 MIBs in remote directories specified
-                  in URL form. The @mib@ token in the URL is substituted
-                  with actual MIB to be downloaded. Default repository
-                  address is http://mibs.snmplabs.com/asn1/@mib@
-              XB: search for pysnmp MIBs in remote directories specified
-                  in URL form. The @mib@ token in the URL is substituted
-                  with actual MIB to be downloaded. Default repository
-                  address is http://mibs.snmplabs.com/pysnmp/fulltexts/@mib@
    -O OUTOPTS     Toggle various defaults controlling output display:
               q:  removes the equal sign and type information
               Q:  removes the type information
