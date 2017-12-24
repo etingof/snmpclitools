@@ -8,6 +8,7 @@
 #
 import os
 from pyasn1.type import univ
+from pyasn1.type import namedval
 from pysnmp_apps.cli import base
 from pysnmp.proto import rfc1902
 from pysnmp.smi import builder, compiler
@@ -174,8 +175,6 @@ class __MibViewGenerator(base.GeneratorTemplate):
                 mibViewProxy.buildObjectDesc = True
             elif c == 'S':
                 mibViewProxy.buildObjectDesc = True
-            elif c == 'u':
-                pass
             elif c == 'n':
                 mibViewProxy.buildObjectDesc = False
                 mibViewProxy.buildModInfo = False
@@ -183,7 +182,7 @@ class __MibViewGenerator(base.GeneratorTemplate):
                 mibViewProxy.buildNumericIndices = True
                 mibViewProxy.buildAbsoluteName = True
             elif c == 'e':
-                raise error.PySnmpError('Option not implemented')
+                mibViewProxy.buildEnums = False
             elif c == 'b':
                 mibViewProxy.buildNumericIndices = True
             elif c == 'E':
@@ -275,6 +274,7 @@ class MibViewProxy:
     buildObjectDesc = True
     buildNumericName = False
     buildAbsoluteName = False
+    buildEnums = True
     buildNumericIndices = False
     buildEqualSign = True
     buildTypeInfo = True
@@ -310,6 +310,7 @@ class MibViewProxy:
         self.__oidValue = univ.ObjectIdentifier()
         self.__intValue = univ.Integer()
         self.__timeValue = rfc1902.TimeTicks()
+        self.__bitsValue = rfc1902.Bits()
 
     def getPrettyOidVal(self, mibViewController, oid, val):
         prefix, label, suffix = mibViewController.getNodeName(oid)
@@ -404,6 +405,10 @@ class MibViewProxy:
                 out += '.'.join(
                     label + tuple([str(x) for x in suffix])
                 )
+            elif (not self.buildEnums and
+                      (self.__intValue.isSuperTypeOf(val) or
+                       self.__bitsValue.isSuperTypeOf(val))):
+                out += syntax.clone(val, namedValues=namedval.NamedValues()).prettyPrint()
             else:
                 out += syntax.clone(val).prettyPrint()
 
