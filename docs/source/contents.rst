@@ -89,7 +89,12 @@ Documentation
 .. toctree::
    :maxdepth: 2
 
-   /snmpget
+   snmpget.py </snmpget>
+   snmpset.py </snmpset>
+   snmpwalk.py </snmpwalk>
+   snmpbulkwalk.py </snmpbulkwalk>
+   snmptrap.py </snmptrap>
+   snmptranslate.py </snmptranslate>
 
 Download
 --------

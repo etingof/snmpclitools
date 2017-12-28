@@ -1,9 +1,10 @@
 
-Revision 0.5.3, released XX-12-2017
+Revision 0.5.3, released 07-01-2018
 -----------------------------------
 
-The *-Oe* option implemented to disable integer/bits enumeration
-rendering.
+* Added Sphinx docs for the command-line tools
+* The *-Oe* option implemented to disable integer/bits enumeration
+  rendering.
 
 Revision 0.5.2, released 18-12-2017
 -----------------------------------
