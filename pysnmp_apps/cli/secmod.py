@@ -317,7 +317,7 @@ def generator(cbCtx, ast):
             ctx['communityName']
         )
 
-    ctx['paramsName'] = '%s-params' % ctx['securityName']
+    ctx['paramsName'] = ctx['securityName']
     config.addTargetParams(
         snmpEngine, ctx['paramsName'], ctx['securityName'],
         ctx['securityLevel'], ctx['versionId']
