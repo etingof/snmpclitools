@@ -116,10 +116,10 @@ class MibViewProxy(mibview.MibViewProxy):
         if self.translateFullDetails:
             if suffix:
                 out = '%s::%s' % (modName, nodeDesc)
-                out = out + ' [ %s ]' % '.'.join([str(x) for x in suffix])
-                out = out + '\n'
+                out += ' [ %s ]' % '.'.join([str(x) for x in suffix])
+                out += '\n'
             else:
-                out = out + '%s::%s\n%s ::= { %s }' % (
+                out += '%s::%s\n%s ::= { %s }' % (
                     modName,
                     nodeDesc,
                     mibNode.asn1Print(),
@@ -130,22 +130,22 @@ class MibViewProxy(mibview.MibViewProxy):
                 len(label) > 1 and label[-2] or ".", label[-1], prefix[-1]
             )
             if suffix:
-                out = out + ' [ %s ]' % '.'.join([str(x) for x in suffix])
-            out = out + ' }'
+                out += ' [ %s ]' % '.'.join([str(x) for x in suffix])
+            out += ' }'
         elif self.translateLabeledOid:
             out = '.' + '.'.join(
                 map(lambda x, y: '%s(%s)' % (y, x),  prefix, label)
             )
             if suffix:
-                out = out + ' [ %s ]' % '.'.join([str(x) for x in suffix])
+                out += ' [ %s ]' % '.'.join([str(x) for x in suffix])
         elif self.translateNumericOid:
             out = '.' + '.'.join([str(x) for x in prefix])
             if suffix:
-                out = out + ' [ %s ]' % '.'.join([str(x) for x in suffix])
+                out += ' [ %s ]' % '.'.join([str(x) for x in suffix])
         elif self.translateSymbolicOid:
             out = '.' + '.'.join(label)
             if suffix:
-                out = out + ' [ %s ]' % '.'.join([str(x) for x in suffix])
+                out += ' [ %s ]' % '.'.join([str(x) for x in suffix])
         if not out:
             out = mibview.MibViewProxy.getPrettyOidVal(
                 self, mibViewController, oid, self._null

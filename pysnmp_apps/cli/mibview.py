@@ -8,6 +8,7 @@
 #
 import os
 from pyasn1.type import univ
+from pyasn1.type import namedval
 from pysnmp_apps.cli import base
 from pysnmp.proto import rfc1902
 from pysnmp.smi import builder, compiler
@@ -174,8 +175,6 @@ class __MibViewGenerator(base.GeneratorTemplate):
                 mibViewProxy.buildObjectDesc = True
             elif c == 'S':
                 mibViewProxy.buildObjectDesc = True
-            elif c == 'u':
-                pass
             elif c == 'n':
                 mibViewProxy.buildObjectDesc = False
                 mibViewProxy.buildModInfo = False
@@ -183,7 +182,7 @@ class __MibViewGenerator(base.GeneratorTemplate):
                 mibViewProxy.buildNumericIndices = True
                 mibViewProxy.buildAbsoluteName = True
             elif c == 'e':
-                raise error.PySnmpError('Option not implemented')
+                mibViewProxy.buildEnums = False
             elif c == 'b':
                 mibViewProxy.buildNumericIndices = True
             elif c == 'E':
@@ -275,6 +274,7 @@ class MibViewProxy:
     buildObjectDesc = True
     buildNumericName = False
     buildAbsoluteName = False
+    buildEnums = True
     buildNumericIndices = False
     buildEqualSign = True
     buildTypeInfo = True
@@ -310,6 +310,7 @@ class MibViewProxy:
         self.__oidValue = univ.ObjectIdentifier()
         self.__intValue = univ.Integer()
         self.__timeValue = rfc1902.TimeTicks()
+        self.__bitsValue = rfc1902.Bits()
 
     def getPrettyOidVal(self, mibViewController, oid, val):
         prefix, label, suffix = mibViewController.getNodeName(oid)
@@ -320,7 +321,7 @@ class MibViewProxy:
             if self.buildModInfo:
                 out = '%s::' % modName
             if self.buildObjectDesc:
-                out = out + nodeDesc
+                out += nodeDesc
             else:
                 if self.buildNumericName:
                     name = prefix
@@ -328,37 +329,37 @@ class MibViewProxy:
                     name = label
                 if not self.buildAbsoluteName:
                     name = name[len(self.defaultOidPrefix):]
-                out = out + '.'.join([str(x) for x in name])
+                out += '.'.join([str(x) for x in name])
 
             if suffix:
                 if suffix == (0,):
-                    out = out + '.0'
+                    out += '.0'
                 else:
                     m, n, s = mibViewController.getNodeLocation(prefix[:-1])
                     rowNode, = mibViewController.mibBuilder.importSymbols(
                         m, n
                     )
                     if self.buildNumericIndices:
-                        out = out + '.' + '.'.join([str(x) for x in suffix])
+                        out += '.' + '.'.join([str(x) for x in suffix])
                     else:
                         try:
                             for i in rowNode.getIndicesFromInstId(suffix):
                                 if self.buildEscQuotes:
-                                    out = out + '.\\\"%s\\\"' % i.prettyOut(i)
+                                    out += '.\\\"%s\\\"' % i.prettyOut(i)
                                 elif self.buildSquareBrackets:
-                                    out = out + '.[%s]' % i.prettyOut(i)
+                                    out += '.[%s]' % i.prettyOut(i)
                                 else:
-                                    out = out + '.\"%s\"' % i.prettyOut(i)
+                                    out += '.\"%s\"' % i.prettyOut(i)
                         except Exception:
-                            out = out + '.' + '.'.join(
+                            out += '.' + '.'.join(
                                 [str(x) for x in suffix]
                             )
 
         if self.buildObjectName and self.buildValue:
             if self.buildEqualSign:
-                out = out + ' = '
+                out += ' = '
             else:
-                out = out + ' '
+                out += ' '
 
         # Value
         if self.buildValue:
@@ -374,42 +375,46 @@ class MibViewProxy:
             if syntax is None:  # lame Agent may return a non-instance OID
                 syntax = unknownSyntax
             if self.buildTypeInfo:
-                out = out + '%s: ' % syntax.__class__.__name__
+                out += '%s: ' % syntax.__class__.__name__
             if self.buildRawVals:
-                out = out + str(val)
+                out += str(val)
             elif self.buildHexVals:  # XXX make it always in hex?
                 if self.__intValue.isSuperTypeOf(val):
-                    out = out + '%x' % int(val)
+                    out += '%x' % int(val)
                 elif self.__timeValue.isSameTypeWith(val):
-                    out = out + '%x' % int(val)
+                    out += '%x' % int(val)
                 elif self.__oidValue.isSuperTypeOf(val):
-                    out = out + ' '.join(['%x' % x for x in tuple(val)])
+                    out += ' '.join(['%x' % x for x in tuple(val)])
                 else:
-                    out = out + ' '.join(['%.2x' % x for x in val.asNumbers()])
+                    out += ' '.join(['%.2x' % x for x in val.asNumbers()])
             elif self.__timeValue.isSameTypeWith(val):
                 if self.buildRawTimeTicks:
-                    out = out + str(int(val))
+                    out += str(int(val))
                 else:  # TimeTicks is not a TC
                     val = int(val)
                     d, m = divmod(val, 8640000)
-                    out = out + '%d days ' % d
+                    out += '%d days ' % d
                     d, m = divmod(m, 360000)
-                    out = out + '%d:' % d
+                    out += '%d:' % d
                     d, m = divmod(m, 6000)
-                    out = out + '%d:' % d
+                    out += '%d:' % d
                     d, m = divmod(m, 100)
-                    out = out + '%d.%d' % (d, m)
+                    out += '%d.%d' % (d, m)
             elif self.__oidValue.isSuperTypeOf(val):
                 oid, label, suffix = mibViewController.getNodeName(val)
-                out = out + '.'.join(
+                out += '.'.join(
                     label + tuple([str(x) for x in suffix])
                 )
+            elif (not self.buildEnums and
+                      (self.__intValue.isSuperTypeOf(val) or
+                       self.__bitsValue.isSuperTypeOf(val))):
+                out += syntax.clone(val, namedValues=namedval.NamedValues()).prettyPrint()
             else:
-                out = out + syntax.clone(val).prettyPrint()
+                out += syntax.clone(val).prettyPrint()
 
             if self.buildUnits:
                 if hasattr(mibNode, 'getUnits'):
-                    out = out + ' %s' % mibNode.getUnits()
+                    out += ' %s' % mibNode.getUnits()
 
         return out
 
