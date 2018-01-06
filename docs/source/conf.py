@@ -52,7 +52,7 @@ master_doc = 'contents'
 
 # General information about the project.
 project = 'SNMP Commands'
-copyright = '2005-2017, Ilya Etingof <etingof@gmail.com>'
+copyright = '2005-2018, Ilya Etingof <etingof@gmail.com>'
 author = 'Ilya Etingof <etingof@gmail.com>'
 
 # The version info for the project you're documenting, acts as replacement for

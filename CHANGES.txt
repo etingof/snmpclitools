@@ -1,10 +1,11 @@
 
-Revision 0.5.4, released XX-01-2018
+Revision 0.5.4, released 06-01-2018
 -----------------------------------
 
-* Added Sphinx docs for the command-line tools
-* The *-Oe* option implemented to disable integer/bits enumeration
+- Added Sphinx docs for the command-line tools
+- The *-Oe* option implemented to disable integer/bits enumeration
   rendering.
+- Copyright extended towards 2018
 
 Revision 0.5.2, released 22-12-2017
 -----------------------------------

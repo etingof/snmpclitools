@@ -2,7 +2,7 @@
 #
 # This file is part of pysnmp-apps software.
 #
-# Copyright (c) 2005-2017, Ilya Etingof <etingof@gmail.com>
+# Copyright (c) 2005-2018, Ilya Etingof <etingof@gmail.com>
 # License: http://snmplabs.com/pysnmp/license.html
 #
 # SET command generator
