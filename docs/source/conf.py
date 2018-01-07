@@ -100,7 +100,7 @@ html_theme_options = {
     'description': '<p align=left><i><b>Brewing free software for the greater good</i></b></p>',
     'show_powered_by': False,
     'github_user': 'etingof',
-    'github_repo': 'pysnmp-apps',
+    'github_repo': 'snmpclitools',
     'fixed_sidebar': True,
 }
 

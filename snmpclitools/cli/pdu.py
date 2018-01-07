@@ -1,15 +1,15 @@
 #
-# This file is part of pysnmp-apps software.
+# This file is part of snmpclitools software.
 #
 # Copyright (c) 2005-2018, Ilya Etingof <etingof@gmail.com>
-# License: http://snmplabs.com/pysnmp/license.html
+# License: http://snmplabs.com/snmpclitools/license.html
 #
 import sys
 from pyasn1.type import univ
 from pyasn1.error import PyAsn1Error
 from pysnmp.proto import rfc1902
 from pysnmp import error
-from pysnmp_apps.cli import base
+from snmpclitools.cli import base
 
 # Read class
 

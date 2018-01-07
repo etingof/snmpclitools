@@ -1,14 +1,14 @@
 #
-# This file is part of pysnmp-apps software.
+# This file is part of snmpclitools software.
 #
 # Copyright (c) 2005-2018, Ilya Etingof <etingof@gmail.com>
-# License: http://snmplabs.com/pysnmp/license.html
+# License: http://snmplabs.com/snmpclitools/license.html
 #
 import sys
 from pysnmp.smi import view
-from pysnmp_apps.cli import base
+from snmpclitools.cli import base
 from pysnmp import error
-from pysnmp_apps import __version__ as pysnmpAppsVersion
+from snmpclitools import __version__ as pysnmpAppsVersion
 
 try:
     from pysnmp import __version__ as pysnmpVersion

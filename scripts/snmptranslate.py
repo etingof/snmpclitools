@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 #
-# This file is part of pysnmp-apps software.
+# This file is part of snmpclitools software.
 #
 # Copyright (c) 2005-2018, Ilya Etingof <etingof@gmail.com>
-# License: http://snmplabs.com/pysnmp/license.html
+# License: http://snmplabs.com/snmpclitools/license.html
 #
 # Command-line MIB browser
 #
 import sys
 import traceback
 from pysnmp.entity import engine
-from pysnmp_apps.cli import main, pdu, mibview, base
+from snmpclitools.cli import main, pdu, mibview, base
 from pysnmp.smi.error import NoSuchObjectError
 from pysnmp import error
 from pyasn1.type import univ

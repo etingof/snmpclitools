@@ -19,14 +19,14 @@ of computing platforms and ease introducing new SNMP features
 by leveraging the high-level programming language.
 
 These SNMP tools are free and open-source. Source code is hosted in
-a `GitHub repo <https://github.com/etingof/pysnmp-apps>`_ and
+a `GitHub repo <https://github.com/etingof/snmpclitools>`_ and
 distributed under 2-clause BSD-style license.
 
 Quick start
 -----------
 
 If you understand SNMP and have some experience with the Net-SNMP tool set,
-you do not need to learn much. Just install *pysnmp-apps* and run the
+you do not need to learn much. Just install *snmpclitools* and run the
 *.py*-suffixed version of the SNMP tool you want.
 
 .. code-block:: bash
@@ -103,7 +103,7 @@ Best way is usually to
 
 .. code-block:: bash
 
-   # pip install pysnmp-apps
+   # pip install snmpclitools
    
 If that does not work for you for some reason, you might need to read the 
 following page.
@@ -133,5 +133,5 @@ Contact
 -------
 
 In case of questions or issues using these SNMP tools, please open up an
-`issue <https://github.com/etingof/pysnmp-apps/issues>`_ at GitHub.
+`issue <https://github.com/etingof/snmpclitools/issues>`_ at GitHub.
 Or just fix it and send us a pull request. ;-)

@@ -7,8 +7,8 @@ Getting SNMP tools
 
 The SNMP tools are provided under terms and conditions of BSD-style
 license, and can be freely downloaded from 
-`PyPI <http://pypi.python.org/pypi/pysnmp-apps/>`_ or
-GitHub (`master branch <https://github.com/etingof/pysnmp-apps/archive/master.zip>`_).
+`PyPI <http://pypi.python.org/pypi/snmpclitools/>`_ or
+GitHub (`master branch <https://github.com/etingof/snmpclitools/archive/master.zip>`_).
 
 The best way to obtain SNMP tools and dependencies is to *pip install*
 them all into a Python virtual environment:
@@ -17,13 +17,13 @@ them all into a Python virtual environment:
 
    $ python3 -m venv venv3
    $ . venv3/bin/activate
-   $ pip install pysnmp-apps
+   $ pip install snmpclitools
 
 or
 
 .. code-block:: bash
 
-   $ easy_install pysnmp-apps
+   $ easy_install snmpclitools
 
 In case you do not have the *easy_install* command on your system but still
 would like to use the on-line package installation method, please install 
@@ -63,7 +63,7 @@ The installation procedure for all the above packages is as follows
    # cd .. 
    # rm -rf package-X.X.X
 
-In case of any issues, please open a `GitHub issue <https://github.com/etingof/pysnmp-apps/issues/new>`_ so
+In case of any issues, please open a `GitHub issue <https://github.com/etingof/snmpclitools/issues/new>`_ so
 we could try to help out.
 
 

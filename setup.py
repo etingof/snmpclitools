@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 #
-# This file is part of pysnmp-apps software.
+# This file is part of snmpclitools software.
 #
 # Copyright (c) 2005-2018, Ilya Etingof <etingof@gmail.com>
-# License: http://snmplabs.com/pysnmp/license.html
+# License: http://snmplabs.com/snmpclitools/license.html
 #
 """SNMP command-line tools
 
@@ -80,18 +80,18 @@ doclines = [x.strip() for x in (__doc__ or '').split('\n') if x]
 
 params.update(
     {
-        'name': 'pysnmp-apps',
-        'version': open('pysnmp_apps/__init__.py').read().split('\'')[1],
+        'name': 'snmpclitools',
+        'version': open('snmpclitools/__init__.py').read().split('\'')[1],
         'description': doclines[0],
         'long_description': ' '.join(doclines[1:]),
         'maintainer': 'Ilya Etingof <etingof@gmail.com>',
         'author': 'Ilya Etingof',
         'author_email': 'etingof@gmail.com',
-        'url': 'https://github.com/etingof/pysnmp-apps',
+        'url': 'https://github.com/etingof/snmpclitools',
         'classifiers': [x for x in classifiers.split('\n') if x],
         'platforms': ['any'],
         'license': 'BSD',
-        'packages': ['pysnmp_apps', 'pysnmp_apps.cli'],
+        'packages': ['snmpclitools', 'snmpclitools.cli'],
         'scripts': ['scripts/snmpget.py',
                     'scripts/snmpset.py',
                     'scripts/snmpwalk.py',

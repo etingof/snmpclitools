@@ -1,13 +1,13 @@
 #
-# This file is part of pysnmp-apps software.
+# This file is part of snmpclitools software.
 #
 # Copyright (c) 2005-2018, Ilya Etingof <etingof@gmail.com>
-# License: http://snmplabs.com/pysnmp/license.html
+# License: http://snmplabs.com/snmpclitools/license.html
 #
 import socket
-from pysnmp_apps.cli import base
+from snmpclitools.cli import base
 from pysnmp.carrier.asynsock.dgram import udp, udp6
-from pysnmp_apps.error import SnmpApplicationError
+from snmpclitools.error import SnmpApplicationError
 from pysnmp.entity import config
 from pysnmp import error
 

@@ -1,17 +1,17 @@
 
-Pure-Python SNMP management tools
----------------------------------
+Command-line SNMP tools
+-----------------------
 
-[![PyPI](https://img.shields.io/pypi/v/pysnmp-apps.svg?maxAge=2592000)](https://pypi.python.org/pypi/pysnmp-apps)
-[![Python Versions](https://img.shields.io/pypi/pyversions/pysnmp-apps.svg)](https://pypi.python.org/pypi/pysnmp-apps/)
-[![Build status](https://travis-ci.org/etingof/pysnmp-apps.svg?branch=master)](https://secure.travis-ci.org/etingof/pysnmp-apps)
-[![GitHub license](https://img.shields.io/badge/license-BSD-blue.svg)](https://raw.githubusercontent.com/etingof/pysnmp-apps/master/LICENSE.txt)
+[![PyPI](https://img.shields.io/pypi/v/snmpclitools.svg?maxAge=2592000)](https://pypi.python.org/pypi/snmpclitools)
+[![Python Versions](https://img.shields.io/pypi/pyversions/snmpclitools.svg)](https://pypi.python.org/pypi/snmpclitools/)
+[![Build status](https://travis-ci.org/etingof/snmpclitools.svg?branch=master)](https://secure.travis-ci.org/etingof/snmpclitools)
+[![GitHub license](https://img.shields.io/badge/license-BSD-blue.svg)](https://raw.githubusercontent.com/etingof/snmpclitools/master/LICENSE.txt)
 
-Here is a set of SNMP applications written on top of
-[pysnmp](http://snmplabs.com/pysnmp/) library. Some of these tools mimic
-their famous [Net-SNMP](http://sourceforge.net/projects/net-snmp/)
-counterparts, while the rest are designed to ease integration with
-other Python applications.
+This is a collection of command-line SNMP tools written in pure-Python.
+The tools mimic their famous [Net-SNMP](http://sourceforge.net/projects/net-snmp/)
+counterparts.
+
+In the past this project was known as *pysnmp-apps*.
 
 Features
 --------
@@ -28,17 +28,17 @@ Features
 Download
 --------
 
-The pysnmp-apps package is distributed under terms and conditions of 2-clause
-BSD [license](http://snmplabs.com/pysnmp/license.html). Source code is freely
-available as a Github [repo](https://github.com/etingof/pysnmp-apps).
+The snmpclitools package is distributed under terms and conditions of 2-clause
+BSD [license](http://snmplabs.com/snmpclitools/license.html). Source code is freely
+available as a Github [repo](https://github.com/etingof/snmpclitools).
 
 Installation
 ------------
 
-Download pysnmp-apps from [PyPI](https://pypi.python.org/pypi/pysnmp-apps) or just run:
+Download snmpclitools from [PyPI](https://pypi.python.org/pypi/snmpclitools) or just run:
 
 ```bash
-$ pip install pysnmp-apps
+$ pip install snmpclitools
 ```
 
 How to use the tools
@@ -66,13 +66,13 @@ notWritable(17)
 For more information, please, run any of these tools with --help option.
 
 You can play with different security protocols against the publicly available SNMP
-agent like [this one @snmplabs.com](http://snmplabs.com/snmpsim/public-snmp-agent-simulator.html>).
+agent like [this one @snmplabs.com](http://snmplabs.com/snmpsim/public-snmp-agent-simulator.html).
 
 Getting help
 ------------
 
-If something does not work as expected, try browsing PySNMP
-[mailing list archives](http://sourceforge.net/mail/?group_id=14735) or post
+If something does not work as expected, please open up a
+[GitHub issue](https://github.com/etingof/snmpclitools/issues/new) or post
 your question [to Stack Overflow](http://stackoverflow.com/questions/ask).
 
 Feedback and collaboration

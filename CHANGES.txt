@@ -1,4 +1,10 @@
 
+Revision 0.6.1, released 07-01-2018
+-----------------------------------
+
+- The pysnmp-apps project renamed into a hopefully more meaningful
+  snmpclitools
+
 Revision 0.5.3, released 06-01-2018
 -----------------------------------
 
@@ -66,7 +72,7 @@ Revision 0.3.4, released 05-10-2013
 Revision 0.3.3, released 30-01-2013
 -----------------------------------
 
-- Tools will report pysnmp-apps package version along with pysnmp version
+- Tools will report snmpclitools package version along with pysnmp version
   being used.
 - Package meta-information updated.
 - Package version is now in __init__.__version__
@@ -213,4 +219,4 @@ Revision 0.0.1
 - PySNMP-based applications split off the pysnmp package and re-released
   on their own
 - The command line interface to SNMP tools previously shipped along with PySNMP
-  not reworked for a more consistent design and re-released within pysnmp-apps.
+  not reworked for a more consistent design and re-released within snmpclitools.

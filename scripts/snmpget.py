@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 #
-# This file is part of pysnmp-apps software.
+# This file is part of snmpclitools software.
 #
 # Copyright (c) 2005-2018, Ilya Etingof <etingof@gmail.com>
-# License: http://snmplabs.com/pysnmp/license.html
+# License: http://snmplabs.com/snmpclitools/license.html
 #
 # GET command generator
 #
 import sys
 import traceback
-from pysnmp_apps.cli import main, msgmod, secmod, target, pdu, mibview, base
+from snmpclitools.cli import main, msgmod, secmod, target, pdu, mibview, base
 from pysnmp.entity import engine
 from pysnmp.entity.rfc3413 import cmdgen
 from pysnmp import error
