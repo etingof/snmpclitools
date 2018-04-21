@@ -7,7 +7,7 @@ Getting SNMP tools
 
 The SNMP tools are provided under terms and conditions of BSD-style
 license, and can be freely downloaded from 
-`PyPI <http://pypi.python.org/pypi/snmpclitools/>`_ or
+`PyPI <http://pypi.org/project/snmpclitools/>`_ or
 GitHub (`master branch <https://github.com/etingof/snmpclitools/archive/master.zip>`_).
 
 The best way to obtain SNMP tools and dependencies is to *pip install*
@@ -27,7 +27,7 @@ or
 
 In case you do not have the *easy_install* command on your system but still
 would like to use the on-line package installation method, please install 
-`setuptools <http://pypi.python.org/pypi/setuptools>`_ package by 
+`setuptools <http://pypi.org/project/setuptools>`_ package by 
 downloading and running `ez_setup.pz <https://bootstrap.pypa.io/ez_setup.py>`_ bootstrap:
 
 .. code-block:: bash
@@ -38,18 +38,18 @@ downloading and running `ez_setup.pz <https://bootstrap.pypa.io/ez_setup.py>`_ b
 In case you are installing SNMP tools on an off-line system, the following
 packages need to be downloaded and installed:
 
-* `PyASN1 <https://pypi.python.org/pypi/pyasn1>`_,
+* `PyASN1 <https://pypi.org/project/pyasn1>`_,
   used for handling ASN.1 objects
-* `PySNMP <https://pypi.python.org/pypi/pysnmp/>`_,
+* `PySNMP <https://pypi.org/project/pysnmp/>`_,
   SNMP engine implementation
 
 Optional, but recommended:
 
-* `PyCryptodomex <https://pypi.python.org/pypi/pycryptodomex/>`_,
+* `PyCryptodomex <https://pypi.org/project/pycryptodomex/>`_,
   used by SNMPv3 crypto features
-* `PySMI <https://pypi.python.org/pypi/pysmi/>`_ for automatic
+* `PySMI <https://pypi.org/project/pysmi/>`_ for automatic
   MIB download and compilation. That helps visualizing more SNMP objects
-* `Ply <https://pypi.python.org/pypi/ply/>`_, parser generator
+* `Ply <https://pypi.org/project/ply/>`_, parser generator
   required by PySMI
 
 The installation procedure for all the above packages is as follows 
