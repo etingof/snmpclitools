@@ -23,7 +23,7 @@ Features
 * Automatically downloads required MIBs from the Internet
 * Runs over IPv4 and/or IPv6 transports
 * Cross-platform: works on Linux, Windows and OS X.
-* 100% Python, works with Python 2.4 up to Python 3.6
+* 100% Python, works with Python 2.4 up to Python 3.7
 
 Download
 --------

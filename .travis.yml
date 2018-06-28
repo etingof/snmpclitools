@@ -1,5 +1,5 @@
-
 language: python
+cache: pip
 python:
 # temporary broken
 #  - "2.6"
@@ -8,6 +8,8 @@ python:
   - "3.3"
   - "3.4"
   - "3.5"
+  - "3.6"
+  - "3.7"
   - "nightly"
   - "pypy"
 # temporary broken
