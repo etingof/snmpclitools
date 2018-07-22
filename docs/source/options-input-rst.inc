@@ -1,6 +1,4 @@
 
-.. _options-input:
-
 Input options
 -------------
 

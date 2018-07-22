@@ -12,18 +12,18 @@ is tightly aligned with its
 
 Command line syntax is as follows:
 
-|SNMPTOOL| [:ref:`options <options>`] <:ref:`peer-address <snmpwalk-peer-address>`> <:ref:`mib-object <snmpwalk-mib-objects>` [:ref:`mib-object <snmpwalk-mib-objects>` [...]]>
+|SNMPTOOL| [:ref:`options <snmpwalk-options>`] <:ref:`peer-address <snmpwalk-peer-address>`> <:ref:`mib-object <snmpwalk-mib-objects>` [:ref:`mib-object <snmpwalk-mib-objects>` [...]]>
 
 Options always start with dash (-), other parameters are positional.
 
-.. _options:
+.. _snmpwalk-options:
 
 Options can be categorized by the part they are tackling e.g.
 
-* :ref:`SNMP protocol <options-protocol>`
-* :ref:`MIB modules <options-mibs>`
-* :ref:`input <options-input>`/:ref:`output <options-output>` formatting
-* :ref:`network I/O <options-network>`
+* :ref:`SNMP protocol <snmpwalk-options-protocol>`
+* :ref:`MIB modules <snmpwalk-options-mibs>`
+* :ref:`input <snmpwalk-options-input>`/:ref:`output <snmpwalk-options-output>` formatting
+* :ref:`network I/O <snmpwalk-options-network>`
 * :ref:`SNMP GETNEXT <options-getnext>` command specifics
 
 Past these named options, mandatory positional parameters follow:
@@ -31,10 +31,24 @@ Past these named options, mandatory positional parameters follow:
 * :ref:`SNMP peer address <snmpwalk-peer-address>`
 * :ref:`MIB object(s) to work on <snmpwalk-mib-objects>`
 
+.. _snmpwalk-options-protocol:
+
 .. include:: options-protocol-rst.inc
+
+.. _snmpwalk-options-mibs:
+
 .. include:: options-mib-rst.inc
+
+.. _snmpwalk-options-input:
+
 .. include:: options-input-rst.inc
+
+.. _snmpwalk-options-output:
+
 .. include:: options-output-rst.inc
+
+.. _snmpwalk-options-network:
+
 .. include:: options-network-rst.inc
 
 .. _options-getnext:

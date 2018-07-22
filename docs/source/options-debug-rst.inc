@@ -1,4 +1,3 @@
-.. _options-debug:
 
 Debugging options
 -----------------

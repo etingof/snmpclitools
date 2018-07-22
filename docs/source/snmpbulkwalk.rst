@@ -18,18 +18,18 @@ is tightly aligned with its
 
 Command line syntax is as follows:
 
-|SNMPTOOL| [:ref:`options <options>`] <:ref:`peer-address <snmpbulkwalk-peer-address>`> <:ref:`mib-object <snmpbulkwalk-mib-objects>` [:ref:`mib-object <snmpbulkwalk-mib-objects>` [...]]>
+|SNMPTOOL| [:ref:`options <snmpbulkwalk-options>`] <:ref:`peer-address <snmpbulkwalk-peer-address>`> <:ref:`mib-object <snmpbulkwalk-mib-objects>` [:ref:`mib-object <snmpbulkwalk-mib-objects>` [...]]>
 
 Options always start with dash (-), other parameters are positional.
 
-.. _options:
+.. _snmpbulkwalk-options:
 
 Options can be categorized by the part they are tackling e.g.
 
-* :ref:`SNMP protocol <options-protocol>`
-* :ref:`MIB modules <options-mibs>`
-* :ref:`input <options-input>`/:ref:`output <options-output>` formatting
-* :ref:`network I/O <options-network>`
+* :ref:`SNMP protocol <snmpbulkwalk-options-protocol>`
+* :ref:`MIB modules <snmpbulkwalk-options-mibs>`
+* :ref:`input <snmpbulkwalk-options-input>`/:ref:`output <snmpbulkwalk-options-output>` formatting
+* :ref:`network I/O <snmpbulkwalk-options-network>`
 * :ref:`SNMP GETBULK <options-getbulk>` command specifics
 
 Past these named options, mandatory positional parameters follow:
@@ -37,10 +37,24 @@ Past these named options, mandatory positional parameters follow:
 * :ref:`SNMP peer address <snmpbulkwalk-peer-address>`
 * :ref:`MIB object(s) to work on <snmpbulkwalk-mib-objects>`
 
+.. _snmpbulkwalk-options-protocol:
+
 .. include:: options-protocol-rst.inc
+
+.. _snmpbulkwalk-options-mibs:
+
 .. include:: options-mib-rst.inc
+
+.. _snmpbulkwalk-options-input:
+
 .. include:: options-input-rst.inc
+
+.. _snmpbulkwalk-options-output:
+
 .. include:: options-output-rst.inc
+
+.. _snmpbulkwalk-options-network:
+
 .. include:: options-network-rst.inc
 
 .. _options-getbulk:
@@ -89,6 +103,8 @@ Report responses count
 
 The *-Cp* option makes |SNMPTOOL| reporting the total count of fetched and
 reported MIB objects during its walk.
+
+.. _snmpbulkwalk-options-debug:
 
 .. include:: options-debug-rst.inc
 

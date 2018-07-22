@@ -15,24 +15,35 @@ Its usage is tightly aligned with its
 
 Command line syntax is as follows:
 
-|SNMPTOOL| [:ref:`options <options>`] <:ref:`mib-object <snmptranslate-mib-objects>` [:ref:`mib-object <snmptranslate-mib-objects>` [...]]>
+|SNMPTOOL| [:ref:`options <snmptranslate-options>`] <:ref:`mib-object <snmptranslate-mib-objects>` [:ref:`mib-object <snmptranslate-mib-objects>` [...]]>
 
 Options always start with dash (-), other parameters are positional.
 
-.. _options:
+.. _snmptranslate-options:
 
 Options can be categorized by the part they are tackling e.g.
 
-* :ref:`MIB modules <options-mibs>`
-* :ref:`input <options-input>`/:ref:`output <options-output>` formatting
+* :ref:`MIB modules <snmptranslate-options-mibs>`
+* :ref:`input <snmptranslate-options-input>`/:ref:`output <snmptranslate-options-output>` formatting
 
 Past these named options, mandatory positional parameters follow:
 
 * :ref:`MIB object(s) to look up <snmptranslate-mib-objects>`
 
+.. _snmptranslate-options-mibs:
+
 .. include:: options-mib-rst.inc
+
+.. _snmptranslate-options-input:
+
 .. include:: options-input-rst.inc
+
+.. _snmptranslate-options-output:
+
 .. include:: options-output-rst.inc
+
+.. _snmptranslate-options-debug:
+
 .. include:: options-debug-rst.inc
 
 .. _snmptranslate-mib-objects:

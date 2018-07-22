@@ -1,6 +1,4 @@
 
-.. _options-protocol:
-
 Protocol options
 ----------------
 

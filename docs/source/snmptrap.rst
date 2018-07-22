@@ -20,24 +20,26 @@ and `snmpinform <http://www.net-snmp.org/docs/man/snmpinform.html>`_.
 
 Command line syntax is as follows:
 
-|SNMPTOOL| [:ref:`options <options>`] <:ref:`peer-address <snmptrap-peer-address>`> <:ref:`trap-parameters <snmptrap-params>`
+|SNMPTOOL| [:ref:`options <snmptrap-options>`] <:ref:`peer-address <snmptrap-peer-address>`> <:ref:`trap-parameters <snmptrap-params>`
 
 Options always start with dash (-), other parameters are positional.
 
-.. _options:
+.. _snmptrap-options:
 
 Options can be categorized by the part they are tackling e.g.
 
-* :ref:`SNMP protocol <options-protocol>`
-* :ref:`MIB modules <options-mibs>`
-* :ref:`input <options-input>`/:ref:`output <options-output>` formatting
-* :ref:`network I/O <options-network>`
+* :ref:`SNMP protocol <snmptrap-options-protocol>`
+* :ref:`MIB modules <snmptrap-options-mibs>`
+* :ref:`input <snmptrap-options-input>`/:ref:`output <snmptrap-options-output>` formatting
+* :ref:`network I/O <snmptrap-options-network>`
 * :ref:`SNMP TRAP/INFORM <options-snmptrap>` command specifics
 
 Past these named options, mandatory positional parameters follow:
 
 * :ref:`SNMP peer address <snmptrap-peer-address>`
 * :ref:`SNMP TRAP parameters <snmptrap-params>`
+
+.. _snmptrap-options-protocol:
 
 .. include:: options-protocol-rst.inc
 
@@ -48,10 +50,24 @@ Past these named options, mandatory positional parameters follow:
    must have USM configuration tied to the *SNMPv3 engine ID* used by
    the |SNMPTOOL|.
 
+.. _snmptrap-options-mibs:
+
 .. include:: options-mib-rst.inc
+
+.. _snmptrap-options-input:
+
 .. include:: options-input-rst.inc
+
+.. _snmptrap-options-output:
+
 .. include:: options-output-rst.inc
+
+.. _snmptrap-options-network:
+
 .. include:: options-network-rst.inc
+
+.. _snmptrap-options-debug:
+
 .. include:: options-debug-rst.inc
 
 .. _options-snmptrap:

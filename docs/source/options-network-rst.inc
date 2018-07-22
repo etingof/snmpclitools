@@ -1,6 +1,4 @@
 
-.. _options-network:
-
 Network options
 ---------------
 
@@ -19,5 +17,3 @@ The *-t* option specifies how many seconds the |SNMPTOOL| tool should wait
 for the initial request and for each retry to produce any response. Once the
 timeout is reached, the |SNMPTOOL| tool will either send a retry or fail.
 Default is one second.
-
-.. _snmp-peer-address:

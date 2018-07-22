@@ -1,6 +1,4 @@
 
-.. _options-output:
-
 Output options
 --------------
 

@@ -1,6 +1,4 @@
 
-.. _options-mibs:
-
 MIB options
 -----------
 

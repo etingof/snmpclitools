@@ -12,29 +12,46 @@ tightly aligned with its
 
 Command line syntax is as follows:
 
-|SNMPTOOL| [:ref:`options <options>`] <:ref:`peer-address <snmpset-peer-address>`> <:ref:`mib-object <snmpset-mib-objects>` [:ref:`mib-object <snmpset-mib-objects>` [...]]>
+|SNMPTOOL| [:ref:`options <snmpset-options>`] <:ref:`peer-address <snmpset-peer-address>`> <:ref:`mib-object <snmpset-mib-objects>` [:ref:`mib-object <snmpset-mib-objects>` [...]]>
 
 Options always start with dash (-), other parameters are positional.
 
-.. _options:
+.. _snmpset-options:
 
 Options can be categorized by the part they are tackling e.g.
 
-* :ref:`SNMP protocol <options-protocol>`
-* :ref:`MIB modules <options-mibs>`
-* :ref:`input <options-input>`/:ref:`output <options-output>` formatting
-* :ref:`network I/O <options-network>`
+* :ref:`SNMP protocol <snmpset-options-protocol>`
+* :ref:`MIB modules <snmpset-options-mibs>`
+* :ref:`input <snmpset-options-input>`/:ref:`output <snmpset-options-output>` formatting
+* :ref:`network I/O <snmpset-options-network>`
 
 Past these named options, mandatory positional parameters follow:
 
 * :ref:`SNMP peer address <snmpset-peer-address>`
 * :ref:`MIB object(s) to work on <snmpset-mib-objects>`
 
+.. _snmpset-options-protocol:
+
 .. include:: options-protocol-rst.inc
+
+.. _snmpset-options-mibs:
+
 .. include:: options-mib-rst.inc
+
+.. _snmpset-options-input:
+
 .. include:: options-input-rst.inc
+
+.. _snmpset-options-output:
+
 .. include:: options-output-rst.inc
+
+.. _snmpset-options-network:
+
 .. include:: options-network-rst.inc
+
+.. _snmpset-options-debug:
+
 .. include:: options-debug-rst.inc
 
 .. _snmpset-peer-address:
