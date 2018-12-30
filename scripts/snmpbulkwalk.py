@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # This file is part of snmpclitools software.
 #
-# Copyright (c) 2005-2018, Ilya Etingof <etingof@gmail.com>
+# Copyright (c) 2005-2019, Ilya Etingof <etingof@gmail.com>
 # License: http://snmplabs.com/snmpclitools/license.html
 #
 # GETBULK command generator
