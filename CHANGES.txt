@@ -2,7 +2,7 @@
 Revision 0.6.3, released XX-12-2018
 -----------------------------------
 
-No changes yet.
+- Upper constraint pysnmp to 5.0.0 in setup.py as well
 
 Revision 0.6.2, released 30-12-2018
 -----------------------------------
