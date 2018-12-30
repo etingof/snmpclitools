@@ -63,7 +63,7 @@ $ snmpset.py -v2c -c public demo.snmplabs.com SNMPv2-MIB::sysDescr.0 = my-new-de
 notWritable(17)
 ```
 
-For more information, please, run any of these tools with --help option.
+For more information, please, run any of these tools with `--help` option.
 
 You can play with different security protocols against the publicly available SNMP
 agent like [this one @snmplabs.com](http://snmplabs.com/snmpsim/public-snmp-agent-simulator.html).
