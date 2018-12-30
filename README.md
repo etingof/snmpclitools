@@ -4,7 +4,7 @@ Command-line SNMP tools
 
 [![PyPI](https://img.shields.io/pypi/v/snmpclitools.svg?maxAge=2592000)](https://pypi.org/project/snmpclitools)
 [![Python Versions](https://img.shields.io/pypi/pyversions/snmpclitools.svg)](https://pypi.org/project/snmpclitools/)
-[![Build status](https://travis-ci.org/etingof/snmpclitools.svg?branch=master)](https://secure.travis-ci.org/etingof/snmpclitools)
+[![Build status](https://travis-ci.org/etingof/snmpclitools.svg?branch=master)](https://travis-ci.org/etingof/snmpclitools)
 [![GitHub license](https://img.shields.io/badge/license-BSD-blue.svg)](https://raw.githubusercontent.com/etingof/snmpclitools/master/LICENSE.txt)
 
 This is a collection of command-line SNMP tools written in pure-Python.
