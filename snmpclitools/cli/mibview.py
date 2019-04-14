@@ -22,16 +22,19 @@ def getUsage():
     return """\
 MIB options:
    -m MIB[:...]   load given list of MIBs (ALL loads all compiled MIBs)
-   -M DIR[:...]   look in given list of directories for MIBs
-   -P MIBOPTS     Toggle various defaults controlling MIB parsing:
-              XS: search for ASN.1 MIBs in remote directories specified
-                  in URL form. The @mib@ token in the URL is substituted
-                  with actual MIB to be downloaded. Default repository
-                  address is %s
-              XB: search for pysnmp MIBs in remote directories specified
-                  in URL form. The @mib@ token in the URL is substituted
-                  with actual MIB to be downloaded. Default repository
-                  address is %s
+   -M DIR[:...]   look in given list of directories (not URLs) for MIBs
+   -P MIBOPTS     Toggle various defaults controlling MIB compiler:
+              XS: search for ASN.1 MIBs in local and/or remote directories
+                  specified in URL form. The @mib@ token in the URL is
+                  substituted by the actual MIB name to be downloaded.
+                  Default repository address is
+                  %s
+              XB: search for compiled pysnmp (*.py) MIBs in local and/or
+                  remote directories specified in URL form (e.g.
+                  file:///pymibs/@mib@). The @mib@ token in the URL is
+                  substituted by the actual MIB name to be downloaded.
+                  Default repository address is
+                  %s
    -O OUTOPTS     Toggle various defaults controlling output display:
               q:  removes the equal sign and type information
               Q:  removes the type information
@@ -101,8 +104,6 @@ class MibViewParserMixIn:
         MibFiles ::= MibFile
         MibFile ::= string
 
-        ParserOption ::= parseropts string
-        ParserOption ::= parseropts whitespace string
         ParserOption ::= parseropts string whitespace Url
         ParserOption ::= parseropts whitespace string whitespace Url
         Url ::= string semicolon string
@@ -121,11 +122,9 @@ class __MibViewGenerator(base.GeneratorTemplate):
     # Load MIB modules
     def n_MibFile(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
-        mibBuilder = snmpEngine.getMibBuilder()
-        if node[0].attr.lower() == 'all':
-            mibBuilder.loadModules()
-        else:
-            mibBuilder.loadModules(node[0].attr)
+        if 'MibFiles' not in ctx:
+            ctx['MibFiles'] = []
+        ctx['MibFiles'].append(node[0].attr)
 
     def n_MibDir(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
@@ -140,21 +139,22 @@ class __MibViewGenerator(base.GeneratorTemplate):
     def n_ParserOption_exit(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
         opt = node[1].attr or node[2].attr
-        for c in opt:
-            if c == 'XS':
-                if 'MibDir' not in ctx:
-                    ctx['MibDir'] = []
-                if 'Url' not in ctx:
-                    raise error.PySnmpError('Missing URL for option')
-                ctx['MibDir'].append(ctx['Url'])
-                del ctx['Url']
-            elif c == 'XB':
-                if 'MibBorrowers' not in ctx:
-                    ctx['MibBorrowers'] = []
-                if 'Url' not in ctx:
-                    raise error.PySnmpError('Missing URL for option')
-                ctx['MibBorrowers'].append(ctx['Url'])
-                del ctx['Url']
+        if opt == 'XS':
+            if 'MibDir' not in ctx:
+                ctx['MibDir'] = []
+            if 'Url' not in ctx:
+                raise error.PySnmpError('Missing URL for option')
+            ctx['MibDir'].append(ctx['Url'])
+            del ctx['Url']
+        elif opt == 'XB':
+            if 'MibBorrowers' not in ctx:
+                ctx['MibBorrowers'] = []
+            if 'Url' not in ctx:
+                raise error.PySnmpError('Missing URL for option')
+            ctx['MibBorrowers'].append(ctx['Url'])
+            del ctx['Url']
+        else:
+            raise error.PySnmpError('bad -P option arguments: %s' % opt)
 
     def n_OutputOption(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
@@ -233,7 +233,7 @@ def generator(cbCtx, ast):
     if 'mibViewProxy' not in ctx:
         ctx['mibViewProxy'] = MibViewProxy(ctx['mibViewController'])
 
-    compiler.addMibCompiler(snmpEngine.getMibBuilder())
+#    compiler.addMibCompiler(snmpEngine.getMibBuilder())
 
     snmpEngine, ctx = __MibViewGenerator().preorder((snmpEngine, ctx), ast)
 
@@ -245,6 +245,16 @@ def generator(cbCtx, ast):
     compiler.addMibCompiler(snmpEngine.getMibBuilder(),
                             sources=ctx['MibDir'],
                             borrowers=ctx['MibBorrowers'])
+
+    if 'MibFiles' in ctx:
+        mibBuilder = snmpEngine.getMibBuilder()
+
+        for mibFile in ctx['MibFiles']:
+            if mibFile.lower() == 'all':
+                mibBuilder.loadModules()
+            else:
+                mibBuilder.loadModules(mibFile)
+
     return snmpEngine, ctx
 
 
