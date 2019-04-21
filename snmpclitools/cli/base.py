@@ -5,12 +5,13 @@
 # License: http://snmplabs.com/snmpclitools/license.html
 #
 import sys
+
 from snmpclitools.cli import spark
+
 
 # AST
 
-
-class ConfigToken:
+class ConfigToken(object):
     # Abstract grammar token
     def __init__(self, typ, attr=None):
         self.type = typ
@@ -44,7 +45,7 @@ class ConfigToken:
             return '%s(%s)' % (self.type, self.attr)
 
 
-class ConfigNode:
+class ConfigNode(object):
     # AST node class -- N-ary tree
     def __init__(self, typ, attr=None):
         self.type, self.attr = typ, attr
@@ -55,6 +56,7 @@ class ConfigNode:
 
     def __len__(self):
         return len(self._kids)
+
     if sys.version_info[0] < 3:
         def __setslice__(self, low, high, seq):
             self._kids[low:high] = seq
@@ -89,51 +91,52 @@ class ConfigNode:
 
 # Scanner
 
-class __ScannerTemplate(spark.GenericScanner):
+class _ScannerTemplate(spark.GenericScanner):
     def tokenize(self, data):
         self.rv = []
         spark.GenericScanner.tokenize(self, data)
         return self.rv
 
 
-class __FirstLevelScanner(__ScannerTemplate):
+class _FirstLevelScanner(_ScannerTemplate):
     def t_string(self, s):
-        r' [!#\$%&\'\(\)\*\+,\.//0-9<=>\?@A-Z\\\^_`a-z\{\|\}~][!#\$%&\'\(\)\*\+,\-\.//0-9<=>\?@A-Z\\\^_`a-z\{\|\}~]* '
+        """ [!#\$%&\'\(\)\*\+,\.//0-9<=>\?@A-Z\\\^_`a-z\{\|\}~][!#\$%&\'\(\)\*\+,\-\.//0-9<=>\?@A-Z\\\^_`a-z\{\|\}~]* """
         self.rv.append(ConfigToken('string', s))
 
 
-class __SecondLevelScanner(__FirstLevelScanner):
+class _SecondLevelScanner(_FirstLevelScanner):
     def t_semicolon(self, s):
-        r' : '
+        """ : """
         self.rv.append(ConfigToken('semicolon'))
 
     def t_lparen(self, s):
-        r' \[ '
+        """ \[ """
         self.rv.append(ConfigToken('lparen'))
 
     def t_rparen(self, s):
-        r' \] '
+        """ \] """
         self.rv.append(ConfigToken('rparen'))
 
     def t_quote(self, s):
-        r' \" '
+        """ \" """
         self.rv.append(ConfigToken('quote'))
 
     def t_whitespace(self, s):
-        r' \s+ '
+        """ \s+ """
         self.rv.append(ConfigToken('whitespace'))
 
-ScannerTemplate = __SecondLevelScanner
+
+ScannerTemplate = _SecondLevelScanner
 
 
 # Parser
 
 class ParserTemplate(spark.GenericASTBuilder):
-    initialSymbol = None
+    START_SYMBOL = None
 
     def __init__(self, startSymbol=None):
         if startSymbol is None:
-            startSymbol = self.initialSymbol
+            startSymbol = self.START_SYMBOL
         spark.GenericASTBuilder.__init__(self, ConfigNode, startSymbol)
 
     def terminal(self, token):
@@ -156,8 +159,10 @@ class GeneratorTemplate(spark.GenericASTTraversal):
             if hasattr(self, name):
                 func = getattr(self, name)
                 func(client, node)
+
             else:
                 self.default(client, node)
+
         except spark.GenericASTTraversalPruningException:
             return client
 
