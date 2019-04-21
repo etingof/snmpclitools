@@ -4,8 +4,9 @@
 # Copyright (c) 2005-2019, Ilya Etingof <etingof@gmail.com>
 # License: http://snmplabs.com/snmpclitools/license.html
 #
-from snmpclitools.cli import base
 from pysnmp import error
+
+from snmpclitools.cli import base
 
 
 def getUsage():
@@ -17,27 +18,27 @@ SNMP message processing options:
 # Scanner
 
 
-class MPScannerMixIn:
+class MPScannerMixIn(object):
     def t_version(self, s):
-        r' -v '
+        """ -v """
         self.rv.append(base.ConfigToken('version'))
 
 # Parser
 
 
-class MPParserMixIn:
+class MPParserMixIn(object):
     def p_mpSpec(self, args):
-        '''
+        """
         Option ::= SnmpVersionId
         SnmpVersionId ::= version string
         SnmpVersionId ::= version whitespace string
-        '''
+        """
 
 # Generator
 
 
-class __MPGenerator(base.GeneratorTemplate):
-    _versionIdMap = {
+class _MPGenerator(base.GeneratorTemplate):
+    VERSION_ID_MAP = {
         '1':  0,
         '2':  1,
         '2c': 1,
@@ -46,19 +47,23 @@ class __MPGenerator(base.GeneratorTemplate):
 
     def n_SnmpVersionId(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
+
         if len(node) > 2:
             versionId = node[2].attr
+
         else:
             versionId = node[1].attr
-        if versionId in self._versionIdMap:
-            ctx['versionId'] = self._versionIdMap[versionId]
+
+        if versionId in self.VERSION_ID_MAP:
+            ctx['versionId'] = self.VERSION_ID_MAP[versionId]
+
         else:
             raise error.PySnmpError('Bad version value %s' % versionId)
 
 
 def generator(cbCtx, ast):
     snmpEngine, ctx = cbCtx
-    __MPGenerator().preorder((snmpEngine, ctx), ast)
+    _MPGenerator().preorder((snmpEngine, ctx), ast)
     # Commit defaults
     if 'versionId' not in ctx:
         ctx['versionId'] = 3

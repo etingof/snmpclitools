@@ -7,26 +7,37 @@
 #
 # GET command generator
 #
+import os
 import sys
 import traceback
-from snmpclitools.cli import main, msgmod, secmod, target, pdu, mibview, base
+
+from pysnmp import error
 from pysnmp.entity import engine
 from pysnmp.entity.rfc3413 import cmdgen
-from pysnmp import error
+
+from snmpclitools.cli import base
+from snmpclitools.cli import main
+from snmpclitools.cli import mibview
+from snmpclitools.cli import msgmod
+from snmpclitools.cli import pdu
+from snmpclitools.cli import secmod
+from snmpclitools.cli import target
 
 
 def getUsage():
-    return "Usage: %s [OPTIONS] <AGENT> <PARAMETERS>\n\
-%s%s%s%s%s%s" % (sys.argv[0],
-                 main.getUsage(),
-                 msgmod.getUsage(),
-                 secmod.getUsage(),
-                 mibview.getUsage(),
-                 target.getUsage(),
-                 pdu.getReadUsage())
+    return """\
+Usage: %s [OPTIONS] <AGENT> <PARAMETERS>
+%s%s%s%s%s%s
+""" % (os.path.basename(sys.argv[0]),
+       main.getUsage(),
+       msgmod.getUsage(),
+       secmod.getUsage(),
+       mibview.getUsage(),
+       target.getUsage(),
+       pdu.getReadUsage())
+
 
 # Construct c/l interpreter for this app
-
 
 class Scanner(msgmod.MPScannerMixIn,
               secmod.SMScannerMixIn,
@@ -48,17 +59,19 @@ class Parser(msgmod.MPParserMixIn,
     pass
 
 
-
 def cbFun(snmpEngine, sendRequestHandle, errorIndication,
           errorStatus, errorIndex, varBinds, cbCtx):
+
     if errorIndication:
         sys.stderr.write('%s\n' % errorIndication)
+
     elif errorStatus:
         sys.stderr.write(
             '%s at %s\n' %
             (errorStatus.prettyPrint(),
              errorIndex and varBinds[int(errorIndex) - 1] or '?')
         )
+
     else:
         for oid, val in varBinds:
             sys.stdout.write(
@@ -66,6 +79,7 @@ def cbFun(snmpEngine, sendRequestHandle, errorIndication,
                     cbCtx['mibViewController'], oid, val
                 )
             )
+
 
 # Run SNMP engine
 
@@ -102,10 +116,12 @@ except KeyboardInterrupt:
 
 except error.PySnmpError:
     sys.stderr.write('Error: %s\n%s' % (sys.exc_info()[1], getUsage()))
-    sys.exit(-1)
+    sys.exit(1)
 
 except Exception:
     sys.stderr.write('Process terminated\n')
+
     for line in traceback.format_exception(*sys.exc_info()):
         sys.stderr.write(line.replace('\n', ';'))
-    sys.exit(-1)
+
+    sys.exit(1)
