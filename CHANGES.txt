@@ -1,8 +1,12 @@
 
-Revision 0.6.3, released 14-04-2019
+Revision 0.6.4, released XX-04-2019
 -----------------------------------
 
 - PEP8'ed the whole project
+
+Revision 0.6.3, released 14-04-2019
+-----------------------------------
+
 - Upper constraint pysnmp to 5.0.0 in setup.py as well
 - Upper constraint pysmi to 0.4.0 and lower constraint it to 0.3.4+
 - Fixed broken -M and -P options to make non-default MIB paths
