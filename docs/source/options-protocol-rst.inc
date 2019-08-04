@@ -121,13 +121,13 @@ The *-E* option sets the context engineID used for SNMPv3 REQUEST messages
 scopedPdu, given as a hexadecimal string. If not specified, this will
 default to the authoritative engineID.
 
-SNMPv3 engine ID
-++++++++++++++++
+SNMPv3 security engine ID
++++++++++++++++++++++++++
 
 The *-e* option sets the authoritative (security) engineID used for SNMPv3
 REQUEST messages, given as a hexadecimal string.  It is typically not
 necessary to specify engine ID, as it will usually be discovered
-automatically.
+automatically, unless master or localized USM keys are used.
 
 SNMPv3 context name
 +++++++++++++++++++
@@ -143,3 +143,33 @@ The *-Z* option sets SNMP engine boot counter and its timeline values to
 SNMPv3 REQUEST message. These values are used for message authentication.
 It is typically not necessary to specify this option, as these values will
 usually be discovered automatically.
+
+SNMPv3 USM master and localized keys
+++++++++++++++++++++++++++++++++++++
+
+The *-3[MmKk]* set of options allow for specifying master or localized
+keys for given USM user instead of pass phrase (via *-A* and *-X* options
+respectively).
+
+* *-3m key* - adds master authentication key (hashed passphrase or password)
+  for USM security name
+* *-3M key* - adds master privacy key (hashed passphrase) for USM security
+  name
+* *-3k key* - adds localized authentication key (passphrase hashed with
+  security SNMP engine ID) for USM security name and SNMP security engine ID
+* *-3K key* - adds localized privacy key (passphrase hashed with security
+  SNMP engine ID) for USM security name and SNMP security engine ID
+
+The *key* argument could be an ASCII string or a hexadecimal string (if it
+starts with *0x* prefix).
+
+Regular pass-phrase, master and localized keys can be used together in
+any combination.
+
+See :RFC:`3414#section-2.6` for more information on key localization algorithm.
+
+.. note::
+
+  Using any of *-3[kKMm]* options effectively disable SNMP engine ID
+  discovery mechanism. Therefore authoritative security SNMP engine ID should
+  be specified along with *-3[kKMm]* options (via *-e* option).

@@ -6,6 +6,7 @@
 #
 from pysnmp import error
 from pysnmp.entity import config
+from pysnmp.proto import rfc1902
 
 from snmpclitools.cli import base
 
@@ -47,6 +48,12 @@ SNMPv3 security options:
    -e ENGINE-ID          security SNMP engine ID (e.g. 800000020109840301)
    -n CONTEXT-NAME       SNMP context name (e.g. bridge1)
    -Z BOOTS,TIME         destination SNMP engine boots/time
+   -3[MmKk]  0xHEXKEY    keys to be used for authentication (-3m, -3k) and
+                         encryption (-3M, -3K). These options allow you to
+                         set the master authentication and encryption keys
+                         (-3m and -3M respectively) or set the localized
+                         authentication and encryption keys (-3k and -3K
+                         respectively).
 """ % ('|'.join(sorted([x for x in AUTH_PROTOCOLS if x != 'NONE'])),
        '|'.join(sorted([x for x in PRIV_PROTOCOLS if x != 'NONE'])))
 
@@ -87,9 +94,9 @@ class SMScannerMixIn(object):
         """ -l """
         self.rv.append(base.ConfigToken('securityLevel'))
 
-    def t_engineID(self, s):
+    def t_securityEngineId(self, s):
         """ -e """
-        self.rv.append(base.ConfigToken('engineID'))
+        self.rv.append(base.ConfigToken('securityEngineId'))
 
     def t_contextEngineId(self, s):
         """ -E """
@@ -102,6 +109,23 @@ class SMScannerMixIn(object):
     def t_engineBoots(self, s):
         """ -Z """
         self.rv.append(base.ConfigToken('engineBoots'))
+
+    def t_masterAuthKey(self, s):
+        """ -3m """
+        self.rv.append(base.ConfigToken('masterAuthKey'))
+
+    def t_localizedAuthKey(self, s):
+        """ -3k """
+        self.rv.append(base.ConfigToken('localizedAuthKey'))
+
+    def t_masterPrivKey(self, s):
+        """ -3M """
+        self.rv.append(base.ConfigToken('masterPrivKey'))
+
+    def t_localizedPrivKey(self, s):
+        """ -3K """
+        self.rv.append(base.ConfigToken('localizedPrivKey'))
+
 
 # Parser
 
@@ -118,11 +142,17 @@ class SMParserMixIn(object):
 
         SnmpV3Option ::= AuthProtocol
         SnmpV3Option ::= AuthKey
+        SnmpV3Option ::= MasterAuthKey
+        SnmpV3Option ::= LocalizedAuthKey
+
         SnmpV3Option ::= PrivProtocol
         SnmpV3Option ::= PrivKey
+        SnmpV3Option ::= MasterPrivKey
+        SnmpV3Option ::= LocalizedPrivKey
+
         SnmpV3Option ::= SecurityName
         SnmpV3Option ::= SecurityLevel
-        SnmpV3Option ::= EngineID
+        SnmpV3Option ::= SecurityEngineId
         SnmpV3Option ::= ContextEngineId
         SnmpV3Option ::= ContextName
         SnmpV3Option ::= EngineBoots
@@ -131,16 +161,26 @@ class SMParserMixIn(object):
         AuthProtocol ::= authProtocol whitespace string
         AuthKey ::= authKey string
         AuthKey ::= authKey whitespace string
+        MasterAuthKey ::= masterAuthKey string
+        MasterAuthKey ::= masterAuthKey whitespace string
+        LocalizedAuthKey ::= localizedAuthKey string
+        LocalizedAuthKey ::= localizedAuthKey whitespace string
+
         PrivProtocol ::= privProtocol string
         PrivProtocol ::= privProtocol whitespace string
         PrivKey ::= privKey string
         PrivKey ::= privKey whitespace string
+        MasterPrivKey ::= masterPrivKey string
+        MasterPrivKey ::= masterPrivKey whitespace string
+        LocalizedPrivKey ::= localizedPrivKey string
+        LocalizedPrivKey ::= localizedPrivKey whitespace string
+
         SecurityName ::= securityName string
         SecurityName ::= securityName whitespace string
         SecurityLevel ::= securityLevel string
         SecurityLevel ::= securityLevel whitespace string
-        EngineID ::= engineID string
-        EngineID ::= engineID whitespace string
+        SecurityEngineId ::= securityEngineId string
+        SecurityEngineId ::= securityEngineId whitespace string
         ContextEngineId ::= contextEngineId string
         ContextEngineId ::= contextEngineId whitespace string
         ContextName ::= contextName string
@@ -193,6 +233,36 @@ class _SMGenerator(base.GeneratorTemplate):
 
         ctx['authKey'] = p
 
+    def n_MasterAuthKey(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
+
+        if len(node) > 2:
+            p = node[2].attr
+
+        else:
+            p = node[1].attr
+
+        if len(p) < 8:
+            raise error.PySnmpError(
+                'Short master authentication key (8+ chars required)')
+
+        ctx['masterAuthKey'] = p
+
+    def n_LocalizedAuthKey(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
+
+        if len(node) > 2:
+            p = node[2].attr
+
+        else:
+            p = node[1].attr
+
+        if len(p) < 8:
+            raise error.PySnmpError(
+                'Short localized authentication key (8+ chars required)')
+
+        ctx['localizedAuthKey'] = p
+
     def n_PrivProtocol(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
 
@@ -222,6 +292,36 @@ class _SMGenerator(base.GeneratorTemplate):
 
         ctx['privKey'] = p
 
+    def n_MasterPrivKey(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
+
+        if len(node) > 2:
+            p = node[2].attr
+
+        else:
+            p = node[1].attr
+
+        if len(p) < 8:
+            raise error.PySnmpError(
+                'Short master privacy key (8+ chars required)')
+
+        ctx['masterPrivKey'] = p
+
+    def n_LocalizedPrivKey(self, cbCtx, node):
+        snmpEngine, ctx = cbCtx
+
+        if len(node) > 2:
+            p = node[2].attr
+
+        else:
+            p = node[1].attr
+
+        if len(p) < 8:
+            raise error.PySnmpError(
+                'Short localized privacy key (8+ chars required)')
+
+        ctx['localizedPrivKey'] = p
+
     def n_SecurityName(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
 
@@ -240,14 +340,14 @@ class _SMGenerator(base.GeneratorTemplate):
         else:
             ctx['securityLevel'] = node[1].attr
 
-    def n_EngineID(self, cbCtx, node):
+    def n_SecurityEngineId(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
 
         if len(node) > 2:
-            ctx['engineID'] = node[2].attr
+            ctx['securityEngineId'] = node[2].attr
 
         else:
-            ctx['engineID'] = node[1].attr
+            ctx['securityEngineId'] = node[1].attr
 
     def n_ContextEngineId(self, cbCtx, node):
         snmpEngine, ctx = cbCtx
@@ -291,11 +391,51 @@ def generator(cbCtx, ast):
     # Commit collected data
     if ctx['versionId'] == 3:
 
+        def _unhexKey(key):
+            if key.lower().startswith('0x'):
+                key = key[2:]
+
+            return rfc1902.OctetString(hexValue=key)
+
         if 'securityName' not in ctx:
             raise error.PySnmpError('Security name not specified')
 
         if 'securityLevel' not in ctx:
             raise error.PySnmpError('Security level not specified')
+
+        if 'securityEngineId' in ctx:
+            ctx['securityEngineId'] = _unhexKey(ctx['securityEngineId'])
+
+        else:
+            ctx['securityEngineId'] = None
+
+        if 'contextEngineId' in ctx:
+            ctx['contextEngineId'] = _unhexKey(ctx['contextEngineId'])
+
+        else:
+            ctx['contextEngineId'] = None
+
+        if 'localizedAuthKey' in ctx:
+            ctx['authKey'] = _unhexKey(ctx.pop('localizedAuthKey'))
+            authKeyType = config.usmKeyTypeLocalized
+
+        elif 'masterAuthKey' in ctx:
+            ctx['authKey'] = _unhexKey(ctx.pop('masterAuthKey'))
+            authKeyType = config.usmKeyTypeMaster
+
+        else:
+            authKeyType = config.usmKeyTypePassphrase
+
+        if 'localizedPrivKey' in ctx:
+            ctx['privKey'] = _unhexKey(ctx.pop('localizedPrivKey'))
+            privKeyType = config.usmKeyTypeLocalized
+
+        elif 'masterPrivKey' in ctx:
+            ctx['privKey'] = _unhexKey(ctx.pop('masterPrivKey'))
+            privKeyType = config.usmKeyTypeMaster
+
+        else:
+            privKeyType = config.usmKeyTypePassphrase
 
         if ctx['securityLevel'] == 'noAuthNoPriv':
             if 'authKey' in ctx:
@@ -330,12 +470,18 @@ def generator(cbCtx, ast):
             ctx['authProtocol'],
             ctx['authKey'],
             ctx['privProtocol'],
-            ctx['privKey']
+            ctx['privKey'],
+            securityEngineId=ctx['securityEngineId'],
+            securityName=ctx['securityName'],
+            authKeyType=authKeyType,
+            privKeyType=privKeyType
         )
 
         # edit SNMP engine boots/uptime
+
+        mibBuilder = snmpEngine.msgAndPduDsp.mibInstrumController.mibBuilder
+
         if 'engineBoots' in ctx:
-            mibBuilder = snmpEngine.msgAndPduDsp.mibInstrumController.mibBuilder
             snmpEngineBoots, = mibBuilder.importSymbols(
                 '__SNMP-FRAMEWORK-MIB', 'snmpEngineBoots')
             snmpEngineBoots.setSyntax(

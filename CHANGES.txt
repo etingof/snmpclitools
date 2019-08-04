@@ -2,6 +2,8 @@
 Revision 0.6.4, released XX-04-2019
 -----------------------------------
 
+- Added support for specifying master or localized SNMPv3 USM
+  keys (-3[mMkK] options)
 - PEP8'ed the whole project
 
 Revision 0.6.3, released 14-04-2019
