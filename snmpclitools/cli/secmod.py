@@ -404,10 +404,10 @@ def generator(cbCtx, ast):
             raise error.PySnmpError('Security level not specified')
 
         if 'securityEngineId' in ctx:
-            ctx['securityEngineId'] = _unhexKey(ctx['securityEngineId'])
+            securityEngineId = _unhexKey(ctx['securityEngineId'])
 
         else:
-            ctx['securityEngineId'] = None
+            securityEngineId = None
 
         if 'contextEngineId' in ctx:
             ctx['contextEngineId'] = _unhexKey(ctx['contextEngineId'])
@@ -436,6 +436,14 @@ def generator(cbCtx, ast):
 
         else:
             privKeyType = config.usmKeyTypePassphrase
+
+        if (authKeyType == config.usmKeyTypeLocalized or
+                privKeyType == config.usmKeyTypeLocalized):
+            # Wildcard security engine ID assocciating localized keys
+            # with any authoritative SNMP engine
+            securityEngineId = rfc1902.OctetString(hexValue='0000000000')
+
+        ctx['securityEngineId'] = securityEngineId
 
         if ctx['securityLevel'] == 'noAuthNoPriv':
             if 'authKey' in ctx:
@@ -471,7 +479,7 @@ def generator(cbCtx, ast):
             ctx['authKey'],
             ctx['privProtocol'],
             ctx['privKey'],
-            securityEngineId=ctx['securityEngineId'],
+            securityEngineId=securityEngineId,
             securityName=ctx['securityName'],
             authKeyType=authKeyType,
             privKeyType=privKeyType

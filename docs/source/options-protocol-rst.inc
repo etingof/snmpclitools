@@ -170,6 +170,15 @@ See :RFC:`3414#section-2.6` for more information on key localization algorithm.
 
 .. note::
 
-  Using any of *-3[kKMm]* options effectively disable SNMP engine ID
-  discovery mechanism. Therefore authoritative security SNMP engine ID should
-  be specified along with *-3[kKMm]* options (via *-e* option).
+  Using any of *-3[kKMm]* options effectively inactivate USM key
+  localization mechanism. As a consequence, local SNMP engine configuration
+  won't get automatically populated with remote SNMP engine's
+  *securityEngineId*.
+
+  Therefore authoritative security SNMP engine ID should be specified
+  along with *-3[kKMm]* options (via *-e* option).
+
+  Otherwise, the magic *securityEngineId* value of five zeros
+  (*0x0000000000*) will be added to local configuration automatically to
+  refer to the localized keys that should be used with any unknown
+  authoritative SNMP engine.
