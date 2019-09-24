@@ -69,6 +69,13 @@ The network address is either IPv4 or IPv6 address or a fully qualified
 domain name optionally followed by a colon-separated port number. The
 default for port is 161.
 
+.. note::
+
+   Numeric IPv6 addresses should be surrounded by square brackets to
+   be parsed correctly. The entire token (address in brackets) might
+   need to be quored to avoid shell expansion.
+   Example: *'udpv6:[::1]:161'*
+
 .. _snmpset-mib-objects:
 
 MIB objects specification
