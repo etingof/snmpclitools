@@ -21,9 +21,13 @@ General communication options
    -r RETRIES        number of retries when sending request
    -t TIMEOUT        request timeout (in seconds)
 Agent address:
-   [<transport-domain>:]<transport-endpoint>
+   [<transport-domain>:]<transport-endpoint|[transport-endpoint]>
               transport-domain:    (udp|udp6)
               transport-endpoint:  (IP|IPv6|FQDN[:port])
+
+   Note: IPv6 address should be surrounded by square brackets
+   to be parsed correctly e.g. udp6:[::1]161
+
 """
 
 
