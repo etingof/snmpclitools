@@ -1,4 +1,4 @@
-include *.txt *.md *.sh
+include *.txt *.md *.sh LICENSE.rst
 recursive-include scripts *.py
 recursive-include docs/source *.rst *.svg *.py
 recursive-include docs *.conf Makefile
