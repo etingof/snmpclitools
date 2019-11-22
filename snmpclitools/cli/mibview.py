@@ -358,10 +358,10 @@ class MibViewProxy(object):
             self.DEFAULT_OID_PREFIX = os.environ['PYSNMPOIDPREFIX']
 
         if 'PYSNMPMIBS' in os.environ:
-            self.DEFAULT_MIBS = os.environ['PYSNMPMIBS'].split(':')
+            self.DEFAULT_MIBS = os.environ['PYSNMPMIBS'].split(os.pathsep)
 
         if 'PYSNMPMIBDIRS' in os.environ:
-            self.DEFAULT_MIB_DIRS = os.environ['PYSNMPMIBDIRS'].split(':')
+            self.DEFAULT_MIB_DIRS = os.environ['PYSNMPMIBDIRS'].split(os.pathsep)
 
         if self.DEFAULT_MIB_DIRS:
             mibViewController.mibBuilder.setMibSources(
