@@ -229,7 +229,7 @@ class WritePduParserMixIn(ReadPduParserMixIn):
 class _WritePduGenerator(_ReadPduGenerator):
     TYPE_MAP = {
         'i': rfc1902.Integer(),
-        'u': rfc1902.Integer32(),
+        'u': rfc1902.Unsigned32(),
         's': rfc1902.OctetString(),
         'n': univ.Null(),
         'o': univ.ObjectIdentifier(),
